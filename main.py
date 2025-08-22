@@ -1,484 +1,275 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
-import uvicorn
+from database import engine, Base, get_db
+import models
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+from datetime import datetime
 
-# Importar módulos locales
-from database import get_db, test_connection, engine
-from models import Base
-import schemas
-import crud
-
-# Crear tablas en la base de datos
+# Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
 
-# Crear la aplicación FastAPI
-app = FastAPI(
-    title="Barberin API",
-    description="API completa para sistema de barbería",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
-)
+app = FastAPI(title="BarberIn API", version="1.0.0")
 
-# Middleware para CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # En producción especifica los dominios permitidos
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ----------------------------
+# 📌 ESQUEMAS (Pydantic)
+# ----------------------------
+class RoleBase(BaseModel):
+    customer: Optional[str] = None
+    bhair: Optional[str] = None
 
-# Eventos de inicio y cierre
-@app.on_event("startup")
-async def startup_event():
-    print("🚀 Iniciando Barberin API...")
-    if test_connection():
-        print("📊 Base de datos conectada correctamente")
-    else:
-        print("❌ Error al conectar con la base de datos")
+class RoleCreate(RoleBase):
+    pass
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    print("👋 Cerrando Barberin API...")
+class RoleResponse(RoleBase):
+    rol_id_int: int
+    class Config:
+        from_attributes = True
 
-# ENDPOINTS DE SALUD Y INFO
-@app.get("/", tags=["Info"])
-def root():
-    return {
-        "message": "Bienvenido a Barberin API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "health": "/health"
-    }
+class UserBase(BaseModel):
+    username: str
+    password: str
+    rol_id_int: Optional[int] = None
 
-@app.get("/health", tags=["Info"])
-def health_check():
-    return {
-        "status": "healthy",
-        "message": "Barberin API funcionando correctamente",
-        "database": "connected" if test_connection() else "disconnected"
-    }
+class UserCreate(UserBase):
+    pass
 
-# ===========================================
-# ENDPOINTS PARA ROLES
-# ===========================================
-@app.post("/roles/", response_model=schemas.Role, tags=["Roles"])
-def create_role(role_data: schemas.RoleCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo rol"""
-    return crud.role.create(db=db, obj_in=role_data)
+class UserResponse(UserBase):
+    user_id_int: int
+    class Config:
+        from_attributes = True
 
-@app.get("/roles/", response_model=List[schemas.Role], tags=["Roles"])
-def read_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los roles"""
-    return crud.role.get_multi(db=db, skip=skip, limit=limit)
+class GenereBase(BaseModel):
+    name: str
+    abv: Optional[str] = None
 
-@app.get("/roles/{role_id}", response_model=schemas.Role, tags=["Roles"])
-def read_role(role_id: int, db: Session = Depends(get_db)):
-    """Obtener un rol por ID"""
-    role = crud.role.get(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return role
+class GenereCreate(GenereBase):
+    pass
 
-@app.put("/roles/{role_id}", response_model=schemas.Role, tags=["Roles"])
-def update_role(role_id: int, role_data: schemas.RoleUpdate, db: Session = Depends(get_db)):
-    """Actualizar un rol"""
-    role = crud.role.get(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return crud.role.update(db=db, db_obj=role, obj_in=role_data)
+class GenereResponse(GenereBase):
+    genere_id_int: int
+    class Config:
+        from_attributes = True
 
-@app.delete("/roles/{role_id}", response_model=schemas.StandardResponse, tags=["Roles"])
-def delete_role(role_id: int, db: Session = Depends(get_db)):
-    """Eliminar un rol"""
-    role = crud.role.delete(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return schemas.StandardResponse(message="Rol eliminado exitosamente")
+class CustomerBase(BaseModel):
+    name: str
+    last_name: str
+    cellphone: str
+    email: EmailStr
+    age: int
+    genere_id_int: Optional[int] = None
 
-# ===========================================
-# ENDPOINTS PARA USUARIOS
-# ===========================================
-@app.post("/users/", response_model=schemas.User, tags=["Usuarios"])
-def create_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo usuario"""
-    # Verificar si el username ya existe
-    existing_user = crud.user.get_by_username(db=db, username=user_data.username)
-    if existing_user:
-        raise HTTPException(status_code=400, detail="El nombre de usuario ya existe")
-    return crud.user.create(db=db, obj_in=user_data)
+class CustomerCreate(CustomerBase):
+    pass
 
-@app.get("/users/", response_model=List[schemas.User], tags=["Usuarios"])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los usuarios"""
-    return crud.user.get_multi(db=db, skip=skip, limit=limit)
+class CustomerResponse(CustomerBase):
+    id_customer_int: int
+    class Config:
+        from_attributes = True
 
-@app.get("/users/{user_id}", response_model=schemas.User, tags=["Usuarios"])
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    """Obtener un usuario por ID"""
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return user
+class BhairBase(BaseModel):
+    name: str
+    last_name: str
+    cellphone: str
+    direction: str
+    name_work: str
+    email_work: EmailStr
+    points: Optional[int] = None
+    genere_id_int: Optional[int] = None
 
-@app.put("/users/{user_id}", response_model=schemas.User, tags=["Usuarios"])
-def update_user(user_id: int, user_data: schemas.UserUpdate, db: Session = Depends(get_db)):
-    """Actualizar un usuario"""
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return crud.user.update(db=db, db_obj=user, obj_in=user_data)
+class BhairCreate(BhairBase):
+    pass
 
-@app.delete("/users/{user_id}", response_model=schemas.StandardResponse, tags=["Usuarios"])
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    """Eliminar un usuario"""
-    user = crud.user.delete(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return schemas.StandardResponse(message="Usuario eliminado exitosamente")
+class BhairResponse(BhairBase):
+    bhair_id_int: int
+    class Config:
+        from_attributes = True
 
-# ===========================================
-# ENDPOINTS PARA GÉNEROS
-# ===========================================
-@app.post("/generes/", response_model=schemas.Genere, tags=["Géneros"])
-def create_genere(genere_data: schemas.GenereCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo género"""
-    return crud.genere.create(db=db, obj_in=genere_data)
+class ServiceBase(BaseModel):
+    Amount: int
+    discount: Optional[float] = None
+    type_service: str
+    bhair_id_int: Optional[int] = None
 
-@app.get("/generes/", response_model=List[schemas.Genere], tags=["Géneros"])
-def read_generes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los géneros"""
-    return crud.genere.get_multi(db=db, skip=skip, limit=limit)
+class ServiceCreate(ServiceBase):
+    pass
 
-@app.get("/generes/{genere_id}", response_model=schemas.Genere, tags=["Géneros"])
-def read_genere(genere_id: int, db: Session = Depends(get_db)):
-    """Obtener un género por ID"""
-    genere = crud.genere.get(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return genere
+class ServiceResponse(ServiceBase):
+    id_service_int: int
+    class Config:
+        from_attributes = True
 
-@app.put("/generes/{genere_id}", response_model=schemas.Genere, tags=["Géneros"])
-def update_genere(genere_id: int, genere_data: schemas.GenereUpdate, db: Session = Depends(get_db)):
-    """Actualizar un género"""
-    genere = crud.genere.get(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return crud.genere.update(db=db, db_obj=genere, obj_in=genere_data)
+class QuoteBase(BaseModel):
+    date_quote: datetime
+    ticket_order: int
+    description: str
+    id_customer_int: Optional[int] = None
+    id_service_int: Optional[int] = None
+    bhair_id_int: Optional[int] = None
 
-@app.delete("/generes/{genere_id}", response_model=schemas.StandardResponse, tags=["Géneros"])
-def delete_genere(genere_id: int, db: Session = Depends(get_db)):
-    """Eliminar un género"""
-    genere = crud.genere.delete(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return schemas.StandardResponse(message="Género eliminado exitosamente")
+class QuoteCreate(QuoteBase):
+    pass
 
-# ===========================================
-# ENDPOINTS PARA CLIENTES
-# ===========================================
-@app.post("/customers/", response_model=schemas.Customer, tags=["Clientes"])
-def create_customer(customer_data: schemas.CustomerCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo cliente"""
-    # Verificar si el email ya existe
-    existing_email = crud.customer.get_by_email(db=db, email=str(customer_data.email))
-    if existing_email:
-        raise HTTPException(status_code=400, detail="El email ya está registrado")
-    
-    # Verificar si el teléfono ya existe
-    existing_phone = crud.customer.get_by_cellphone(db=db, cellphone=customer_data.cellphone)
-    if existing_phone:
-        raise HTTPException(status_code=400, detail="El teléfono ya está registrado")
-    
-    return crud.customer.create(db=db, obj_in=customer_data)
+class QuoteResponse(QuoteBase):
+    quote_id_int: int
+    class Config:
+        from_attributes = True
 
-@app.get("/customers/", response_model=List[schemas.Customer], tags=["Clientes"])
-def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los clientes"""
-    return crud.customer.get_multi(db=db, skip=skip, limit=limit)
+class SpecialtyBase(BaseModel):
+    name: str
+    year_expertise: int
+    bhair_id_int: Optional[int] = None
 
-@app.get("/customers/{customer_id}", response_model=schemas.Customer, tags=["Clientes"])
-def read_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Obtener un cliente por ID"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return customer
+class SpecialtyCreate(SpecialtyBase):
+    pass
 
-@app.put("/customers/{customer_id}", response_model=schemas.Customer, tags=["Clientes"])
-def update_customer(customer_id: int, customer_data: schemas.CustomerUpdate, db: Session = Depends(get_db)):
-    """Actualizar un cliente"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return crud.customer.update(db=db, db_obj=customer, obj_in=customer_data)
+class SpecialtyResponse(SpecialtyBase):
+    speciality_id_int: int
+    class Config:
+        from_attributes = True
 
-@app.delete("/customers/{customer_id}", response_model=schemas.StandardResponse, tags=["Clientes"])
-def delete_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Eliminar un cliente"""
-    customer = crud.customer.delete(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return schemas.StandardResponse(message="Cliente eliminado exitosamente")
+class StyleBase(BaseModel):
+    type: str
+    name: str
+    speciality_id_int: Optional[int] = None
 
-# ===========================================
-# ENDPOINTS PARA BARBEROS
-# ===========================================
-@app.post("/bhairs/", response_model=schemas.Bhair, tags=["Barberos"])
-def create_bhair(bhair_data: schemas.BhairCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo barbero"""
-    # Verificar si el email de trabajo ya existe
-    existing_email = crud.bhair.get_by_email_work(db=db, email_work=str(bhair_data.email_work))
-    if existing_email:
-        raise HTTPException(status_code=400, detail="El email de trabajo ya está registrado")
-    
-    # Verificar si el teléfono ya existe
-    existing_phone = crud.bhair.get_by_cellphone(db=db, cellphone=bhair_data.cellphone)
-    if existing_phone:
-        raise HTTPException(status_code=400, detail="El teléfono ya está registrado")
-    
-    return crud.bhair.create(db=db, obj_in=bhair_data)
+class StyleCreate(StyleBase):
+    pass
 
-@app.get("/bhairs/", response_model=List[schemas.Bhair], tags=["Barberos"])
-def read_bhairs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los barberos"""
-    return crud.bhair.get_multi(db=db, skip=skip, limit=limit)
+class StyleResponse(StyleBase):
+    style_id: int
+    class Config:
+        from_attributes = True
 
-@app.get("/bhairs/{bhair_id}", response_model=schemas.Bhair, tags=["Barberos"])
-def read_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener un barbero por ID"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return bhair
 
-@app.put("/bhairs/{bhair_id}", response_model=schemas.Bhair, tags=["Barberos"])
-def update_bhair(bhair_id: int, bhair_data: schemas.BhairUpdate, db: Session = Depends(get_db)):
-    """Actualizar un barbero"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.bhair.update(db=db, db_obj=bhair, obj_in=bhair_data)
+# ----------------------------
+# 📌 ENDPOINTS
+# ----------------------------
+@app.get("/")
+def home():
+    return {"message": "Bienvenido a la API de BarberIn"}
 
-@app.delete("/bhairs/{bhair_id}", response_model=schemas.StandardResponse, tags=["Barberos"])
-def delete_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Eliminar un barbero"""
-    bhair = crud.bhair.delete(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return schemas.StandardResponse(message="Barbero eliminado exitosamente")
+@app.get("/health")
+def health_check(db: Session = Depends(get_db)):
+    try:
+        db.execute("SELECT 1")
+        return {"status": "ok", "db": "connected"}
+    except:
+        raise HTTPException(status_code=500, detail="Error de conexión a la BD")
 
-# ===========================================
-# ENDPOINTS PARA SERVICIOS
-# ===========================================
-@app.post("/services/", response_model=schemas.Service, tags=["Servicios"])
-def create_service(service_data: schemas.ServiceCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo servicio"""
-    return crud.service.create(db=db, obj_in=service_data)
+# -------- Roles --------
+@app.post("/roles/", response_model=RoleResponse)
+def create_role(role: RoleCreate, db: Session = Depends(get_db)):
+    db_role = models.Role(**role.dict())
+    db.add(db_role)
+    db.commit()
+    db.refresh(db_role)
+    return db_role
 
-@app.get("/services/", response_model=List[schemas.Service], tags=["Servicios"])
-def read_services(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los servicios"""
-    return crud.service.get_multi(db=db, skip=skip, limit=limit)
+@app.get("/roles/", response_model=List[RoleResponse])
+def read_roles(db: Session = Depends(get_db)):
+    return db.query(models.Role).all()
 
-@app.get("/services/{service_id}", response_model=schemas.Service, tags=["Servicios"])
-def read_service(service_id: int, db: Session = Depends(get_db)):
-    """Obtener un servicio por ID"""
-    service = crud.service.get(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return service
+# -------- Users --------
+@app.post("/users/", response_model=UserResponse)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = models.User(**user.dict())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
-@app.put("/services/{service_id}", response_model=schemas.Service, tags=["Servicios"])
-def update_service(service_id: int, service_data: schemas.ServiceUpdate, db: Session = Depends(get_db)):
-    """Actualizar un servicio"""
-    service = crud.service.get(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return crud.service.update(db=db, db_obj=service, obj_in=service_data)
+@app.get("/users/", response_model=List[UserResponse])
+def read_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()
 
-@app.delete("/services/{service_id}", response_model=schemas.StandardResponse, tags=["Servicios"])
-def delete_service(service_id: int, db: Session = Depends(get_db)):
-    """Eliminar un servicio"""
-    service = crud.service.delete(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return schemas.StandardResponse(message="Servicio eliminado exitosamente")
+# -------- Generes --------
+@app.post("/generes/", response_model=GenereResponse)
+def create_genere(genere: GenereCreate, db: Session = Depends(get_db)):
+    db_genere = models.Genere(**genere.dict())
+    db.add(db_genere)
+    db.commit()
+    db.refresh(db_genere)
+    return db_genere
 
-# ===========================================
-# ENDPOINTS PARA CITAS
-# ===========================================
-@app.post("/quotes/", response_model=schemas.Quote, tags=["Citas"])
-def create_quote(quote_data: schemas.QuoteCreate, db: Session = Depends(get_db)):
-    """Crear una nueva cita"""
-    # Verificar si el ticket_order ya existe
-    existing_ticket = crud.quote.get_by_ticket_order(db=db, ticket_order=quote_data.ticket_order)
-    if existing_ticket:
-        raise HTTPException(status_code=400, detail="El número de ticket ya existe")
-    
-    return crud.quote.create(db=db, obj_in=quote_data)
+@app.get("/generes/", response_model=List[GenereResponse])
+def read_generes(db: Session = Depends(get_db)):
+    return db.query(models.Genere).all()
 
-@app.get("/quotes/", response_model=List[schemas.Quote], tags=["Citas"])
-def read_quotes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todas las citas"""
-    return crud.quote.get_multi(db=db, skip=skip, limit=limit)
+# -------- Customers --------
+@app.post("/customers/", response_model=CustomerResponse)
+def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
+    db_customer = models.Customer(**customer.dict())
+    db.add(db_customer)
+    db.commit()
+    db.refresh(db_customer)
+    return db_customer
 
-@app.get("/quotes/{quote_id}", response_model=schemas.Quote, tags=["Citas"])
-def read_quote(quote_id: int, db: Session = Depends(get_db)):
-    """Obtener una cita por ID"""
-    quote = crud.quote.get(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return quote
+@app.get("/customers/", response_model=List[CustomerResponse])
+def read_customers(db: Session = Depends(get_db)):
+    return db.query(models.Customer).all()
 
-@app.put("/quotes/{quote_id}", response_model=schemas.Quote, tags=["Citas"])
-def update_quote(quote_id: int, quote_data: schemas.QuoteUpdate, db: Session = Depends(get_db)):
-    """Actualizar una cita"""
-    quote = crud.quote.get(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return crud.quote.update(db=db, db_obj=quote, obj_in=quote_data)
+# -------- Bhairs --------
+@app.post("/bhairs/", response_model=BhairResponse)
+def create_bhair(bhair: BhairCreate, db: Session = Depends(get_db)):
+    db_bhair = models.Bhair(**bhair.dict())
+    db.add(db_bhair)
+    db.commit()
+    db.refresh(db_bhair)
+    return db_bhair
 
-@app.delete("/quotes/{quote_id}", response_model=schemas.StandardResponse, tags=["Citas"])
-def delete_quote(quote_id: int, db: Session = Depends(get_db)):
-    """Eliminar una cita"""
-    quote = crud.quote.delete(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return schemas.StandardResponse(message="Cita eliminada exitosamente")
+@app.get("/bhairs/", response_model=List[BhairResponse])
+def read_bhairs(db: Session = Depends(get_db)):
+    return db.query(models.Bhair).all()
 
-# ===========================================
-# ENDPOINTS PARA ESPECIALIDADES
-# ===========================================
-@app.post("/specialties/", response_model=schemas.Specialty, tags=["Especialidades"])
-def create_specialty(specialty_data: schemas.SpecialtyCreate, db: Session = Depends(get_db)):
-    """Crear una nueva especialidad"""
-    return crud.specialty.create(db=db, obj_in=specialty_data)
+# -------- Services --------
+@app.post("/services/", response_model=ServiceResponse)
+def create_service(service: ServiceCreate, db: Session = Depends(get_db)):
+    db_service = models.Service(**service.dict())
+    db.add(db_service)
+    db.commit()
+    db.refresh(db_service)
+    return db_service
 
-@app.get("/specialties/", response_model=List[schemas.Specialty], tags=["Especialidades"])
-def read_specialties(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todas las especialidades"""
-    return crud.specialty.get_multi(db=db, skip=skip, limit=limit)
+@app.get("/services/", response_model=List[ServiceResponse])
+def read_services(db: Session = Depends(get_db)):
+    return db.query(models.Service).all()
 
-@app.get("/specialties/{specialty_id}", response_model=schemas.Specialty, tags=["Especialidades"])
-def read_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Obtener una especialidad por ID"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return specialty
+# -------- Quotes --------
+@app.post("/quotes/", response_model=QuoteResponse)
+def create_quote(quote: QuoteCreate, db: Session = Depends(get_db)):
+    db_quote = models.Quote(**quote.dict())
+    db.add(db_quote)
+    db.commit()
+    db.refresh(db_quote)
+    return db_quote
 
-@app.put("/specialties/{specialty_id}", response_model=schemas.Specialty, tags=["Especialidades"])
-def update_specialty(specialty_id: int, specialty_data: schemas.SpecialtyUpdate, db: Session = Depends(get_db)):
-    """Actualizar una especialidad"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return crud.specialty.update(db=db, db_obj=specialty, obj_in=specialty_data)
+@app.get("/quotes/", response_model=List[QuoteResponse])
+def read_quotes(db: Session = Depends(get_db)):
+    return db.query(models.Quote).all()
 
-@app.delete("/specialties/{specialty_id}", response_model=schemas.StandardResponse, tags=["Especialidades"])
-def delete_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Eliminar una especialidad"""
-    specialty = crud.specialty.delete(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return schemas.StandardResponse(message="Especialidad eliminada exitosamente")
+# -------- Specialties --------
+@app.post("/specialties/", response_model=SpecialtyResponse)
+def create_specialty(specialty: SpecialtyCreate, db: Session = Depends(get_db)):
+    db_specialty = models.Specialty(**specialty.dict())
+    db.add(db_specialty)
+    db.commit()
+    db.refresh(db_specialty)
+    return db_specialty
 
-# ===========================================
-# ENDPOINTS PARA ESTILOS
-# ===========================================
-@app.post("/styles/", response_model=schemas.Style, tags=["Estilos"])
-def create_style(style_data: schemas.StyleCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo estilo"""
-    return crud.style.create(db=db, obj_in=style_data)
+@app.get("/specialties/", response_model=List[SpecialtyResponse])
+def read_specialties(db: Session = Depends(get_db)):
+    return db.query(models.Specialty).all()
 
-@app.get("/styles/", response_model=List[schemas.Style], tags=["Estilos"])
-def read_styles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los estilos"""
-    return crud.style.get_multi(db=db, skip=skip, limit=limit)
+# -------- Styles --------
+@app.post("/styles/", response_model=StyleResponse)
+def create_style(style: StyleCreate, db: Session = Depends(get_db)):
+    db_style = models.Style(**style.dict())
+    db.add(db_style)
+    db.commit()
+    db.refresh(db_style)
+    return db_style
 
-@app.get("/styles/{style_id}", response_model=schemas.Style, tags=["Estilos"])
-def read_style(style_id: int, db: Session = Depends(get_db)):
-    """Obtener un estilo por ID"""
-    style = crud.style.get(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return style
-
-@app.put("/styles/{style_id}", response_model=schemas.Style, tags=["Estilos"])
-def update_style(style_id: int, style_data: schemas.StyleUpdate, db: Session = Depends(get_db)):
-    """Actualizar un estilo"""
-    style = crud.style.get(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return crud.style.update(db=db, db_obj=style, obj_in=style_data)
-
-@app.delete("/styles/{style_id}", response_model=schemas.StandardResponse, tags=["Estilos"])
-def delete_style(style_id: int, db: Session = Depends(get_db)):
-    """Eliminar un estilo"""
-    style = crud.style.delete(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return schemas.StandardResponse(message="Estilo eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS RELACIONALES ADICIONALES
-# ===========================================
-
-# Obtener citas por barbero
-@app.get("/bhairs/{bhair_id}/quotes", response_model=List[schemas.Quote], tags=["Relaciones"])
-def get_quotes_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las citas de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.quote.get_by_bhair(db=db, bhair_id=bhair_id)
-
-# Obtener servicios por barbero
-@app.get("/bhairs/{bhair_id}/services", response_model=List[schemas.Service], tags=["Relaciones"])
-def get_services_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todos los servicios de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.service.get_by_bhair(db=db, bhair_id=bhair_id)
-
-# Obtener especialidades por barbero
-@app.get("/bhairs/{bhair_id}/specialties", response_model=List[schemas.Specialty], tags=["Relaciones"])
-def get_specialties_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las especialidades de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.specialty.get_by_bhair(db=db, bhair_id=bhair_id)
-
-# Obtener citas por cliente
-@app.get("/customers/{customer_id}/quotes", response_model=List[schemas.Quote], tags=["Relaciones"])
-def get_quotes_by_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las citas de un cliente específico"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return crud.quote.get_by_customer(db=db, customer_id=customer_id)
-
-# Obtener estilos por especialidad
-@app.get("/specialties/{specialty_id}/styles", response_model=List[schemas.Style], tags=["Relaciones"])
-def get_styles_by_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Obtener todos los estilos de una especialidad específica"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return crud.style.get_by_specialty(db=db, specialty_id=specialty_id)
-
-# Ejecutar la aplicación
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+@app.get("/styles/", response_model=List[StyleResponse])
+def read_styles(db: Session = Depends(get_db)):
+    return db.query(models.Style).all()

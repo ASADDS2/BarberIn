@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barberian DB - Sistema de Gestión Profesional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            padding: 2.5rem 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .stat-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .data-section {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            padding: 2rem 2.5rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .section-content {
+            padding: 2.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #ff6b6b, #4ecdc4);
+        }
+
+        .data-card:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .card-info {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label::before {
+            content: '•';
+            color: #4ecdc4;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: linear-gradient(45deg, #ffa726, #ffcc02);
+            color: #000;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(45deg, #66bb6a, #43a047);
+        }
+
+        .status-cancelled {
+            background: linear-gradient(45deg, #ef5350, #c62828);
+        }
+
+        .status-done {
+            background: linear-gradient(45deg, #42a5f5, #1e88e5);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            opacity: 0.7;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            color: #4ecdc4;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 4px solid #4ecdc4;
+            border-right: 4px solid #ff6b6b;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>💈 BARBERIAN DB</h1>
+            <p>Sistema de Gestión Profesional para Barberías v2.0</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Estadísticas Generales -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Usuarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛍️</div>
+                <div class="stat-number" id="totalCustomers">0</div>
+                <div class="stat-label">Clientes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✂️</div>
+                <div class="stat-number" id="totalBarbers">0</div>
+                <div class="stat-label">Barberos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-number" id="totalAppointments">0</div>
+                <div class="stat-label">Citas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏪</div>
+                <div class="stat-number" id="totalBarbershops">0</div>
+                <div class="stat-label">Barberías</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number" id="totalSpecialties">0</div>
+                <div class="stat-label">Especialidades</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏛️</div>
+                <div class="stat-number" id="totalDepartments">0</div>
+                <div class="stat-label">Departamentos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏙️</div>
+                <div class="stat-number" id="totalCities">0</div>
+                <div class="stat-label">Ciudades</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="loadAllData()">🔄 Actualizar Datos</button>
+            <button class="btn btn-secondary" onclick="toggleAutoRefresh()">⏱️ Auto-actualización: <span id="autoRefreshStatus">OFF</span></button>
+        </div>
+
+        <!-- Usuarios -->
+        <div class="data-section">
+            <div class="section-header">👥 Usuarios del Sistema</div>
+            <div class="section-content" id="usersSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando usuarios...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes -->
+        <div class="data-section">
+            <div class="section-header">🛍️ Clientes Registrados</div>
+            <div class="section-content" id="customersSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando clientes...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barberos -->
+        <div class="data-section">
+            <div class="section-header">✂️ Barberos Profesionales</div>
+            <div class="section-content" id="barbersSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando barberos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Citas -->
+        <div class="data-section">
+            <div class="section-header">📅 Citas Agendadas</div>
+            <div class="section-content" id="appointmentsSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando citas...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barberías -->
+        <div class="data-section">
+            <div class="section-header">🏪 Barberías</div>
+            <div class="section-content" id="barbershopsSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando barberías...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Especialidades -->
+        <div class="data-section">
+            <div class="section-header">🎯 Especialidades</div>
+            <div class="section-content" id="specialtiesSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando especialidades...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ubicaciones -->
+        <div class="data-section">
+            <div class="section-header">📍 Ubicaciones</div>
+            <div class="section-content" id="locationsSection">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando ubicaciones...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        let autoRefreshInterval = null;
+        let autoRefreshEnabled = false;
+
+        // Función para realizar peticiones a la API
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${endpoint}:`, error);
+                return [];
+            }
+        }
+
+        // Función para mostrar estado vacío
+        function showEmptyState(container, message, icon = '📝') {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">${icon}</div>
+                    <h3>Sin datos disponibles</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Función para formatear fecha
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Función para formatear hora
+        function formatTime(timeString) {
+            return timeString ? timeString.substring(0, 5) : 'N/A';
+        }
+
+        // Función para obtener badge de estado
+        function getStatusBadge(status) {
+            const statusMap = {
+                'pending': { class: 'status-pending', text: 'Pendiente' },
+                'confirmed': { class: 'status-confirmed', text: 'Confirmada' },
+                'cancelled': { class: 'status-cancelled', text: 'Cancelada' },
+                'done': { class: 'status-done', text: 'Completada' }
+            };
+            const statusInfo = statusMap[status] || { class: 'status-pending', text: status };
+            return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+        }
+
+        // Función para cargar y mostrar usuarios
+        async function loadUsers() {
+            const users = await fetchData('/users/');
+            const container = document.getElementById('usersSection');
+            
+            if (users.length === 0) {
+                showEmptyState(container, 'No hay usuarios registrados en el sistema.', '👥');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${users.map(user => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">👤</div>
+                                <div class="card-title">${user.full_name}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">${user.email}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Rol</span>
+                                    <span class="info-value">${user.role?.name || 'Sin rol'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">ID Usuario</span>
+                                    <span class="info-value">#${user.id_user}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar clientes
+        async function loadCustomers() {
+            const customers = await fetchData('/customers/');
+            const container = document.getElementById('customersSection');
+            
+            if (customers.length === 0) {
+                showEmptyState(container, 'No hay clientes registrados en el sistema.', '🛍️');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${customers.map(customer => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">🛍️</div>
+                                <div class="card-title">${customer.user?.full_name || 'Cliente'}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">${customer.user?.email || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Teléfono</span>
+                                    <span class="info-value">${customer.phone || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Ciudad</span>
+                                    <span class="info-value">${customer.city?.name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Departamento</span>
+                                    <span class="info-value">${customer.department?.name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Género</span>
+                                    <span class="info-value">${customer.genre?.name || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar barberos
+        async function loadBarbers() {
+            const barbers = await fetchData('/barbers/');
+            const container = document.getElementById('barbersSection');
+            
+            if (barbers.length === 0) {
+                showEmptyState(container, 'No hay barberos registrados en el sistema.', '✂️');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${barbers.map(barber => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">✂️</div>
+                                <div class="card-title">${barber.user?.full_name || 'Barbero'}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">${barber.user?.email || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Teléfono</span>
+                                    <span class="info-value">${barber.phone || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Especialidad</span>
+                                    <span class="info-value">${barber.specialty?.name || 'Sin especialidad'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Puntos</span>
+                                    <span class="info-value">${barber.points || 0}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Ciudad</span>
+                                    <span class="info-value">${barber.city?.name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Experiencia</span>
+                                    <span class="info-value">${barber.specialty?.years_experience ? barber.specialty.years_experience + ' años' : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar citas
+        async function loadAppointments() {
+            const appointments = await fetchData('/appointments/');
+            const container = document.getElementById('appointmentsSection');
+            
+            if (appointments.length === 0) {
+                showEmptyState(container, 'No hay citas agendadas en el sistema.', '📅');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${appointments.map(appointment => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">📅</div>
+                                <div class="card-title">Cita #${appointment.id_appointment}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Estado</span>
+                                    <span class="info-value">${getStatusBadge(appointment.status)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Fecha</span>
+                                    <span class="info-value">${formatDate(appointment.appointment_date)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Hora Inicio</span>
+                                    <span class="info-value">${formatTime(appointment.start_time)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Hora Fin</span>
+                                    <span class="info-value">${formatTime(appointment.end_time)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Cliente</span>
+                                    <span class="info-value">${appointment.customer?.user?.full_name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Barbero</span>
+                                    <span class="info-value">${appointment.barber?.user?.full_name || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar barberías
+        async function loadBarbershops() {
+            const barbershops = await fetchData('/barbershops/');
+            const container = document.getElementById('barbershopsSection');
+            
+            if (barbershops.length === 0) {
+                showEmptyState(container, 'No hay barberías registradas en el sistema.', '🏪');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${barbershops.map(barbershop => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">🏪</div>
+                                <div class="card-title">Barbería #${barbershop.id_barbershop}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Teléfono</span>
+                                    <span class="info-value">${barbershop.phone || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Staff ID</span>
+                                    <span class="info-value">#${barbershop.id_staff}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar especialidades
+        async function loadSpecialties() {
+            const specialties = await fetchData('/specialties/');
+            const container = document.getElementById('specialtiesSection');
+            
+            if (specialties.length === 0) {
+                showEmptyState(container, 'No hay especialidades registradas en el sistema.', '🎯');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${specialties.map(specialty => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">🎯</div>
+                                <div class="card-title">${specialty.name}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Años de Experiencia</span>
+                                    <span class="info-value">${specialty.years_experience || 0} años</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">ID Especialidad</span>
+                                    <span class="info-value">#${specialty.id_specialty}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para cargar y mostrar ubicaciones
+        async function loadLocations() {
+            const locations = await fetchData('/locations/');
+            const container = document.getElementById('locationsSection');
+            
+            if (locations.length === 0) {
+                showEmptyState(container, 'No hay ubicaciones registradas en el sistema.', '📍');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="data-grid">
+                    ${locations.map(location => `
+                        <div class="data-card">
+                            <div class="card-header">
+                                <div class="card-icon">📍</div>
+                                <div class="card-title">${location.address}</div>
+                            </div>
+                            <div class="card-info">
+                                <div class="info-row">
+                                    <span class="info-label">Ciudad</span>
+                                    <span class="info-value">${location.city?.name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Departamento</span>
+                                    <span class="info-value">${location.department?.name || 'N/A'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Horario Apertura</span>
+                                    <span class="info-value">${formatTime(location.opening_hour)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Horario Cierre</span>
+                                    <span class="info-value">${formatTime(location.closing_hour)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Barbería ID</span>
+                                    <span class="info-value">#${location.id_barbershop}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Función para actualizar las estadísticas
+        async function updateStats() {
+            try {
+                const stats = await fetchData('/stats');
+                
+                document.getElementById('totalUsers').textContent = stats.users || 0;
+                document.getElementById('totalCustomers').textContent = stats.customers || 0;
+                document.getElementById('totalBarbers').textContent = stats.barbers || 0;
+                document.getElementById('totalAppointments').textContent = stats.appointments || 0;
+                document.getElementById('totalBarbershops').textContent = stats.barbershops || 0;
+                document.getElementById('totalSpecialties').textContent = stats.specialties || 0;
+                document.getElementById('totalDepartments').textContent = stats.departments || 0;
+                document.getElementById('totalCities').textContent = stats.cities || 0;
+
+                // Animar los números
+                animateNumbers();
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // Función para animar los números
+        function animateNumbers() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(element => {
+                const finalValue = parseInt(element.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 30;
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        element.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(currentValue);
+                    }
+                }, 50);
+            });
+        }
+
+        // Función para alternar auto-actualización
+        function toggleAutoRefresh() {
+            if (autoRefreshEnabled) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshEnabled = false;
+                document.getElementById('autoRefreshStatus').textContent = 'OFF';
+                document.getElementById('autoRefreshStatus').parentElement.classList.remove('btn-active');
+            } else {
+                autoRefreshInterval = setInterval(updateStats, 30000); // 30 segundos
+                autoRefreshEnabled = true;
+                document.getElementById('autoRefreshStatus').textContent = 'ON';
+                document.getElementById('autoRefreshStatus').parentElement.classList.add('btn-active');
+            }
+        }
+
+        // Función para cargar todos los datos
+        async function loadAllData() {
+            const loadingPromises = [
+                updateStats(),
+                loadUsers(),
+                loadCustomers(),
+                loadBarbers(),
+                loadAppointments(),
+                loadBarbershops(),
+                loadSpecialties(),
+                loadLocations()
+            ];
+
+            try {
+                await Promise.all(loadingPromises);
+                console.log('Todos los datos cargados exitosamente');
+                
+                // Mostrar notificación de éxito
+                showNotification('Datos actualizados correctamente', 'success');
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Error al cargar algunos datos', 'error');
+            }
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                ${type === 'success' ? 'background: linear-gradient(45deg, #66bb6a, #43a047);' : ''}
+                ${type === 'error' ? 'background: linear-gradient(45deg, #ef5350, #c62828);' : ''}
+                ${type === 'info' ? 'background: linear-gradient(45deg, #42a5f5, #1e88e5);' : ''}
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Función para manejar errores de conexión
+        function handleConnectionError() {
+            showNotification('Error de conexión con el servidor. Verificando...', 'error');
+            
+            // Intentar reconectar después de 5 segundos
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/health`);
+                    if (response.ok) {
+                        showNotification('Conexión restaurada. Recargando datos...', 'success');
+                        loadAllData();
+                    }
+                } catch (error) {
+                    console.error('Still unable to connect:', error);
+                }
+            }, 5000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadAllData();
+            } catch (error) {
+                console.error('Error during initial load:', error);
+                handleConnectionError();
+            }
+        });
+
+        // Detectar si el usuario está offline
+        window.addEventListener('online', () => {
+            showNotification('Conexión restaurada', 'success');
+            loadAllData();
+        });
+
+        window.addEventListener('offline', () => {
+            showNotification('Sin conexión a internet', 'error');
+        });
+
+        // Agregar estilo para botón activo
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-active {
+                background: linear-gradient(45deg, #66bb6a, #43a047) !important;
+                box-shadow: 0 0 20px rgba(102, 187, 106, 0.5) !important;
+            }
+            
+            .notification {
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            .stat-card:hover .stat-number {
+                animation: pulse 0.6s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Mensaje de bienvenida
+        setTimeout(() => {
+            showNotification('¡Bienvenido a Barberian DB v2.0!', 'info');
+        }, 1000);
+    </script>
+</body>
+</html>

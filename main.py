@@ -1,484 +1,710 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+# requirements.txt
+"""
+fastapi==0.104.1
+uvicorn==0.24.0
+sqlalchemy==2.0.23
+pymysql==1.1.0
+pydantic==2.5.0
+python-multipart==0.0.6
+passlib==1.7.4
+python-jose==3.3.0
+bcrypt==4.0.1
+"""
+
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from typing import List
-import uvicorn
+from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, Time, Date, Enum, ForeignKey, text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session, relationship
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+from datetime import datetime, date, time
+from enum import Enum as PyEnum
+import os
 
-# Importar módulos locales
-from database import get_db, test_connection, engine
-from models import Base
-import schemas
-import crud
+# Configuración de la base de datos
+DATABASE_URL = "mysql+pymysql://usuario:contraseña@localhost:3306/barberian_db"
 
-# Crear tablas en la base de datos
-Base.metadata.create_all(bind=engine)
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-# Crear la aplicación FastAPI
+# Enums
+class AuthProviderEnum(PyEnum):
+    local = "local"
+    google = "google"
+
+class AppointmentStatusEnum(PyEnum):
+    pending = "pending"
+    confirmed = "confirmed"
+    cancelled = "cancelled"
+    done = "done"
+
+class DayOfWeekEnum(PyEnum):
+    monday = "monday"
+    tuesday = "tuesday"
+    wednesday = "wednesday"
+    thursday = "thursday"
+    friday = "friday"
+    saturday = "saturday"
+    sunday = "sunday"
+
+# Modelos SQLAlchemy
+class AuthProvider(Base):
+    __tablename__ = "auth_provider"
+    
+    id_auth_provider = Column(Integer, primary_key=True, autoincrement=True)
+    provider = Column(Enum(AuthProviderEnum), nullable=False)
+    provider_id_google = Column(String(255))
+    token = Column(String(255))
+    
+    user_auth_providers = relationship("UserAuthProvider", back_populates="auth_provider")
+
+class Role(Base):
+    __tablename__ = "roles"
+    
+    id_role = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    
+    users = relationship("User", back_populates="role")
+
+class Genre(Base):
+    __tablename__ = "genres"
+    
+    id_genre = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), nullable=False)
+    
+    customers = relationship("Customer", back_populates="genre")
+    barbers = relationship("Barber", back_populates="genre")
+
+class Department(Base):
+    __tablename__ = "departments"
+    
+    id_department = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    
+    cities = relationship("City", back_populates="department")
+    customers = relationship("Customer", back_populates="department")
+    barbers = relationship("Barber", back_populates="department")
+    locations = relationship("Location", back_populates="department")
+
+class City(Base):
+    __tablename__ = "citys"
+    
+    id_city = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    id_department = Column(Integer, ForeignKey("departments.id_department"), nullable=False)
+    
+    department = relationship("Department", back_populates="cities")
+    customers = relationship("Customer", back_populates="city")
+    barbers = relationship("Barber", back_populates="city")
+    locations = relationship("Location", back_populates="city")
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id_user = Column(Integer, primary_key=True, autoincrement=True)
+    full_name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
+    password_hash = Column(String(255))
+    id_role = Column(Integer, ForeignKey("roles.id_role"))
+    
+    role = relationship("Role", back_populates="users")
+    customer = relationship("Customer", back_populates="user", uselist=False)
+    barber = relationship("Barber", back_populates="user", uselist=False)
+    user_auth_providers = relationship("UserAuthProvider", back_populates="user")
+
+class UserAuthProvider(Base):
+    __tablename__ = "user_auth_provider"
+    
+    id_user = Column(Integer, ForeignKey("users.id_user"), primary_key=True)
+    id_auth_provider = Column(Integer, ForeignKey("auth_provider.id_auth_provider"), primary_key=True)
+    
+    user = relationship("User", back_populates="user_auth_providers")
+    auth_provider = relationship("AuthProvider", back_populates="user_auth_providers")
+
+class Specialty(Base):
+    __tablename__ = "specialties"
+    
+    id_specialty = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    years_experience = Column(Integer)
+    
+    barbers = relationship("Barber", back_populates="specialty")
+
+class BarberSchedule(Base):
+    __tablename__ = "barber_schedule"
+    
+    id_schedule = Column(Integer, primary_key=True, autoincrement=True)
+    day_of_week = Column(Enum(DayOfWeekEnum), nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    
+    barbers = relationship("Barber", back_populates="schedule")
+
+class Customer(Base):
+    __tablename__ = "customers"
+    
+    id_customer = Column(Integer, primary_key=True, autoincrement=True)
+    id_user = Column(Integer, ForeignKey("users.id_user"), nullable=False)
+    id_genre = Column(Integer, ForeignKey("genres.id_genre"), nullable=False)
+    phone = Column(String(255))
+    direction = Column(String(255))
+    id_department = Column(Integer, ForeignKey("departments.id_department"), nullable=False)
+    id_city = Column(Integer, ForeignKey("citys.id_city"), nullable=False)
+    
+    user = relationship("User", back_populates="customer")
+    genre = relationship("Genre", back_populates="customers")
+    department = relationship("Department", back_populates="customers")
+    city = relationship("City", back_populates="customers")
+    appointments = relationship("Appointment", back_populates="customer")
+
+class Staff(Base):
+    __tablename__ = "staff"
+    
+    id_staff = Column(Integer, primary_key=True, autoincrement=True)
+    id_barber = Column(Integer, ForeignKey("barbers.id_barber"), nullable=False)
+    
+    barber = relationship("Barber", back_populates="staff")
+    barbershops = relationship("Barbershop", back_populates="staff")
+
+class Barbershop(Base):
+    __tablename__ = "barbershops"
+    
+    id_barbershop = Column(Integer, primary_key=True, autoincrement=True)
+    id_staff = Column(Integer, ForeignKey("staff.id_staff"), nullable=False)
+    phone = Column(String(50))
+    
+    staff = relationship("Staff", back_populates="barbershops")
+    barbers = relationship("Barber", back_populates="barbershop")
+    locations = relationship("Location", back_populates="barbershop")
+
+class Barber(Base):
+    __tablename__ = "barbers"
+    
+    id_barber = Column(Integer, primary_key=True, autoincrement=True)
+    id_user = Column(Integer, ForeignKey("users.id_user"), nullable=False)
+    id_genre = Column(Integer, ForeignKey("genres.id_genre"), nullable=False)
+    id_barbershop = Column(Integer, ForeignKey("barbershops.id_barbershop"))
+    id_specialty = Column(Integer, ForeignKey("specialties.id_specialty"))
+    id_department = Column(Integer, ForeignKey("departments.id_department"), nullable=False)
+    id_city = Column(Integer, ForeignKey("citys.id_city"), nullable=False)
+    id_barber_schedule = Column(Integer, ForeignKey("barber_schedule.id_schedule"))
+    phone = Column(String(255))
+    direction = Column(String(255))
+    points = Column(Integer, nullable=False, default=0)
+    
+    user = relationship("User", back_populates="barber")
+    genre = relationship("Genre", back_populates="barbers")
+    barbershop = relationship("Barbershop", back_populates="barbers")
+    specialty = relationship("Specialty", back_populates="barbers")
+    department = relationship("Department", back_populates="barbers")
+    city = relationship("City", back_populates="barbers")
+    schedule = relationship("BarberSchedule", back_populates="barbers")
+    staff = relationship("Staff", back_populates="barber", uselist=False)
+    appointments = relationship("Appointment", back_populates="barber")
+
+class Location(Base):
+    __tablename__ = "locations"
+    
+    id_location = Column(Integer, primary_key=True, autoincrement=True)
+    id_barbershop = Column(Integer, ForeignKey("barbershops.id_barbershop"), nullable=False)
+    id_department = Column(Integer, ForeignKey("departments.id_department"), nullable=False)
+    id_city = Column(Integer, ForeignKey("citys.id_city"), nullable=False)
+    address = Column(String(255), nullable=False)
+    opening_hour = Column(Time, nullable=False)
+    closing_hour = Column(Time, nullable=False)
+    
+    barbershop = relationship("Barbershop", back_populates="locations")
+    department = relationship("Department", back_populates="locations")
+    city = relationship("City", back_populates="locations")
+
+class Appointment(Base):
+    __tablename__ = "appointment"
+    
+    id_appointment = Column(Integer, primary_key=True, autoincrement=True)
+    id_customer = Column(Integer, ForeignKey("customers.id_customer"), nullable=False)
+    id_barber = Column(Integer, ForeignKey("barbers.id_barber"), nullable=False)
+    appointment_date = Column(Date, nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    status = Column(Enum(AppointmentStatusEnum), default=AppointmentStatusEnum.pending)
+    
+    customer = relationship("Customer", back_populates="appointments")
+    barber = relationship("Barber", back_populates="appointments")
+
+# Esquemas Pydantic
+class RoleBase(BaseModel):
+    name: str
+
+class RoleCreate(RoleBase):
+    pass
+
+class RoleResponse(RoleBase):
+    id_role: int
+    
+    class Config:
+        from_attributes = True
+
+class GenreBase(BaseModel):
+    name: str
+
+class GenreCreate(GenreBase):
+    pass
+
+class GenreResponse(GenreBase):
+    id_genre: int
+    
+    class Config:
+        from_attributes = True
+
+class DepartmentBase(BaseModel):
+    name: str
+
+class DepartmentCreate(DepartmentBase):
+    pass
+
+class DepartmentResponse(DepartmentBase):
+    id_department: int
+    
+    class Config:
+        from_attributes = True
+
+class CityBase(BaseModel):
+    name: str
+    id_department: int
+
+class CityCreate(CityBase):
+    pass
+
+class CityResponse(CityBase):
+    id_city: int
+    department: Optional[DepartmentResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+class UserBase(BaseModel):
+    full_name: str
+    email: EmailStr
+    id_role: Optional[int] = None
+
+class UserCreate(UserBase):
+    password: str
+
+class UserResponse(UserBase):
+    id_user: int
+    role: Optional[RoleResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+class CustomerBase(BaseModel):
+    id_user: int
+    id_genre: int
+    phone: Optional[str] = None
+    direction: Optional[str] = None
+    id_department: int
+    id_city: int
+
+class CustomerCreate(CustomerBase):
+    pass
+
+class CustomerResponse(CustomerBase):
+    id_customer: int
+    user: Optional[UserResponse] = None
+    genre: Optional[GenreResponse] = None
+    department: Optional[DepartmentResponse] = None
+    city: Optional[CityResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+class SpecialtyBase(BaseModel):
+    name: str
+    years_experience: Optional[int] = None
+
+class SpecialtyCreate(SpecialtyBase):
+    pass
+
+class SpecialtyResponse(SpecialtyBase):
+    id_specialty: int
+    
+    class Config:
+        from_attributes = True
+
+class BarberScheduleBase(BaseModel):
+    day_of_week: DayOfWeekEnum
+    start_time: time
+    end_time: time
+
+class BarberScheduleCreate(BarberScheduleBase):
+    pass
+
+class BarberScheduleResponse(BarberScheduleBase):
+    id_schedule: int
+    
+    class Config:
+        from_attributes = True
+
+class BarberBase(BaseModel):
+    id_user: int
+    id_genre: int
+    id_barbershop: Optional[int] = None
+    id_specialty: Optional[int] = None
+    id_department: int
+    id_city: int
+    id_barber_schedule: Optional[int] = None
+    phone: Optional[str] = None
+    direction: Optional[str] = None
+    points: int = 0
+
+class BarberCreate(BarberBase):
+    pass
+
+class BarberResponse(BarberBase):
+    id_barber: int
+    user: Optional[UserResponse] = None
+    genre: Optional[GenreResponse] = None
+    specialty: Optional[SpecialtyResponse] = None
+    department: Optional[DepartmentResponse] = None
+    city: Optional[CityResponse] = None
+    schedule: Optional[BarberScheduleResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+class BarbershopBase(BaseModel):
+    id_staff: int
+    phone: Optional[str] = None
+
+class BarbershopCreate(BarbershopBase):
+    pass
+
+class BarbershopResponse(BarbershopBase):
+    id_barbershop: int
+    
+    class Config:
+        from_attributes = True
+
+class LocationBase(BaseModel):
+    id_barbershop: int
+    id_department: int
+    id_city: int
+    address: str
+    opening_hour: time
+    closing_hour: time
+
+class LocationCreate(LocationBase):
+    pass
+
+class LocationResponse(LocationBase):
+    id_location: int
+    barbershop: Optional[BarbershopResponse] = None
+    department: Optional[DepartmentResponse] = None
+    city: Optional[CityResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+class AppointmentBase(BaseModel):
+    id_customer: int
+    id_barber: int
+    appointment_date: date
+    start_time: time
+    end_time: time
+    status: AppointmentStatusEnum = AppointmentStatusEnum.pending
+
+class AppointmentCreate(AppointmentBase):
+    pass
+
+class AppointmentResponse(AppointmentBase):
+    id_appointment: int
+    customer: Optional[CustomerResponse] = None
+    barber: Optional[BarberResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+# Configuración de FastAPI
 app = FastAPI(
-    title="Barberin API",
-    description="API completa para sistema de barbería",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    title="Barberian API",
+    description="API completa para sistema de gestión de barberías",
+    version="2.0.0"
 )
 
-# Middleware para CORS
+# Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción especifica los dominios permitidos
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Eventos de inicio y cierre
-@app.on_event("startup")
-async def startup_event():
-    print("🚀 Iniciando Barberin API...")
-    if test_connection():
-        print("📊 Base de datos conectada correctamente")
-    else:
-        print("❌ Error al conectar con la base de datos")
+# Dependencia para obtener la sesión de la base de datos
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    print("👋 Cerrando Barberin API...")
+# Endpoints para Roles
+@app.post("/roles/", response_model=RoleResponse)
+def create_role(role: RoleCreate, db: Session = Depends(get_db)):
+    db_role = Role(**role.dict())
+    db.add(db_role)
+    db.commit()
+    db.refresh(db_role)
+    return db_role
 
-# ENDPOINTS DE SALUD Y INFO
-@app.get("/", tags=["Info"])
-def root():
-    return {
-        "message": "Bienvenido a Barberin API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "health": "/health"
-    }
-
-@app.get("/health", tags=["Info"])
-def health_check():
-    return {
-        "status": "healthy",
-        "message": "Barberin API funcionando correctamente",
-        "database": "connected" if test_connection() else "disconnected"
-    }
-
-# ===========================================
-# ENDPOINTS PARA ROLES
-# ===========================================
-@app.post("/roles/", response_model=schemas.Role, tags=["Roles"])
-def create_role(role_data: schemas.RoleCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo rol"""
-    return crud.role.create(db=db, obj_in=role_data)
-
-@app.get("/roles/", response_model=List[schemas.Role], tags=["Roles"])
+@app.get("/roles/", response_model=List[RoleResponse])
 def read_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los roles"""
-    return crud.role.get_multi(db=db, skip=skip, limit=limit)
+    roles = db.query(Role).offset(skip).limit(limit).all()
+    return roles
 
-@app.get("/roles/{role_id}", response_model=schemas.Role, tags=["Roles"])
-def read_role(role_id: int, db: Session = Depends(get_db)):
-    """Obtener un rol por ID"""
-    role = crud.role.get(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return role
+# Endpoints para Géneros
+@app.post("/genres/", response_model=GenreResponse)
+def create_genre(genre: GenreCreate, db: Session = Depends(get_db)):
+    db_genre = Genre(**genre.dict())
+    db.add(db_genre)
+    db.commit()
+    db.refresh(db_genre)
+    return db_genre
 
-@app.put("/roles/{role_id}", response_model=schemas.Role, tags=["Roles"])
-def update_role(role_id: int, role_data: schemas.RoleUpdate, db: Session = Depends(get_db)):
-    """Actualizar un rol"""
-    role = crud.role.get(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return crud.role.update(db=db, db_obj=role, obj_in=role_data)
+@app.get("/genres/", response_model=List[GenreResponse])
+def read_genres(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    genres = db.query(Genre).offset(skip).limit(limit).all()
+    return genres
 
-@app.delete("/roles/{role_id}", response_model=schemas.StandardResponse, tags=["Roles"])
-def delete_role(role_id: int, db: Session = Depends(get_db)):
-    """Eliminar un rol"""
-    role = crud.role.delete(db=db, id=role_id)
-    if not role:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return schemas.StandardResponse(message="Rol eliminado exitosamente")
+# Endpoints para Departamentos
+@app.post("/departments/", response_model=DepartmentResponse)
+def create_department(department: DepartmentCreate, db: Session = Depends(get_db)):
+    db_department = Department(**department.dict())
+    db.add(db_department)
+    db.commit()
+    db.refresh(db_department)
+    return db_department
 
-# ===========================================
-# ENDPOINTS PARA USUARIOS
-# ===========================================
-@app.post("/users/", response_model=schemas.User, tags=["Usuarios"])
-def create_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo usuario"""
-    # Verificar si el username ya existe
-    existing_user = crud.user.get_by_username(db=db, username=user_data.username)
-    if existing_user:
-        raise HTTPException(status_code=400, detail="El nombre de usuario ya existe")
-    return crud.user.create(db=db, obj_in=user_data)
+@app.get("/departments/", response_model=List[DepartmentResponse])
+def read_departments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    departments = db.query(Department).offset(skip).limit(limit).all()
+    return departments
 
-@app.get("/users/", response_model=List[schemas.User], tags=["Usuarios"])
+# Endpoints para Ciudades
+@app.post("/cities/", response_model=CityResponse)
+def create_city(city: CityCreate, db: Session = Depends(get_db)):
+    db_city = City(**city.dict())
+    db.add(db_city)
+    db.commit()
+    db.refresh(db_city)
+    return db_city
+
+@app.get("/cities/", response_model=List[CityResponse])
+def read_cities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    cities = db.query(City).offset(skip).limit(limit).all()
+    return cities
+
+@app.get("/cities/by-department/{department_id}", response_model=List[CityResponse])
+def read_cities_by_department(department_id: int, db: Session = Depends(get_db)):
+    cities = db.query(City).filter(City.id_department == department_id).all()
+    return cities
+
+# Endpoints para Usuarios
+@app.post("/users/", response_model=UserResponse)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    # En un caso real, aquí hashearías la contraseña
+    user_data = user.dict()
+    password = user_data.pop('password')
+    user_data['password_hash'] = password  # Aquí deberías usar bcrypt
+    
+    db_user = User(**user_data)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@app.get("/users/", response_model=List[UserResponse])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los usuarios"""
-    return crud.user.get_multi(db=db, skip=skip, limit=limit)
+    users = db.query(User).offset(skip).limit(limit).all()
+    return users
 
-@app.get("/users/{user_id}", response_model=schemas.User, tags=["Usuarios"])
+@app.get("/users/{user_id}", response_model=UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    """Obtener un usuario por ID"""
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
+    user = db.query(User).filter(User.id_user == user_id).first()
+    if user is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return user
 
-@app.put("/users/{user_id}", response_model=schemas.User, tags=["Usuarios"])
-def update_user(user_id: int, user_data: schemas.UserUpdate, db: Session = Depends(get_db)):
-    """Actualizar un usuario"""
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return crud.user.update(db=db, db_obj=user, obj_in=user_data)
+# Endpoints para Clientes
+@app.post("/customers/", response_model=CustomerResponse)
+def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
+    db_customer = Customer(**customer.dict())
+    db.add(db_customer)
+    db.commit()
+    db.refresh(db_customer)
+    return db_customer
 
-@app.delete("/users/{user_id}", response_model=schemas.StandardResponse, tags=["Usuarios"])
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    """Eliminar un usuario"""
-    user = crud.user.delete(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return schemas.StandardResponse(message="Usuario eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA GÉNEROS
-# ===========================================
-@app.post("/generes/", response_model=schemas.Genere, tags=["Géneros"])
-def create_genere(genere_data: schemas.GenereCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo género"""
-    return crud.genere.create(db=db, obj_in=genere_data)
-
-@app.get("/generes/", response_model=List[schemas.Genere], tags=["Géneros"])
-def read_generes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los géneros"""
-    return crud.genere.get_multi(db=db, skip=skip, limit=limit)
-
-@app.get("/generes/{genere_id}", response_model=schemas.Genere, tags=["Géneros"])
-def read_genere(genere_id: int, db: Session = Depends(get_db)):
-    """Obtener un género por ID"""
-    genere = crud.genere.get(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return genere
-
-@app.put("/generes/{genere_id}", response_model=schemas.Genere, tags=["Géneros"])
-def update_genere(genere_id: int, genere_data: schemas.GenereUpdate, db: Session = Depends(get_db)):
-    """Actualizar un género"""
-    genere = crud.genere.get(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return crud.genere.update(db=db, db_obj=genere, obj_in=genere_data)
-
-@app.delete("/generes/{genere_id}", response_model=schemas.StandardResponse, tags=["Géneros"])
-def delete_genere(genere_id: int, db: Session = Depends(get_db)):
-    """Eliminar un género"""
-    genere = crud.genere.delete(db=db, id=genere_id)
-    if not genere:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
-    return schemas.StandardResponse(message="Género eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA CLIENTES
-# ===========================================
-@app.post("/customers/", response_model=schemas.Customer, tags=["Clientes"])
-def create_customer(customer_data: schemas.CustomerCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo cliente"""
-    # Verificar si el email ya existe
-    existing_email = crud.customer.get_by_email(db=db, email=str(customer_data.email))
-    if existing_email:
-        raise HTTPException(status_code=400, detail="El email ya está registrado")
-    
-    # Verificar si el teléfono ya existe
-    existing_phone = crud.customer.get_by_cellphone(db=db, cellphone=customer_data.cellphone)
-    if existing_phone:
-        raise HTTPException(status_code=400, detail="El teléfono ya está registrado")
-    
-    return crud.customer.create(db=db, obj_in=customer_data)
-
-@app.get("/customers/", response_model=List[schemas.Customer], tags=["Clientes"])
+@app.get("/customers/", response_model=List[CustomerResponse])
 def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los clientes"""
-    return crud.customer.get_multi(db=db, skip=skip, limit=limit)
+    customers = db.query(Customer).offset(skip).limit(limit).all()
+    return customers
 
-@app.get("/customers/{customer_id}", response_model=schemas.Customer, tags=["Clientes"])
+@app.get("/customers/{customer_id}", response_model=CustomerResponse)
 def read_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Obtener un cliente por ID"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
+    customer = db.query(Customer).filter(Customer.id_customer == customer_id).first()
+    if customer is None:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
     return customer
 
-@app.put("/customers/{customer_id}", response_model=schemas.Customer, tags=["Clientes"])
-def update_customer(customer_id: int, customer_data: schemas.CustomerUpdate, db: Session = Depends(get_db)):
-    """Actualizar un cliente"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return crud.customer.update(db=db, db_obj=customer, obj_in=customer_data)
+# Endpoints para Especialidades
+@app.post("/specialties/", response_model=SpecialtyResponse)
+def create_specialty(specialty: SpecialtyCreate, db: Session = Depends(get_db)):
+    db_specialty = Specialty(**specialty.dict())
+    db.add(db_specialty)
+    db.commit()
+    db.refresh(db_specialty)
+    return db_specialty
 
-@app.delete("/customers/{customer_id}", response_model=schemas.StandardResponse, tags=["Clientes"])
-def delete_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Eliminar un cliente"""
-    customer = crud.customer.delete(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return schemas.StandardResponse(message="Cliente eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA BARBEROS
-# ===========================================
-@app.post("/bhairs/", response_model=schemas.Bhair, tags=["Barberos"])
-def create_bhair(bhair_data: schemas.BhairCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo barbero"""
-    # Verificar si el email de trabajo ya existe
-    existing_email = crud.bhair.get_by_email_work(db=db, email_work=str(bhair_data.email_work))
-    if existing_email:
-        raise HTTPException(status_code=400, detail="El email de trabajo ya está registrado")
-    
-    # Verificar si el teléfono ya existe
-    existing_phone = crud.bhair.get_by_cellphone(db=db, cellphone=bhair_data.cellphone)
-    if existing_phone:
-        raise HTTPException(status_code=400, detail="El teléfono ya está registrado")
-    
-    return crud.bhair.create(db=db, obj_in=bhair_data)
-
-@app.get("/bhairs/", response_model=List[schemas.Bhair], tags=["Barberos"])
-def read_bhairs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los barberos"""
-    return crud.bhair.get_multi(db=db, skip=skip, limit=limit)
-
-@app.get("/bhairs/{bhair_id}", response_model=schemas.Bhair, tags=["Barberos"])
-def read_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener un barbero por ID"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return bhair
-
-@app.put("/bhairs/{bhair_id}", response_model=schemas.Bhair, tags=["Barberos"])
-def update_bhair(bhair_id: int, bhair_data: schemas.BhairUpdate, db: Session = Depends(get_db)):
-    """Actualizar un barbero"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.bhair.update(db=db, db_obj=bhair, obj_in=bhair_data)
-
-@app.delete("/bhairs/{bhair_id}", response_model=schemas.StandardResponse, tags=["Barberos"])
-def delete_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Eliminar un barbero"""
-    bhair = crud.bhair.delete(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return schemas.StandardResponse(message="Barbero eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA SERVICIOS
-# ===========================================
-@app.post("/services/", response_model=schemas.Service, tags=["Servicios"])
-def create_service(service_data: schemas.ServiceCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo servicio"""
-    return crud.service.create(db=db, obj_in=service_data)
-
-@app.get("/services/", response_model=List[schemas.Service], tags=["Servicios"])
-def read_services(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los servicios"""
-    return crud.service.get_multi(db=db, skip=skip, limit=limit)
-
-@app.get("/services/{service_id}", response_model=schemas.Service, tags=["Servicios"])
-def read_service(service_id: int, db: Session = Depends(get_db)):
-    """Obtener un servicio por ID"""
-    service = crud.service.get(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return service
-
-@app.put("/services/{service_id}", response_model=schemas.Service, tags=["Servicios"])
-def update_service(service_id: int, service_data: schemas.ServiceUpdate, db: Session = Depends(get_db)):
-    """Actualizar un servicio"""
-    service = crud.service.get(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return crud.service.update(db=db, db_obj=service, obj_in=service_data)
-
-@app.delete("/services/{service_id}", response_model=schemas.StandardResponse, tags=["Servicios"])
-def delete_service(service_id: int, db: Session = Depends(get_db)):
-    """Eliminar un servicio"""
-    service = crud.service.delete(db=db, id=service_id)
-    if not service:
-        raise HTTPException(status_code=404, detail="Servicio no encontrado")
-    return schemas.StandardResponse(message="Servicio eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA CITAS
-# ===========================================
-@app.post("/quotes/", response_model=schemas.Quote, tags=["Citas"])
-def create_quote(quote_data: schemas.QuoteCreate, db: Session = Depends(get_db)):
-    """Crear una nueva cita"""
-    # Verificar si el ticket_order ya existe
-    existing_ticket = crud.quote.get_by_ticket_order(db=db, ticket_order=quote_data.ticket_order)
-    if existing_ticket:
-        raise HTTPException(status_code=400, detail="El número de ticket ya existe")
-    
-    return crud.quote.create(db=db, obj_in=quote_data)
-
-@app.get("/quotes/", response_model=List[schemas.Quote], tags=["Citas"])
-def read_quotes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todas las citas"""
-    return crud.quote.get_multi(db=db, skip=skip, limit=limit)
-
-@app.get("/quotes/{quote_id}", response_model=schemas.Quote, tags=["Citas"])
-def read_quote(quote_id: int, db: Session = Depends(get_db)):
-    """Obtener una cita por ID"""
-    quote = crud.quote.get(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return quote
-
-@app.put("/quotes/{quote_id}", response_model=schemas.Quote, tags=["Citas"])
-def update_quote(quote_id: int, quote_data: schemas.QuoteUpdate, db: Session = Depends(get_db)):
-    """Actualizar una cita"""
-    quote = crud.quote.get(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return crud.quote.update(db=db, db_obj=quote, obj_in=quote_data)
-
-@app.delete("/quotes/{quote_id}", response_model=schemas.StandardResponse, tags=["Citas"])
-def delete_quote(quote_id: int, db: Session = Depends(get_db)):
-    """Eliminar una cita"""
-    quote = crud.quote.delete(db=db, id=quote_id)
-    if not quote:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
-    return schemas.StandardResponse(message="Cita eliminada exitosamente")
-
-# ===========================================
-# ENDPOINTS PARA ESPECIALIDADES
-# ===========================================
-@app.post("/specialties/", response_model=schemas.Specialty, tags=["Especialidades"])
-def create_specialty(specialty_data: schemas.SpecialtyCreate, db: Session = Depends(get_db)):
-    """Crear una nueva especialidad"""
-    return crud.specialty.create(db=db, obj_in=specialty_data)
-
-@app.get("/specialties/", response_model=List[schemas.Specialty], tags=["Especialidades"])
+@app.get("/specialties/", response_model=List[SpecialtyResponse])
 def read_specialties(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todas las especialidades"""
-    return crud.specialty.get_multi(db=db, skip=skip, limit=limit)
+    specialties = db.query(Specialty).offset(skip).limit(limit).all()
+    return specialties
 
-@app.get("/specialties/{specialty_id}", response_model=schemas.Specialty, tags=["Especialidades"])
-def read_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Obtener una especialidad por ID"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return specialty
+# Endpoints para Horarios de Barberos
+@app.post("/barber-schedules/", response_model=BarberScheduleResponse)
+def create_barber_schedule(schedule: BarberScheduleCreate, db: Session = Depends(get_db)):
+    db_schedule = BarberSchedule(**schedule.dict())
+    db.add(db_schedule)
+    db.commit()
+    db.refresh(db_schedule)
+    return db_schedule
 
-@app.put("/specialties/{specialty_id}", response_model=schemas.Specialty, tags=["Especialidades"])
-def update_specialty(specialty_id: int, specialty_data: schemas.SpecialtyUpdate, db: Session = Depends(get_db)):
-    """Actualizar una especialidad"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return crud.specialty.update(db=db, db_obj=specialty, obj_in=specialty_data)
+@app.get("/barber-schedules/", response_model=List[BarberScheduleResponse])
+def read_barber_schedules(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    schedules = db.query(BarberSchedule).offset(skip).limit(limit).all()
+    return schedules
 
-@app.delete("/specialties/{specialty_id}", response_model=schemas.StandardResponse, tags=["Especialidades"])
-def delete_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Eliminar una especialidad"""
-    specialty = crud.specialty.delete(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return schemas.StandardResponse(message="Especialidad eliminada exitosamente")
+# Endpoints para Barberos
+@app.post("/barbers/", response_model=BarberResponse)
+def create_barber(barber: BarberCreate, db: Session = Depends(get_db)):
+    db_barber = Barber(**barber.dict())
+    db.add(db_barber)
+    db.commit()
+    db.refresh(db_barber)
+    return db_barber
 
-# ===========================================
-# ENDPOINTS PARA ESTILOS
-# ===========================================
-@app.post("/styles/", response_model=schemas.Style, tags=["Estilos"])
-def create_style(style_data: schemas.StyleCreate, db: Session = Depends(get_db)):
-    """Crear un nuevo estilo"""
-    return crud.style.create(db=db, obj_in=style_data)
+@app.get("/barbers/", response_model=List[BarberResponse])
+def read_barbers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    barbers = db.query(Barber).offset(skip).limit(limit).all()
+    return barbers
 
-@app.get("/styles/", response_model=List[schemas.Style], tags=["Estilos"])
-def read_styles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """Obtener todos los estilos"""
-    return crud.style.get_multi(db=db, skip=skip, limit=limit)
-
-@app.get("/styles/{style_id}", response_model=schemas.Style, tags=["Estilos"])
-def read_style(style_id: int, db: Session = Depends(get_db)):
-    """Obtener un estilo por ID"""
-    style = crud.style.get(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return style
-
-@app.put("/styles/{style_id}", response_model=schemas.Style, tags=["Estilos"])
-def update_style(style_id: int, style_data: schemas.StyleUpdate, db: Session = Depends(get_db)):
-    """Actualizar un estilo"""
-    style = crud.style.get(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return crud.style.update(db=db, db_obj=style, obj_in=style_data)
-
-@app.delete("/styles/{style_id}", response_model=schemas.StandardResponse, tags=["Estilos"])
-def delete_style(style_id: int, db: Session = Depends(get_db)):
-    """Eliminar un estilo"""
-    style = crud.style.delete(db=db, id=style_id)
-    if not style:
-        raise HTTPException(status_code=404, detail="Estilo no encontrado")
-    return schemas.StandardResponse(message="Estilo eliminado exitosamente")
-
-# ===========================================
-# ENDPOINTS RELACIONALES ADICIONALES
-# ===========================================
-
-# Obtener citas por barbero
-@app.get("/bhairs/{bhair_id}/quotes", response_model=List[schemas.Quote], tags=["Relaciones"])
-def get_quotes_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las citas de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
+@app.get("/barbers/{barber_id}", response_model=BarberResponse)
+def read_barber(barber_id: int, db: Session = Depends(get_db)):
+    barber = db.query(Barber).filter(Barber.id_barber == barber_id).first()
+    if barber is None:
         raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.quote.get_by_bhair(db=db, bhair_id=bhair_id)
+    return barber
 
-# Obtener servicios por barbero
-@app.get("/bhairs/{bhair_id}/services", response_model=List[schemas.Service], tags=["Relaciones"])
-def get_services_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todos los servicios de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.service.get_by_bhair(db=db, bhair_id=bhair_id)
+@app.get("/barbers/by-city/{city_id}", response_model=List[BarberResponse])
+def read_barbers_by_city(city_id: int, db: Session = Depends(get_db)):
+    barbers = db.query(Barber).filter(Barber.id_city == city_id).all()
+    return barbers
 
-# Obtener especialidades por barbero
-@app.get("/bhairs/{bhair_id}/specialties", response_model=List[schemas.Specialty], tags=["Relaciones"])
-def get_specialties_by_bhair(bhair_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las especialidades de un barbero específico"""
-    bhair = crud.bhair.get(db=db, id=bhair_id)
-    if not bhair:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
-    return crud.specialty.get_by_bhair(db=db, bhair_id=bhair_id)
+# Endpoints para Barberías
+@app.post("/barbershops/", response_model=BarbershopResponse)
+def create_barbershop(barbershop: BarbershopCreate, db: Session = Depends(get_db)):
+    db_barbershop = Barbershop(**barbershop.dict())
+    db.add(db_barbershop)
+    db.commit()
+    db.refresh(db_barbershop)
+    return db_barbershop
 
-# Obtener citas por cliente
-@app.get("/customers/{customer_id}/quotes", response_model=List[schemas.Quote], tags=["Relaciones"])
-def get_quotes_by_customer(customer_id: int, db: Session = Depends(get_db)):
-    """Obtener todas las citas de un cliente específico"""
-    customer = crud.customer.get(db=db, id=customer_id)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return crud.quote.get_by_customer(db=db, customer_id=customer_id)
+@app.get("/barbershops/", response_model=List[BarbershopResponse])
+def read_barbershops(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    barbershops = db.query(Barbershop).offset(skip).limit(limit).all()
+    return barbershops
 
-# Obtener estilos por especialidad
-@app.get("/specialties/{specialty_id}/styles", response_model=List[schemas.Style], tags=["Relaciones"])
-def get_styles_by_specialty(specialty_id: int, db: Session = Depends(get_db)):
-    """Obtener todos los estilos de una especialidad específica"""
-    specialty = crud.specialty.get(db=db, id=specialty_id)
-    if not specialty:
-        raise HTTPException(status_code=404, detail="Especialidad no encontrada")
-    return crud.style.get_by_specialty(db=db, specialty_id=specialty_id)
+# Endpoints para Ubicaciones
+@app.post("/locations/", response_model=LocationResponse)
+def create_location(location: LocationCreate, db: Session = Depends(get_db)):
+    db_location = Location(**location.dict())
+    db.add(db_location)
+    db.commit()
+    db.refresh(db_location)
+    return db_location
 
-# Ejecutar la aplicación
+@app.get("/locations/", response_model=List[LocationResponse])
+def read_locations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    locations = db.query(Location).offset(skip).limit(limit).all()
+    return locations
+
+# Endpoints para Citas
+@app.post("/appointments/", response_model=AppointmentResponse)
+def create_appointment(appointment: AppointmentCreate, db: Session = Depends(get_db)):
+    db_appointment = Appointment(**appointment.dict())
+    db.add(db_appointment)
+    db.commit()
+    db.refresh(db_appointment)
+    return db_appointment
+
+@app.get("/appointments/", response_model=List[AppointmentResponse])
+def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).offset(skip).limit(limit).all()
+    return appointments
+
+@app.get("/appointments/{appointment_id}", response_model=AppointmentResponse)
+def read_appointment(appointment_id: int, db: Session = Depends(get_db)):
+    appointment = db.query(Appointment).filter(Appointment.id_appointment == appointment_id).first()
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Cita no encontrada")
+    return appointment
+
+@app.patch("/appointments/{appointment_id}/status")
+def update_appointment_status(appointment_id: int, status: AppointmentStatusEnum, db: Session = Depends(get_db)):
+    appointment = db.query(Appointment).filter(Appointment.id_appointment == appointment_id).first()
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Cita no encontrada")
+    
+    appointment.status = status
+    db.commit()
+    return {"message": "Estado de cita actualizado correctamente"}
+
+@app.get("/appointments/by-customer/{customer_id}", response_model=List[AppointmentResponse])
+def read_appointments_by_customer(customer_id: int, db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).filter(Appointment.id_customer == customer_id).all()
+    return appointments
+
+@app.get("/appointments/by-barber/{barber_id}", response_model=List[AppointmentResponse])
+def read_appointments_by_barber(barber_id: int, db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).filter(Appointment.id_barber == barber_id).all()
+    return appointments
+
+# Endpoint raíz
+@app.get("/")
+def read_root():
+    return {"message": "Bienvenido a la API de Barberian DB v2.0"}
+
+# Endpoint de salud
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "version": "2.0.0"}
+
+# Endpoint de estadísticas
+@app.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+    return {
+        "users": db.query(User).count(),
+        "customers": db.query(Customer).count(),
+        "barbers": db.query(Barber).count(),
+        "appointments": db.query(Appointment).count(),
+        "barbershops": db.query(Barbershop).count(),
+        "specialties": db.query(Specialty).count(),
+        "departments": db.query(Department).count(),
+        "cities": db.query(City).count()
+    }
+
 if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

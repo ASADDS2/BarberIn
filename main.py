@@ -9,7 +9,7 @@ from datetime import datetime, date, time
 from enum import Enum as PyEnum
 import os
 
-# Configuración de la base de datos
+# Database configuration
 DATABASE_URL = "mysql+pymysql://root:1234@localhost:3306/barberian_db"
 
 engine = create_engine(DATABASE_URL)
@@ -36,7 +36,7 @@ class DayOfWeekEnum(PyEnum):
     saturday = "saturday"
     sunday = "sunday"
 
-# Modelos SQLAlchemy
+# SQLAlchemy Models
 class AuthProvider(Base):
     __tablename__ = "auth_provider"
     
@@ -220,7 +220,7 @@ class Appointment(Base):
     customer = relationship("Customer", back_populates="appointments")
     barber = relationship("Barber", back_populates="appointments")
 
-# Esquemas Pydantic
+# Pydantic Schemas
 class RoleBase(BaseModel):
     name: str
 
@@ -361,6 +361,20 @@ class BarberResponse(BarberBase):
     class Config:
         from_attributes = True
 
+# Staff schemas - DESPUÉS de BarberResponse para evitar errores de referencia
+class StaffBase(BaseModel):
+    id_barber: int
+
+class StaffCreate(StaffBase):
+    pass
+
+class StaffResponse(StaffBase):
+    id_staff: int
+    barber: Optional[BarberResponse] = None
+    
+    class Config:
+        from_attributes = True
+
 class BarbershopBase(BaseModel):
     id_staff: int
     phone: Optional[str] = None
@@ -413,14 +427,14 @@ class AppointmentResponse(AppointmentBase):
     class Config:
         from_attributes = True
 
-# Configuración de FastAPI
+# FastAPI Configuration
 app = FastAPI(
     title="Barberian API",
-    description="API completa para sistema de gestión de barberías",
+    description="Complete API for barbershop management system",
     version="2.0.0"
 )
 
-# Configurar CORS
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -429,7 +443,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependencia para obtener la sesión de la base de datos
+# Database session dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -437,7 +451,7 @@ def get_db():
     finally:
         db.close()
 
-# Endpoints para Roles
+# Endpoints for Roles
 @app.post("/roles/", response_model=RoleResponse)
 def create_role(role: RoleCreate, db: Session = Depends(get_db)):
     db_role = Role(**role.dict())
@@ -451,7 +465,7 @@ def read_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     roles = db.query(Role).offset(skip).limit(limit).all()
     return roles
 
-# Endpoints para Géneros
+# Endpoints for Genres
 @app.post("/genres/", response_model=GenreResponse)
 def create_genre(genre: GenreCreate, db: Session = Depends(get_db)):
     db_genre = Genre(**genre.dict())
@@ -465,7 +479,7 @@ def read_genres(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     genres = db.query(Genre).offset(skip).limit(limit).all()
     return genres
 
-# Endpoints para Departamentos
+# Endpoints for Departments
 @app.post("/departments/", response_model=DepartmentResponse)
 def create_department(department: DepartmentCreate, db: Session = Depends(get_db)):
     db_department = Department(**department.dict())
@@ -479,7 +493,7 @@ def read_departments(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     departments = db.query(Department).offset(skip).limit(limit).all()
     return departments
 
-# Endpoints para Ciudades
+# Endpoints for Cities
 @app.post("/cities/", response_model=CityResponse)
 def create_city(city: CityCreate, db: Session = Depends(get_db)):
     db_city = City(**city.dict())
@@ -498,13 +512,13 @@ def read_cities_by_department(department_id: int, db: Session = Depends(get_db))
     cities = db.query(City).filter(City.id_department == department_id).all()
     return cities
 
-# Endpoints para Usuarios
+# Endpoints for Users
 @app.post("/users/", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    # En un caso real, aquí hashearías la contraseña
+    # In real case, you should hash the password here
     user_data = user.dict()
     password = user_data.pop('password')
-    user_data['password_hash'] = password  # Aquí deberías usar bcrypt
+    user_data['password_hash'] = password  # You should use bcrypt here
     
     db_user = User(**user_data)
     db.add(db_user)
@@ -521,10 +535,10 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id_user == user_id).first()
     if user is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        raise HTTPException(status_code=404, detail="User not found")
     return user
 
-# Endpoints para Clientes
+# Endpoints for Customers
 @app.post("/customers/", response_model=CustomerResponse)
 def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     db_customer = Customer(**customer.dict())
@@ -542,10 +556,10 @@ def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 def read_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(Customer).filter(Customer.id_customer == customer_id).first()
     if customer is None:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+        raise HTTPException(status_code=404, detail="Customer not found")
     return customer
 
-# Endpoints para Especialidades
+# Endpoints for Specialties
 @app.post("/specialties/", response_model=SpecialtyResponse)
 def create_specialty(specialty: SpecialtyCreate, db: Session = Depends(get_db)):
     db_specialty = Specialty(**specialty.dict())
@@ -559,7 +573,7 @@ def read_specialties(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     specialties = db.query(Specialty).offset(skip).limit(limit).all()
     return specialties
 
-# Endpoints para Horarios de Barberos
+# Endpoints for Barber Schedules
 @app.post("/barber-schedules/", response_model=BarberScheduleResponse)
 def create_barber_schedule(schedule: BarberScheduleCreate, db: Session = Depends(get_db)):
     db_schedule = BarberSchedule(**schedule.dict())
@@ -573,7 +587,7 @@ def read_barber_schedules(skip: int = 0, limit: int = 100, db: Session = Depends
     schedules = db.query(BarberSchedule).offset(skip).limit(limit).all()
     return schedules
 
-# Endpoints para Barberos
+# Endpoints for Barbers
 @app.post("/barbers/", response_model=BarberResponse)
 def create_barber(barber: BarberCreate, db: Session = Depends(get_db)):
     db_barber = Barber(**barber.dict())
@@ -591,7 +605,7 @@ def read_barbers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
 def read_barber(barber_id: int, db: Session = Depends(get_db)):
     barber = db.query(Barber).filter(Barber.id_barber == barber_id).first()
     if barber is None:
-        raise HTTPException(status_code=404, detail="Barbero no encontrado")
+        raise HTTPException(status_code=404, detail="Barber not found")
     return barber
 
 @app.get("/barbers/by-city/{city_id}", response_model=List[BarberResponse])
@@ -599,7 +613,45 @@ def read_barbers_by_city(city_id: int, db: Session = Depends(get_db)):
     barbers = db.query(Barber).filter(Barber.id_city == city_id).all()
     return barbers
 
-# Endpoints para Barberías
+# Endpoints for Staff
+@app.post("/staff/", response_model=StaffResponse)
+def create_staff(staff: StaffCreate, db: Session = Depends(get_db)):
+    db_staff = Staff(**staff.dict())
+    db.add(db_staff)
+    db.commit()
+    db.refresh(db_staff)
+    return db_staff
+
+@app.get("/staff/", response_model=List[StaffResponse])
+def read_staff(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    staff = db.query(Staff).offset(skip).limit(limit).all()
+    return staff
+
+@app.get("/staff/{staff_id}", response_model=StaffResponse)
+def read_staff_by_id(staff_id: int, db: Session = Depends(get_db)):
+    staff = db.query(Staff).filter(Staff.id_staff == staff_id).first()
+    if staff is None:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    return staff
+
+@app.get("/staff/by-barber/{barber_id}", response_model=StaffResponse)
+def read_staff_by_barber(barber_id: int, db: Session = Depends(get_db)):
+    staff = db.query(Staff).filter(Staff.id_barber == barber_id).first()
+    if staff is None:
+        raise HTTPException(status_code=404, detail="Staff not found for this barber")
+    return staff
+
+@app.delete("/staff/{staff_id}")
+def delete_staff(staff_id: int, db: Session = Depends(get_db)):
+    staff = db.query(Staff).filter(Staff.id_staff == staff_id).first()
+    if staff is None:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    
+    db.delete(staff)
+    db.commit()
+    return {"message": "Staff deleted successfully"}
+
+# Endpoints for Barbershops
 @app.post("/barbershops/", response_model=BarbershopResponse)
 def create_barbershop(barbershop: BarbershopCreate, db: Session = Depends(get_db)):
     db_barbershop = Barbershop(**barbershop.dict())
@@ -613,7 +665,7 @@ def read_barbershops(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     barbershops = db.query(Barbershop).offset(skip).limit(limit).all()
     return barbershops
 
-# Endpoints para Ubicaciones
+# Endpoints for Locations
 @app.post("/locations/", response_model=LocationResponse)
 def create_location(location: LocationCreate, db: Session = Depends(get_db)):
     db_location = Location(**location.dict())
@@ -627,7 +679,7 @@ def read_locations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     locations = db.query(Location).offset(skip).limit(limit).all()
     return locations
 
-# Endpoints para Citas
+# Endpoints for Appointments
 @app.post("/appointments/", response_model=AppointmentResponse)
 def create_appointment(appointment: AppointmentCreate, db: Session = Depends(get_db)):
     db_appointment = Appointment(**appointment.dict())
@@ -645,18 +697,18 @@ def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get
 def read_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = db.query(Appointment).filter(Appointment.id_appointment == appointment_id).first()
     if appointment is None:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
+        raise HTTPException(status_code=404, detail="Appointment not found")
     return appointment
 
 @app.patch("/appointments/{appointment_id}/status")
 def update_appointment_status(appointment_id: int, status: AppointmentStatusEnum, db: Session = Depends(get_db)):
     appointment = db.query(Appointment).filter(Appointment.id_appointment == appointment_id).first()
     if appointment is None:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
+        raise HTTPException(status_code=404, detail="Appointment not found")
     
     appointment.status = status
     db.commit()
-    return {"message": "Estado de cita actualizado correctamente"}
+    return {"message": "Appointment status updated successfully"}
 
 @app.get("/appointments/by-customer/{customer_id}", response_model=List[AppointmentResponse])
 def read_appointments_by_customer(customer_id: int, db: Session = Depends(get_db)):
@@ -668,23 +720,24 @@ def read_appointments_by_barber(barber_id: int, db: Session = Depends(get_db)):
     appointments = db.query(Appointment).filter(Appointment.id_barber == barber_id).all()
     return appointments
 
-# Endpoint raíz
+# Root endpoint
 @app.get("/")
 def read_root():
-    return {"message": "Bienvenido a la API de Barberian DB v2.0"}
+    return {"message": "Welcome to Barberian DB API v2.0"}
 
-# Endpoint de salud
+# Health check endpoint
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "version": "2.0.0"}
 
-# Endpoint de estadísticas
+# Statistics endpoint
 @app.get("/stats")
 def get_stats(db: Session = Depends(get_db)):
     return {
         "users": db.query(User).count(),
         "customers": db.query(Customer).count(),
         "barbers": db.query(Barber).count(),
+        "staff": db.query(Staff).count(),
         "appointments": db.query(Appointment).count(),
         "barbershops": db.query(Barbershop).count(),
         "specialties": db.query(Specialty).count(),

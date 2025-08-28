@@ -1,4 +1,4 @@
-#!/home/Coder/Música/BarberIn/venv/bin/python3
+#!/home/Coder/Música/wilffren/BarberIn/backend/server/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -17,7 +17,7 @@ DB_CONFIG = {
     "host": "localhost",
     "port": 3306,
     "user": "root",          # 👈 CHANGE TO YOUR USER
-    "password": "1234",      # 👈 CHANGE TO YOUR PASSWORD
+    "password": "Qwe.123*",      # 👈 CHANGE TO YOUR PASSWORD
     "database": "barberian_db"  # 👈 CHANGE TO YOUR DATABASE
 }
 

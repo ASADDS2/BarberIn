@@ -361,7 +361,7 @@ class BarberResponse(BarberBase):
     class Config:
         from_attributes = True
 
-# Staff schemas - DESPUÉS de BarberResponse para evitar errores de referencia
+# Staff schemas - AFTER BarberResponse to avoid reference errors
 class StaffBase(BaseModel):
     id_barber: int
 

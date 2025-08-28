@@ -1,9 +1,9 @@
-# 📖 Documentación Completa - main.py
-## Sistema de Gestión de Barberías - BarberIn API
+# 📖 Complete Documentation - main.py
+## Barbershop Management System - BarberIn API
 
 ---
 
-## 🔧 **SECCIÓN 1: IMPORTACIONES Y DEPENDENCIAS**
+## 🔧 **SECTION 1: IMPORTS AND DEPENDENCIES**
 
 ```python
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -18,34 +18,34 @@ from enum import Enum as PyEnum
 import os
 ```
 
-### **¿Qué hace?**
-- **FastAPI**: Framework principal para crear la API REST
-- **SQLAlchemy**: ORM para manejar la base de datos MySQL
-- **Pydantic**: Validación de datos y serialización
-- **Typing**: Tipado estático para mejor desarrollo
-- **Datetime**: Manejo de fechas y horas
+### **What does it do?**
+- **FastAPI**: Main framework for creating the REST API
+- **SQLAlchemy**: ORM for handling the MySQL database
+- **Pydantic**: Data validation and serialization
+- **Typing**: Static typing for better development
+- **Datetime**: Date and time management
 
 ---
 
-## 🗄️ **SECCIÓN 2: CONFIGURACIÓN DE BASE DE DATOS**
+## 🗄️ **SECTION 2: DATABASE CONFIGURATION**
 
 ```python
-DATABASE_URL = "mysql+pymysql://usuario:contraseña@localhost:3306/barberian_db"
+DATABASE_URL = "mysql+pymysql://user:password@localhost:3306/barberian_db"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 ```
 
-### **¿Qué hace?**
-- **DATABASE_URL**: Cadena de conexión a MySQL usando PyMySQL
-- **engine**: Motor de SQLAlchemy que maneja las conexiones
-- **SessionLocal**: Factory para crear sesiones de base de datos
-- **Base**: Clase base para todos los modelos ORM
+### **What does it do?**
+- **DATABASE_URL**: MySQL connection string using PyMySQL
+- **engine**: SQLAlchemy engine that manages connections
+- **SessionLocal**: Factory to create database sessions
+- **Base**: Base class for all ORM models
 
 ---
 
-## 📊 **SECCIÓN 3: ENUMERACIONES (ENUMS)**
+## 📊 **SECTION 3: ENUMERATIONS (ENUMS)**
 
 ```python
 class AuthProviderEnum(PyEnum):
@@ -60,20 +60,20 @@ class AppointmentStatusEnum(PyEnum):
 
 class DayOfWeekEnum(PyEnum):
     monday = "monday"
-    # ... resto de días
+    # ... rest of days
 ```
 
-### **¿Qué hace?**
-- Define valores constantes para campos específicos
-- **AuthProviderEnum**: Tipos de autenticación (local/Google)
-- **AppointmentStatusEnum**: Estados de las citas
-- **DayOfWeekEnum**: Días de la semana para horarios
+### **What does it do?**
+- Defines constant values for specific fields
+- **AuthProviderEnum**: Authentication types (local/Google)
+- **AppointmentStatusEnum**: Appointment statuses
+- **DayOfWeekEnum**: Days of the week for schedules
 
 ---
 
-## 🏗️ **SECCIÓN 4: MODELOS DE BASE DE DATOS (SQLAlchemy)**
+## 🏗️ **SECTION 4: DATABASE MODELS (SQLAlchemy)**
 
-### **AuthProvider - Proveedores de Autenticación**
+### **AuthProvider - Authentication Providers**
 ```python
 class AuthProvider(Base):
     __tablename__ = "auth_provider"
@@ -83,9 +83,9 @@ class AuthProvider(Base):
     provider_id_google = Column(String(255))
     token = Column(String(255))
 ```
-**Función**: Almacena información de autenticación (Google, local)
+**Function**: Stores authentication info (Google, local)
 
-### **Role - Roles de Usuario**
+### **Role - User Roles**
 ```python
 class Role(Base):
     __tablename__ = "roles"
@@ -93,9 +93,9 @@ class Role(Base):
     id_role = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
 ```
-**Función**: Define roles (Cliente, Barbero, Admin, etc.)
+**Function**: Defines roles (Client, Barber, Admin, etc.)
 
-### **Genre - Géneros**
+### **Genre - Genders**
 ```python
 class Genre(Base):
     __tablename__ = "genres"
@@ -103,9 +103,9 @@ class Genre(Base):
     id_genre = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
 ```
-**Función**: Almacena géneros (Masculino, Femenino, Otro)
+**Function**: Stores genders (Male, Female, Other)
 
-### **Department - Departamentos**
+### **Department - Departments**
 ```python
 class Department(Base):
     __tablename__ = "departments"
@@ -113,9 +113,9 @@ class Department(Base):
     id_department = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
 ```
-**Función**: Estados/departamentos del país
+**Function**: States/departments of the country
 
-### **City - Ciudades**
+### **City - Cities**
 ```python
 class City(Base):
     __tablename__ = "citys"
@@ -124,9 +124,9 @@ class City(Base):
     name = Column(String(100), nullable=False)
     id_department = Column(Integer, ForeignKey("departments.id_department"), nullable=False)
 ```
-**Función**: Ciudades que pertenecen a departamentos
+**Function**: Cities belonging to departments
 
-### **User - Usuarios del Sistema**
+### **User - System Users**
 ```python
 class User(Base):
     __tablename__ = "users"
@@ -137,9 +137,9 @@ class User(Base):
     password_hash = Column(String(255))
     id_role = Column(Integer, ForeignKey("roles.id_role"))
 ```
-**Función**: Usuarios base del sistema (clientes, barberos, admins)
+**Function**: Base users of the system (clients, barbers, admins)
 
-### **Customer - Clientes**
+### **Customer - Clients**
 ```python
 class Customer(Base):
     __tablename__ = "customers"
@@ -149,11 +149,11 @@ class Customer(Base):
     id_genre = Column(Integer, ForeignKey("genres.id_genre"), nullable=False)
     phone = Column(String(255))
     direction = Column(String(255))
-    # ... más campos
+    # ... more fields
 ```
-**Función**: Información específica de clientes
+**Function**: Specific client information
 
-### **Specialty - Especialidades de Barberos**
+### **Specialty - Barber Specialties**
 ```python
 class Specialty(Base):
     __tablename__ = "specialties"
@@ -162,9 +162,9 @@ class Specialty(Base):
     name = Column(String(100), nullable=False)
     years_experience = Column(Integer)
 ```
-**Función**: Especialidades (Corte clásico, Barba, Coloración, etc.)
+**Function**: Specialties (Classic cut, Beard, Coloring, etc.)
 
-### **BarberSchedule - Horarios de Barberos**
+### **BarberSchedule - Barber Schedules**
 ```python
 class BarberSchedule(Base):
     __tablename__ = "barber_schedule"
@@ -174,21 +174,21 @@ class BarberSchedule(Base):
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
 ```
-**Función**: Horarios de trabajo de cada barbero
+**Function**: Work schedules for each barber
 
-### **Barber - Barberos**
+### **Barber - Barbers**
 ```python
 class Barber(Base):
     __tablename__ = "barbers"
     
     id_barber = Column(Integer, primary_key=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("users.id_user"), nullable=False)
-    # ... muchas relaciones y campos
+    # ... many relationships and fields
     points = Column(Integer, nullable=False, default=0)
 ```
-**Función**: Información específica de barberos (especialidad, puntos, ubicación)
+**Function**: Specific barber information (specialty, points, location)
 
-### **Staff - Personal**
+### **Staff - Staff**
 ```python
 class Staff(Base):
     __tablename__ = "staff"
@@ -196,9 +196,9 @@ class Staff(Base):
     id_staff = Column(Integer, primary_key=True, autoincrement=True)
     id_barber = Column(Integer, ForeignKey("barbers.id_barber"), nullable=False)
 ```
-**Función**: Agrupa barberos en equipos de trabajo
+**Function**: Groups barbers into work teams
 
-### **Barbershop - Barberías**
+### **Barbershop - Barbershops**
 ```python
 class Barbershop(Base):
     __tablename__ = "barbershops"
@@ -207,21 +207,21 @@ class Barbershop(Base):
     id_staff = Column(Integer, ForeignKey("staff.id_staff"), nullable=False)
     phone = Column(String(50))
 ```
-**Función**: Establecimientos físicos de barberías
+**Function**: Physical barbershop establishments
 
-### **Location - Ubicaciones**
+### **Location - Locations**
 ```python
 class Location(Base):
     __tablename__ = "locations"
     
     id_location = Column(Integer, primary_key=True, autoincrement=True)
-    # ... información de dirección y horarios
+    # ... address and schedule info
     opening_hour = Column(Time, nullable=False)
     closing_hour = Column(Time, nullable=False)
 ```
-**Función**: Direcciones físicas y horarios de barberías
+**Function**: Physical addresses and barbershop hours
 
-### **Appointment - Citas**
+### **Appointment - Appointments**
 ```python
 class Appointment(Base):
     __tablename__ = "appointment"
@@ -234,32 +234,32 @@ class Appointment(Base):
     end_time = Column(Time, nullable=False)
     status = Column(Enum(AppointmentStatusEnum), default=AppointmentStatusEnum.pending)
 ```
-**Función**: Citas agendadas entre clientes y barberos
+**Function**: Scheduled appointments between clients and barbers
 
 ---
 
-## 📋 **SECCIÓN 5: ESQUEMAS PYDANTIC (VALIDACIÓN DE DATOS)**
+## 📋 **SECTION 5: PYDANTIC SCHEMAS (DATA VALIDATION)**
 
-### **¿Qué son los esquemas Pydantic?**
-Los esquemas definen cómo deben verse los datos que entran y salen de la API.
+### **What are Pydantic schemas?**
+Schemas define how data entering and leaving the API should look.
 
-### **Patrones de Esquemas:**
+### **Schema Patterns:**
 
-#### **Base Schema (Modelo base)**
+#### **Base Schema**
 ```python
 class RoleBase(BaseModel):
     name: str
 ```
-**Función**: Define los campos comunes
+**Function**: Defines common fields
 
-#### **Create Schema (Para crear)**
+#### **Create Schema**
 ```python
 class RoleCreate(RoleBase):
     pass
 ```
-**Función**: Define qué datos se necesitan para crear
+**Function**: Defines required data for creation
 
-#### **Response Schema (Para respuesta)**
+#### **Response Schema**
 ```python
 class RoleResponse(RoleBase):
     id_role: int
@@ -267,27 +267,27 @@ class RoleResponse(RoleBase):
     class Config:
         from_attributes = True
 ```
-**Función**: Define qué datos se devuelven, incluye el ID
+**Function**: Defines returned data, includes ID
 
-### **Esquemas Importantes:**
+### **Important Schemas:**
 
-- **UserCreate**: Incluye password para registro
-- **UserResponse**: No incluye password por seguridad
-- **CustomerResponse**: Incluye relaciones (user, genre, city, department)
-- **AppointmentResponse**: Incluye información completa del cliente y barbero
+- **UserCreate**: Includes password for registration
+- **UserResponse**: Does not include password for security
+- **CustomerResponse**: Includes relationships (user, genre, city, department)
+- **AppointmentResponse**: Includes complete client and barber info
 
 ---
 
-## 🚀 **SECCIÓN 6: CONFIGURACIÓN DE FASTAPI**
+## 🚀 **SECTION 6: FASTAPI CONFIGURATION**
 
 ```python
 app = FastAPI(
     title="Barberian API",
-    description="API completa para sistema de gestión de barberías",
+    description="Complete API for barbershop management system",
     version="2.0.0"
 )
 
-# Configurar CORS
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -297,14 +297,14 @@ app.add_middleware(
 )
 ```
 
-### **¿Qué hace?**
-- **FastAPI**: Crea la aplicación principal
-- **CORS**: Permite acceso desde cualquier dominio (importante para desarrollo)
-- **Metadata**: Título, descripción y versión que aparece en /docs
+### **What does it do?**
+- **FastAPI**: Creates the main application
+- **CORS**: Allows access from any domain (important for development)
+- **Metadata**: Title, description, and version shown in /docs
 
 ---
 
-## 🔗 **SECCIÓN 7: DEPENDENCIAS**
+## 🔗 **SECTION 7: DEPENDENCIES**
 
 ```python
 def get_db():
@@ -315,18 +315,18 @@ def get_db():
         db.close()
 ```
 
-### **¿Qué hace?**
-- **Dependency Injection**: Inyecta automáticamente una sesión de base de datos
-- **Gestión automática**: Abre y cierra conexiones automáticamente
-- **Usado en todos los endpoints**: Cada endpoint recibe `db: Session = Depends(get_db)`
+### **What does it do?**
+- **Dependency Injection**: Automatically injects a database session
+- **Automatic management**: Opens and closes connections automatically
+- **Used in all endpoints**: Each endpoint receives `db: Session = Depends(get_db)`
 
 ---
 
-## 🛣️ **SECCIÓN 8: ENDPOINTS (RUTAS DE LA API)**
+## 🛣️ **SECTION 8: API ENDPOINTS (ROUTES)**
 
-### **Patrones de Endpoints:**
+### **Endpoint Patterns:**
 
-#### **POST (Crear)**
+#### **POST (Create)**
 ```python
 @app.post("/roles/", response_model=RoleResponse)
 def create_role(role: RoleCreate, db: Session = Depends(get_db)):
@@ -336,73 +336,73 @@ def create_role(role: RoleCreate, db: Session = Depends(get_db)):
     db.refresh(db_role)
     return db_role
 ```
-**Función**: Crea nuevos registros
+**Function**: Creates new records
 
-#### **GET (Leer todos)**
+#### **GET (Read all)**
 ```python
 @app.get("/roles/", response_model=List[RoleResponse])
 def read_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     roles = db.query(Role).offset(skip).limit(limit).all()
     return roles
 ```
-**Función**: Obtiene lista con paginación
+**Function**: Gets a paginated list
 
-#### **GET (Leer uno)**
+#### **GET (Read one)**
 ```python
 @app.get("/users/{user_id}", response_model=UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id_user == user_id).first()
     if user is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        raise HTTPException(status_code=404, detail="User not found")
     return user
 ```
-**Función**: Obtiene un registro específico por ID
+**Function**: Gets a specific record by ID
 
-#### **PATCH (Actualizar parcial)**
+#### **PATCH (Partial update)**
 ```python
 @app.patch("/appointments/{appointment_id}/status")
 def update_appointment_status(appointment_id: int, status: AppointmentStatusEnum, db: Session = Depends(get_db)):
     appointment = db.query(Appointment).filter(Appointment.id_appointment == appointment_id).first()
     if appointment is None:
-        raise HTTPException(status_code=404, detail="Cita no encontrada")
+        raise HTTPException(status_code=404, detail="Appointment not found")
     
     appointment.status = status
     db.commit()
-    return {"message": "Estado de cita actualizado correctamente"}
+    return {"message": "Appointment status updated successfully"}
 ```
-**Función**: Actualiza campos específicos
+**Function**: Updates specific fields
 
-### **Endpoints Especiales:**
+### **Special Endpoints:**
 
-#### **Filtros por relación**
+#### **Filters by relationship**
 ```python
 @app.get("/cities/by-department/{department_id}", response_model=List[CityResponse])
 def read_cities_by_department(department_id: int, db: Session = Depends(get_db)):
     cities = db.query(City).filter(City.id_department == department_id).all()
     return cities
 ```
-**Función**: Obtiene ciudades de un departamento específico
+**Function**: Gets cities of a specific department
 
-#### **Relaciones complejas**
+#### **Complex relationships**
 ```python
 @app.get("/appointments/by-customer/{customer_id}", response_model=List[AppointmentResponse])
 def read_appointments_by_customer(customer_id: int, db: Session = Depends(get_db)):
     appointments = db.query(Appointment).filter(Appointment.id_customer == customer_id).all()
     return appointments
 ```
-**Función**: Obtiene todas las citas de un cliente
+**Function**: Gets all appointments for a client
 
 ---
 
-## 🏠 **SECCIÓN 9: ENDPOINTS DE SISTEMA**
+## 🏠 **SECTION 9: SYSTEM ENDPOINTS**
 
-#### **Endpoint raíz**
+#### **Root endpoint**
 ```python
 @app.get("/")
 def read_root():
-    return {"message": "Bienvenido a la API de Barberian DB v2.0"}
+    return {"message": "Welcome to Barberian DB API v2.0"}
 ```
-**Función**: Mensaje de bienvenida
+**Function**: Welcome message
 
 #### **Health Check**
 ```python
@@ -410,9 +410,9 @@ def read_root():
 def health_check():
     return {"status": "healthy", "version": "2.0.0"}
 ```
-**Función**: Verificar que la API esté funcionando
+**Function**: Checks if the API is running
 
-#### **Estadísticas**
+#### **Statistics**
 ```python
 @app.get("/stats")
 def get_stats(db: Session = Depends(get_db)):
@@ -427,11 +427,11 @@ def get_stats(db: Session = Depends(get_db)):
         "cities": db.query(City).count()
     }
 ```
-**Función**: Devuelve conteos de todos los tipos de datos
+**Function**: Returns counts of all data types
 
 ---
 
-## 🚀 **SECCIÓN 10: EJECUCIÓN DEL SERVIDOR**
+## 🚀 **SECTION 10: SERVER EXECUTION**
 
 ```python
 if __name__ == "__main__":
@@ -439,90 +439,90 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
-### **¿Qué hace?**
-- **Condicional**: Solo ejecuta si el archivo se ejecuta directamente
-- **Uvicorn**: Servidor ASGI para ejecutar FastAPI
-- **host="0.0.0.0"**: Acepta conexiones de cualquier IP
-- **port=8000**: Puerto donde corre la aplicación
+### **What does it do?**
+- **Conditional**: Only runs if the file is executed directly
+- **Uvicorn**: ASGI server to run FastAPI
+- **host="0.0.0.0"**: Accepts connections from any IP
+- **port=8000**: Port where the app runs
 
 ---
 
-## 🌟 **CARACTERÍSTICAS PRINCIPALES DEL SISTEMA**
+## 🌟 **MAIN SYSTEM FEATURES**
 
-### **1. Gestión de Usuarios**
-- ✅ Registro y autenticación
-- ✅ Roles diferenciados (Cliente/Barbero/Admin)
-- ✅ Perfiles con información personal
+### **1. User Management**
+- ✅ Registration and authentication
+- ✅ Differentiated roles (Client/Barber/Admin)
+- ✅ Profiles with personal information
 
-### **2. Gestión de Barberías**
-- ✅ Registro de establecimientos
-- ✅ Ubicaciones y horarios
-- ✅ Gestión de personal
+### **2. Barbershop Management**
+- ✅ Establishment registration
+- ✅ Locations and schedules
+- ✅ Staff management
 
-### **3. Gestión de Citas**
-- ✅ Agendamiento de citas
-- ✅ Estados (Pendiente, Confirmada, Cancelada, Completada)
-- ✅ Horarios de barberos
+### **3. Appointment Management**
+- ✅ Appointment scheduling
+- ✅ Statuses (Pending, Confirmed, Cancelled, Completed)
+- ✅ Barber schedules
 
-### **4. Sistema de Especialidades**
-- ✅ Especialidades de barberos
-- ✅ Años de experiencia
-- ✅ Sistema de puntos
+### **4. Specialty System**
+- ✅ Barber specialties
+- ✅ Years of experience
+- ✅ Points system
 
-### **5. Ubicaciones**
-- ✅ Departamentos y ciudades
-- ✅ Direcciones detalladas
-- ✅ Horarios de funcionamiento
+### **5. Locations**
+- ✅ Departments and cities
+- ✅ Detailed addresses
+- ✅ Operating hours
 
 ---
 
-## 📚 **URLS IMPORTANTES**
+## 📚 **IMPORTANT URLS**
 
-Una vez ejecutado el servidor:
+Once the server is running:
 
-- **🏠 Inicio**: `http://localhost:8000/`
-- **📖 Documentación Interactiva**: `http://localhost:8000/docs`
-- **📋 Documentación ReDoc**: `http://localhost:8000/redoc`
+- **🏠 Home**: `http://localhost:8000/`
+- **📖 Interactive Documentation**: `http://localhost:8000/docs`
+- **📋 ReDoc Documentation**: `http://localhost:8000/redoc`
 - **💚 Health Check**: `http://localhost:8000/health`
-- **📊 Estadísticas**: `http://localhost:8000/stats`
+- **📊 Statistics**: `http://localhost:8000/stats`
 
 ---
 
-## 🔧 **COMANDOS PARA EJECUTAR**
+## 🔧 **COMMANDS TO RUN**
 
 ```bash
-# Activar entorno virtual
+# Activate virtual environment
 venv\Scripts\activate
 
-# Instalar dependencias
+# Install dependencies
 pip install -r requirements.txt
 
-# Ejecutar servidor
+# Run server
 python main.py
 
-# O con uvicorn directamente
+# Or with uvicorn directly
 uvicorn main:app --reload
 ```
 
 ---
 
-## 📝 **NOTAS TÉCNICAS**
+## 📝 **TECHNICAL NOTES**
 
-### **Seguridad**
-- Las contraseñas se almacenan como hash (línea donde se crea el usuario)
-- CORS habilitado para desarrollo (cambiar para producción)
+### **Security**
+- Passwords are stored as hashes (line where user is created)
+- CORS enabled for development (change for production)
 
-### **Base de Datos**
-- Usa SQLAlchemy ORM para abstracción de base de datos
-- Relaciones definidas entre todas las tablas
-- Soporte para MySQL mediante PyMySQL
+### **Database**
+- Uses SQLAlchemy ORM for database abstraction
+- Relationships defined between all tables
+- MySQL support via PyMySQL
 
-### **Validación**
-- Pydantic valida automáticamente todos los datos de entrada
-- Esquemas separados para entrada y salida
-- Validación de tipos y campos obligatorios
+### **Validation**
+- Pydantic automatically validates all input data
+- Separate schemas for input and output
+- Type and required field validation
 
-### **Documentación Automática**
-- Swagger UI generado automáticamente en `/docs`
-- Esquemas y ejemplos incluidos
-- Pruebas interactivas disponibles
+### **Automatic Documentation**
+- Swagger UI automatically generated at `/docs`
+- Schemas and examples included
+- Interactive testing available

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Script para probar la conexión a la base de datos MySQL
-Ejecutar: python test_db_connection.py
+Script to test the connection to the MySQL database
+Run: python test_db_connection.py
 """
 
 import sys
@@ -11,29 +11,29 @@ import pymysql
 from datetime import datetime
 
 # ========================================
-# 🔧 CONFIGURACIÓN - MODIFICA ESTOS DATOS
+# 🔧 CONFIGURATION - MODIFY THESE VALUES
 # ========================================
 DB_CONFIG = {
     "host": "localhost",
     "port": 3306,
-    "user": "root",          # 👈 CAMBIAR POR TU USUARIO
-    "password": "1234",   # 👈 CAMBIAR POR TU CONTRASEÑA
-    "database": "barberian_db"  # 👈 CAMBIAR POR TU BASE DE DATOS
+    "user": "root",          # 👈 CHANGE TO YOUR USER
+    "password": "1234",      # 👈 CHANGE TO YOUR PASSWORD
+    "database": "barberian_db"  # 👈 CHANGE TO YOUR DATABASE
 }
 
 def print_separator(title=""):
-    """Imprime un separador visual"""
+    """Prints a visual separator"""
     print("\n" + "="*60)
     if title:
         print(f"  {title}")
         print("="*60)
 
 def test_pymysql_connection():
-    """Prueba la conexión directa con PyMySQL"""
-    print_separator("PROBANDO CONEXIÓN DIRECTA CON PyMySQL")
+    """Test direct connection with PyMySQL"""
+    print_separator("TESTING DIRECT CONNECTION WITH PyMySQL")
     
     try:
-        print("🔄 Intentando conectar con PyMySQL...")
+        print("🔄 Trying to connect with PyMySQL...")
         connection = pymysql.connect(
             host=DB_CONFIG["host"],
             port=DB_CONFIG["port"],
@@ -43,23 +43,23 @@ def test_pymysql_connection():
             charset='utf8mb4'
         )
         
-        print("✅ ¡Conexión exitosa con PyMySQL!")
+        print("✅ Successful connection with PyMySQL!")
         
-        # Probar una consulta simple
+        # Test a simple query
         cursor = connection.cursor()
         cursor.execute("SELECT VERSION()")
         version = cursor.fetchone()
-        print(f"📊 Versión de MySQL: {version[0]}")
+        print(f"📊 MySQL Version: {version[0]}")
         
         cursor.execute("SELECT DATABASE()")
         db_name = cursor.fetchone()
-        print(f"🗄️  Base de datos actual: {db_name[0]}")
+        print(f"🗄️  Current database: {db_name[0]}")
         
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
-        print(f"📋 Número de tablas: {len(tables)}")
+        print(f"📋 Number of tables: {len(tables)}")
         if tables:
-            print("🔍 Tablas encontradas:")
+            print("🔍 Tables found:")
             for table in tables:
                 print(f"   - {table[0]}")
         
@@ -68,63 +68,63 @@ def test_pymysql_connection():
         return True
         
     except Exception as e:
-        print(f"❌ Error de conexión con PyMySQL:")
-        print(f"   Tipo: {type(e).__name__}")
-        print(f"   Mensaje: {str(e)}")
+        print(f"❌ PyMySQL connection error:")
+        print(f"   Type: {type(e).__name__}")
+        print(f"   Message: {str(e)}")
         return False
 
 def test_sqlalchemy_connection():
-    """Prueba la conexión con SQLAlchemy"""
-    print_separator("PROBANDO CONEXIÓN CON SQLAlchemy")
+    """Test connection with SQLAlchemy"""
+    print_separator("TESTING CONNECTION WITH SQLAlchemy")
     
-    # Crear la URL de conexión
+    # Create connection URL
     database_url = f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
-    print(f"🔗 URL de conexión: {database_url.replace(DB_CONFIG['password'], '*****')}")
+    print(f"🔗 Connection URL: {database_url.replace(DB_CONFIG['password'], '*****')}")
     
     try:
-        print("🔄 Creando engine de SQLAlchemy...")
+        print("🔄 Creating SQLAlchemy engine...")
         engine = create_engine(database_url)
         
-        print("🔄 Probando conexión con SQLAlchemy...")
+        print("🔄 Testing connection with SQLAlchemy...")
         with engine.connect() as connection:
-            print("✅ ¡Conexión exitosa con SQLAlchemy!")
+            print("✅ Successful connection with SQLAlchemy!")
             
-            # Probar consultas
+            # Test queries
             result = connection.execute(text("SELECT VERSION()"))
             version = result.fetchone()
-            print(f"📊 Versión de MySQL: {version[0]}")
+            print(f"📊 MySQL Version: {version[0]}")
             
-            result = connection.execute(text("SELECT COUNT(*) as tabla_count FROM information_schema.tables WHERE table_schema = :db_name"), 
+            result = connection.execute(text("SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = :db_name"), 
                                       {"db_name": DB_CONFIG["database"]})
             count = result.fetchone()
-            print(f"📋 Número de tablas en {DB_CONFIG['database']}: {count[0]}")
+            print(f"📋 Number of tables in {DB_CONFIG['database']}: {count[0]}")
             
-            # Mostrar tablas
+            # Show tables
             result = connection.execute(text("SHOW TABLES"))
             tables = result.fetchall()
             if tables:
-                print("🔍 Tablas encontradas:")
+                print("🔍 Tables found:")
                 for table in tables:
                     print(f"   - {table[0]}")
             else:
-                print("⚠️  No se encontraron tablas en la base de datos")
+                print("⚠️  No tables found in the database")
         
         return True
         
     except SQLAlchemyError as e:
-        print(f"❌ Error de SQLAlchemy:")
-        print(f"   Tipo: {type(e).__name__}")
-        print(f"   Mensaje: {str(e)}")
+        print(f"❌ SQLAlchemy error:")
+        print(f"   Type: {type(e).__name__}")
+        print(f"   Message: {str(e)}")
         return False
     except Exception as e:
-        print(f"❌ Error general:")
-        print(f"   Tipo: {type(e).__name__}")
-        print(f"   Mensaje: {str(e)}")
+        print(f"❌ General error:")
+        print(f"   Type: {type(e).__name__}")
+        print(f"   Message: {str(e)}")
         return False
 
 def test_database_permissions():
-    """Prueba los permisos de la base de datos"""
-    print_separator("PROBANDO PERMISOS DE BASE DE DATOS")
+    """Test database permissions"""
+    print_separator("TESTING DATABASE PERMISSIONS")
     
     try:
         connection = pymysql.connect(
@@ -137,14 +137,14 @@ def test_database_permissions():
         
         cursor = connection.cursor()
         
-        # Probar SELECT
+        # Test SELECT
         try:
             cursor.execute("SELECT 1")
-            print("✅ Permisos SELECT: OK")
+            print("✅ SELECT permissions: OK")
         except Exception as e:
-            print(f"❌ Permisos SELECT: {e}")
+            print(f"❌ SELECT permissions: {e}")
         
-        # Probar CREATE TABLE (crear tabla temporal)
+        # Test CREATE TABLE (create temporary table)
         try:
             cursor.execute("""
                 CREATE TEMPORARY TABLE test_permissions (
@@ -152,99 +152,99 @@ def test_database_permissions():
                     test_field VARCHAR(50)
                 )
             """)
-            print("✅ Permisos CREATE: OK")
+            print("✅ CREATE permissions: OK")
             
-            # Probar INSERT
+            # Test INSERT
             cursor.execute("INSERT INTO test_permissions (id, test_field) VALUES (1, 'test')")
-            print("✅ Permisos INSERT: OK")
+            print("✅ INSERT permissions: OK")
             
-            # Probar UPDATE
+            # Test UPDATE
             cursor.execute("UPDATE test_permissions SET test_field = 'updated' WHERE id = 1")
-            print("✅ Permisos UPDATE: OK")
+            print("✅ UPDATE permissions: OK")
             
-            # Probar DELETE
+            # Test DELETE
             cursor.execute("DELETE FROM test_permissions WHERE id = 1")
-            print("✅ Permisos DELETE: OK")
+            print("✅ DELETE permissions: OK")
             
-            # Probar DROP
+            # Test DROP
             cursor.execute("DROP TEMPORARY TABLE test_permissions")
-            print("✅ Permisos DROP: OK")
+            print("✅ DROP permissions: OK")
             
         except Exception as e:
-            print(f"❌ Error en permisos de modificación: {e}")
+            print(f"❌ Error in modification permissions: {e}")
         
         cursor.close()
         connection.close()
         return True
         
     except Exception as e:
-        print(f"❌ Error probando permisos: {e}")
+        print(f"❌ Error testing permissions: {e}")
         return False
 
 def show_diagnostics():
-    """Muestra información de diagnóstico"""
-    print_separator("INFORMACIÓN DE DIAGNÓSTICO")
+    """Show diagnostic information"""
+    print_separator("DIAGNOSTIC INFORMATION")
     
-    print(f"🐍 Versión de Python: {sys.version}")
+    print(f"🐍 Python version: {sys.version}")
     
-    # Verificar dependencias instaladas
+    # Check installed dependencies
     dependencies = ['sqlalchemy', 'pymysql', 'fastapi', 'uvicorn', 'pydantic']
     
     for dep in dependencies:
         try:
             module = __import__(dep)
-            version = getattr(module, '__version__', 'Desconocida')
+            version = getattr(module, '__version__', 'Unknown')
             print(f"📦 {dep}: {version} ✅")
         except ImportError:
-            print(f"📦 {dep}: NO INSTALADO ❌")
+            print(f"📦 {dep}: NOT INSTALLED ❌")
     
-    print(f"⏰ Fecha y hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"⏰ Date and time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 def main():
-    """Función principal"""
-    print("🚀 INICIANDO PRUEBAS DE CONEXIÓN A LA BASE DE DATOS")
-    print(f"🎯 Objetivo: {DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}")
+    """Main function"""
+    print("🚀 STARTING DATABASE CONNECTION TESTS")
+    print(f"🎯 Target: {DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}")
     
-    # Mostrar información de diagnóstico
+    # Show diagnostic information
     show_diagnostics()
     
-    # Contador de éxito
+    # Success counter
     tests_passed = 0
     total_tests = 3
     
-    # Prueba 1: PyMySQL directo
+    # Test 1: Direct PyMySQL
     if test_pymysql_connection():
         tests_passed += 1
     
-    # Prueba 2: SQLAlchemy
+    # Test 2: SQLAlchemy
     if test_sqlalchemy_connection():
         tests_passed += 1
     
-    # Prueba 3: Permisos
+    # Test 3: Permissions
     if test_database_permissions():
         tests_passed += 1
     
-    # Resultado final
-    print_separator("RESULTADO FINAL")
-    print(f"🏆 Pruebas exitosas: {tests_passed}/{total_tests}")
+    # Final result
+    print_separator("FINAL RESULT")
+    print(f"🏆 Successful tests: {tests_passed}/{total_tests}")
     
     if tests_passed == total_tests:
-        print("🎉 ¡TODAS LAS PRUEBAS PASARON!")
-        print("✅ Tu base de datos está lista para usar con FastAPI")
-        print("\n📌 Próximos pasos:")
-        print("   1. Actualiza la configuración en main.py")
-        print("   2. Ejecuta: python main.py")
-        print("   3. Ve a: http://localhost:8000")
+        print("🎉 ALL TESTS PASSED!")
+        print("✅ Your database is ready to use with FastAPI")
+        print("\n📌 Next steps:")
+        print("   1. Update the configuration in main.py")
+        print("   2. Run: python main.py")
+        print("   3. Go to: http://localhost:8000")
     elif tests_passed > 0:
-        print("⚠️  ALGUNAS PRUEBAS FALLARON")
-        print("💡 Revisa los errores mostrados arriba")
+        print("⚠️  SOME TESTS FAILED")
+        print("💡 Check the errors shown above")
     else:
-        print("💥 TODAS LAS PRUEBAS FALLARON")
-        print("🔧 Soluciones comunes:")
-        print("   - Verifica que MySQL esté ejecutándose")
-        print("   - Revisa usuario y contraseña")
-        print("   - Confirma que la base de datos existe")
-        print("   - Verifica que el usuario tenga permisos")
+        print("💥 ALL TESTS FAILED")
+        print("🔧 Common solutions:")
+        print("   - Make sure MySQL is running")
+        print("   - Check user and password")
+        print("   - Confirm the database exists")
+        print("   - Make sure the user has permissions")
 
 if __name__ == "__main__":
     main()

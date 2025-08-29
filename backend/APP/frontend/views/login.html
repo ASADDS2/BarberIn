@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARBERIN - Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Kcoda logo</div>
+            <div class="main-title">
+                <h1>BARBERIN</h1>
+            </div>
+        </div>
+        
+        <div class="app-slogan">App slogan</div>
+        
+        <div class="main-content">
+            <div class="side-image"></div>
+            
+            <div class="login-container">
+                <form>
+                    <div class="form-group">
+                        <label for="usuario">USERNAME / EMAIL</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="usuario" name="usuario" required>
+                            <div class="selector" id="userTypeSelector">
+                                ▼
+                                <div class="dropdown" id="userTypeDropdown">
+                                    <div class="dropdown-item" onclick="selectUserType('User')">User</div>
+                                    <div class="dropdown-item" onclick="selectUserType('Barber')">Barber</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">PASSWORD</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" required>
+                            <div class="selector">👁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="login-section">
+                        <button type="submit" class="btn-login">Log in</button>
+                        <div class="google-login">G</div>
+                    </div>
+                    
+                    <div class="form-links">
+                        <a href="#">Sign up</a>
+                        <a href="#">Forgot your password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="side-image"></div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle dropdown for user type selector
+        document.getElementById('userTypeSelector').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('userTypeDropdown');
+            dropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            const dropdown = document.getElementById('userTypeDropdown');
+            dropdown.classList.remove('show');
+        });
+
+        // Select user type function
+        function selectUserType(type) {
+            console.log('Selected user type:', type);
+            const dropdown = document.getElementById('userTypeDropdown');
+            dropdown.classList.remove('show');
+            // You can add additional logic here to handle the selection
+        }
+
+        // Toggle password visibility
+        const passwordSelector = document.querySelector('#password + .selector');
+        passwordSelector.addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.innerHTML = '👁';
+            } else {
+                passwordInput.type = 'password';
+                this.innerHTML = '👁';
+            }
+        });
+    </script>
+    <script src="./js/login.js"></script>
+
+</body>
+</html>

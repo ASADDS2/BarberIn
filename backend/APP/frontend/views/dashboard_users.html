@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard User</title>
+<link rel="stylesheet" href="css/dashboard_profile_users.css">
+<style>
+  /* Additional styles for Google Maps */
+  .map-panel {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-box {
+    padding: 10px;
+    background: white;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 10;
+    position: relative;
+  }
+  
+  .search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  #googleMap {
+    flex: 1;
+    min-height: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Loading indicator */
+  .map-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .map-loading.hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-text">Kcoda logo</div>
+</div>
+
+<div class="dashboard-container">
+
+  <!-- Left Agenda Panel -->  
+  <div class="agenda-panel">
+    <div class="icon-add">+</div>
+    <div class="title">Appointments</div>
+    <div class="btn-group">
+      <button class="btn">Barbershops</button>
+      <button class="btn">Favorites</button>
+      <div class="star-favorite">★</div>
+    </div>
+
+    <div class="barber-list">
+      <div class="barber-item" data-lat="10.963889" data-lng="-74.796387">
+        <div>➚ BARBERSHOP NAME</div>
+        <div class="icon-star">★</div>
+      </div>
+      <div class="barber-item" data-lat="10.988056" data-lng="-74.791667">
+        <div>➚  BARBERSHOP NAME 2</div>
+      </div>
+      <div class="barber-item" data-lat="11.004722" data-lng="-74.807222">
+        <div>➚ BARBERSHOP NAME 3</div>
+      </div>
+      <div class="barber-item" data-lat="10.975000" data-lng="-74.802778">
+        <div>➚ BARBERSHOP NAME 4</div>
+      </div>
+    </div>
+
+    <div class="barber-detail">
+      <div class="name-label">BARBERSHOP NAME</div>
+      <div class="photo-box">
+        <div class="icon-edit" style="position:absolute; bottom:4px; right:4px; font-size:18px; cursor:pointer;">↗</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Central Map Panel -->
+  <div class="map-panel">
+    <div class="search-box">
+      <span class="icon-search" aria-hidden="true">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search barbershops..." />
+    </div>
+
+    <div class="map-loading" id="mapLoading">Loading Map...</div>
+    <div id="googleMap"></div>
+  </div>
+
+  <!-- Right User Panel -->
+  <div class="user-panel">
+    
+    <div class="user-photo"><a href="/BarberIn/views/view_user_profile.html">Login </a></div>
+    
+    <div class="user-info-box"></div>
+    <div class="user-info-box small"></div>
+    <div class="user-info-box"></div>
+    <div class="user-info-box large"></div>
+  </div>
+
+</div>
+
+<div class="footer-barberin">
+  BARBERIN
+</div>
+
+<!-- External JavaScript file -->
+<script src="./js/map.js"></script>
+
+<!-- Google Maps API Script -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWSXaUzzU4wYQ9GVQj0j-rv3bWFb-B8Ik&callback=initMap&libraries=places" async defer onerror="handleMapError()"></script>
+
+</body>
+</html>

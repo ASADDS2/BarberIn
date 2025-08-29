@@ -1,0 +1,490 @@
+/* =================================================================
+   GLOBAL RESET AND BASE STYLES
+   ================================================================= */
+/* Universal reset - removes default margins, padding and sets consistent box-sizing */
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+ }
+
+/* Body base styles - sets main font, background color and minimum height */
+ body {
+     font-family: 'Montserrat', Arial, sans-serif;
+     background-color: #f5f5f5;
+     min-height: 100vh;
+     padding: 0;
+ }
+
+/* Main dashboard container - full width white container with minimum viewport height */
+ .dashboard {
+     width: 100%;
+     max-width: none;
+     margin: 0;
+     background-color: white;
+     min-height: 100vh;
+     box-shadow: none;
+ }
+
+/* =================================================================
+   HEADER SECTION STYLES
+   ================================================================= */
+/* Header container - horizontal layout with logo, barber name, and qualification */
+ header {
+     display: flex;
+     align-items: center;
+     padding: 20px;
+     border-bottom: 2px solid #ddd;
+ }
+
+/* Logo section - fixed width area for brand/logo */
+ .logo {
+     flex: 0 0 150px;
+     font-weight: bold;
+     color: #333;
+ }
+
+/* Barber name section - centered flexible area */
+ .barber-name {
+     flex: 1;
+     text-align: center;
+     margin: 0 20px;
+ }
+
+/* Barber name display box - styled container for barber's name */
+ .barber-name-box {
+     background-color: #d3d3d3;
+     padding: 15px 30px;
+     border: 2px solid #ff6b6b;
+     border-radius: 5px;
+     font-size: 24px;
+     font-weight: bold;
+     text-transform: uppercase;
+     letter-spacing: 2px;
+ }
+
+/* Qualification section - fixed width area for ratings and qualifications */
+ .qualification {
+     flex: 0 0 150px;
+     text-align: center;
+ }
+
+/* Qualification title badge - small rounded badge for qualification text */
+ .qualification-title {
+     background-color: #666;
+     color: white;
+     padding: 8px 12px;
+     border-radius: 20px;
+     font-size: 12px;
+     font-weight: bold;
+     text-transform: uppercase;
+     margin-bottom: 10px;
+ }
+
+/* Rating container - vertical layout for thumbs up and stars */
+ .rating {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+ }
+
+/* Thumbs up icon styling */
+ .thumbs-up {
+     font-size: 24px;
+     margin-bottom: 5px;
+ }
+
+/* Star rating display - golden colored stars */
+ .stars {
+     color: #ffd700;
+     font-size: 20px;
+ }
+
+/* =================================================================
+   MAIN CONTENT LAYOUT
+   ================================================================= */
+/* Main content grid - three column layout with fixed left column and flexible center */
+ .main-content {
+     display: grid;
+     grid-template-columns: 1000px 1fr ;
+     /* Same layout as dashboard_barbers for consistency */
+     gap: 20px;
+     /* Same gap as dashboard_barbers for consistency */
+     padding: 20px;
+     /* Same padding as dashboard_barbers for consistency */
+     min-height: calc(100vh - 170px);
+ }
+
+/* =================================================================
+   LEFT COLUMN - APPOINTMENTS SECTION
+   ================================================================= */
+/* Appointments container - fixed width sidebar for appointment listings */
+ .appointments {
+     flex: 0 0 280px;
+     padding: 20px;
+     background-color: #f8f8f8;
+     border-right: 2px solid #ddd;
+ }
+
+/* Appointments section title */
+ .appointments h2 {
+     font-weight: bold;
+     text-transform: uppercase;
+     margin-bottom: 20px;
+     font-size: 16px;
+     text-decoration: underline;
+ }
+
+/* Individual appointment card - contains appointment details and action button */
+ .appointment-card {
+     background-color: #d3d3d3;
+     padding: 15px;
+     margin-bottom: 15px;
+     border-radius: 5px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+ }
+
+/* Appointment text styling - small uppercase text for appointment details */
+ .appointment-text {
+     font-size: 12px;
+     font-weight: bold;
+     text-transform: uppercase;
+ }
+
+/* Take appointment button - green action button for accepting appointments */
+ .take-button {
+     background-color: #28a745;
+     color: white;
+     border: none;
+     padding: 5px 12px;
+     border-radius: 15px;
+     font-size: 10px;
+     font-weight: bold;
+     text-transform: uppercase;
+     cursor: pointer;
+ }
+
+/* =================================================================
+   CENTER COLUMN - PROFILE SECTION
+   ================================================================= */
+/* Profile main container - flexible area for barber profile information */
+ .profile {
+     flex: 1;
+     margin: 10px;
+ }
+
+/* Profile top section - horizontal layout for avatar and info boxes */
+ .profile-top {
+     display: flex;
+     gap: 20px;
+     margin-bottom: 20px;
+ }
+
+/* Avatar section container - fixed width area for profile picture and name */
+ .avatar-section {
+     flex: 0 0 150px;
+ }
+
+/* Avatar image container - square container with border for profile picture */
+ .avatar-box {
+     width: 120px;
+     height: 120px;
+     border: 4px solid #333;
+     border-radius: 10px;
+     background-color: #d3d3d3;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin-bottom: 15px;
+     overflow: hidden;
+ }
+
+/* Avatar image - circular gradient background for profile picture */
+ .avatar-image {
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(45deg, #ffb366, #ff8c42);
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 40px;
+ }
+
+/* Name display box - container for barber name with edit functionality */
+ .name-box {
+     background-color: #d3d3d3;
+     padding: 10px 15px;
+     border-radius: 5px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     font-weight: bold;
+     text-transform: uppercase;
+ }
+
+/* Edit icon - small clickable icon for editing functionality */
+ .edit-icon {
+     font-size: 14px;
+     cursor: pointer;
+ }
+
+/* Info boxes container - flexible area for description and specialties */
+ .info-boxes {
+     flex: 1;
+     display: flex;
+     flex-direction: column;
+     gap: 15px;
+ }
+
+/* Description box - blue bordered container for barber description */
+ .description-box {
+     background-color: #d3d3d3;
+     padding: 20px;
+     border-radius: 5px;
+     border: 2px solid #4a90e2;
+     height: 80px;
+     display: flex;
+     align-items: center;
+     position: relative;
+ }
+
+/* Specialties box - red bordered container for barber specialties */
+ .specialties-box {
+     background-color: #d3d3d3;
+     padding: 20px;
+     border-radius: 5px;
+     border: 2px solid #ff6b6b;
+     height: 80px;
+     display: flex;
+     align-items: center;
+     position: relative;
+ }
+
+/* Box title - positioned title text for info boxes */
+ .box-title {
+     position: absolute;
+     top: 5px;
+     left: 10px;
+     font-size: 12px;
+     font-weight: bold;
+     text-transform: uppercase;
+ }
+
+/* Box edit icon - positioned edit icon for info boxes */
+ .box-edit-icon {
+     position: absolute;
+     top: 5px;
+     right: 10px;
+     font-size: 14px;
+     cursor: pointer;
+ }
+
+/* Haircut references section - showcase area for barber's work examples */
+ .haircut-references {
+     margin-top: 30px;
+ }
+
+/* Haircut references title - dark badge for section heading */
+ .haircut-references h3 {
+     background-color: #666;
+     color: white;
+     padding: 8px 15px;
+     border-radius: 5px;
+     font-size: 14px;
+     font-weight: bold;
+     text-transform: uppercase;
+     margin-bottom: 15px;
+     display: inline-block;
+ }
+
+/* References grid - flexible layout for reference items */
+ .references-grid {
+     display: flex;
+     gap: 15px;
+     flex-wrap: wrap;
+ }
+
+/* Individual reference item - container for each haircut example */
+ .reference-item {
+     flex: 1;
+     min-width: 120px;
+ }
+
+/* Reference image placeholder - container for haircut example images */
+ .reference-image {
+     width: 100%;
+     height: 100px;
+     background-color: #d3d3d3;
+     border-radius: 5px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin-bottom: 10px;
+     font-size: 24px;
+ }
+
+/* Reference description - styled text below each reference image */
+ .reference-description {
+     padding: 8px 12px;
+     text-align: center;
+     border-radius: 15px;
+     font-size: 10px;
+     font-weight: bold;
+     text-transform: uppercase;
+ }
+
+/* Blue description variant - blue background for certain descriptions */
+ .desc-blue {
+     background-color: #4a90e2;
+     color: white;
+ }
+
+/* Red description variant - red background for certain descriptions */
+ .desc-red {
+     background-color: #ff6b6b;
+     color: white;
+ }
+
+/* =================================================================
+   RIGHT COLUMN - RANKING SECTION
+   ================================================================= */
+/* Ranking sidebar - fixed width area for barber ranking display */
+ .ranking {
+     flex: 200px;
+     padding: 10px;
+     background-color: #f8f8f8;
+     border-left: 2px solid #ddd;
+ }
+
+/* Ranking section title - dark rounded badge */
+ .ranking-title {
+     background-color: #666;
+     color: white;
+     padding: 8px 12px;
+     border-radius: 20px;
+     font-size: 12px;
+     font-weight: bold;
+     text-transform: uppercase;
+     margin-bottom: 20px;
+     text-align: center;
+ }
+
+/* Ranking display box - large container for ranking number/score */
+ .ranking-box {
+     background-color: #d3d3d3;
+     height: 300px;
+     border-radius: 5px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 48px;
+     font-weight: bold;
+ }
+
+/* =================================================================
+   FOOTER SECTION
+   ================================================================= */
+/* Footer container - dark background footer with brand name */
+ footer {
+     background-color: #666;
+     padding: 30px 20px;
+     text-align: center;
+ }
+
+/* Footer title - large white text for brand name */
+ .footer-title {
+     color: white;
+     font-size: 32px;
+     font-weight: bold;
+     text-transform: uppercase;
+     letter-spacing: 3px;
+ }
+
+/* =================================================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ================================================================= */
+/* Tablet breakpoint - stacks main content vertically */
+ @media (max-width: 1024px) {
+     .main-content {
+         flex-direction: column;
+     }
+
+     .appointments,
+     .ranking {
+         flex: none;
+         border: none;
+         border-bottom: 2px solid #ddd;
+     }
+
+     .profile-top {
+         flex-direction: column;
+     }
+
+     .references-grid {
+         justify-content: center;
+     }
+ }
+
+/* Mobile breakpoint - adjusts layout for smaller screens */
+ @media (max-width: 768px) {
+     .dashboard {
+         width: 100%;
+     }
+
+     header {
+         flex-direction: column;
+         gap: 15px;
+     }
+
+     .logo,
+     .qualification {
+         flex: none;
+     }
+
+     .barber-name-box {
+         font-size: 18px;
+         padding: 10px 20px;
+     }
+
+     .references-grid {
+         flex-direction: column;
+     }
+
+     .footer-title {
+         font-size: 24px;
+     }
+ }
+
+/* Small mobile breakpoint - further optimizations for very small screens */
+ @media (max-width: 480px) {
+     body {
+         padding: 0;
+     }
+
+     .dashboard {
+         width: 100%;
+     }
+
+     .appointments,
+     .profile,
+     .ranking {
+         padding: 15px;
+     }
+
+     .avatar-box {
+         width: 100px;
+         height: 100px;
+     }
+
+     .reference-image {
+         height: 80px;
+     }
+
+     .ranking-box {
+         height: 200px;
+         font-size: 32px;
+     }
+ }

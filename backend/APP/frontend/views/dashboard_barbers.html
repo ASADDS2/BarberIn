@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BARBERIN - Dashboard Barber</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/dashboard_barbers.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">Kcoda logo</div>
+        <div class="barber-name-container">
+          <div class="barber-name">BARBER NAME</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-container">
+      <!-- Left Column - Appointments -->
+      <div class="column appointments-column">
+        <div class="column-title">APPOINTMENTS</div>
+        <div class="appointment-card">
+          <span>APPOINTMENT DATA</span>
+          <button class="btn-view">view</button>
+        </div>
+        <div class="appointment-card">
+          <span>APPOINTMENT DATA</span>
+          <button class="btn-view">view</button>
+        </div>
+        <div class="appointment-card">
+          <span>APPOINTMENT DATA</span>
+          <button class="btn-view">view</button>
+        </div>
+        <div class="appointment-card">
+          <span>APPOINTMENT DATA</span>
+          <button class="btn-view">view</button>
+        </div>
+      </div>
+
+      <!-- Central Column - Main Content -->
+      <div class="column content-column">
+        <!-- Upper modules -->
+        <div class="content-modules">
+          <div class="module schedule-module">
+            <div class="module-title">Schedule</div>
+            <button class="edit-btn-small">✏️</button>
+            <div class="schedule-slots">
+              <div class="schedule-slot">7:00 am<br />10:00 pm</div>
+              <div class="schedule-slot">7:00 am<br />10:00 pm</div>
+            </div>
+          </div>
+
+          <div class="module availability-module">
+            <div class="module-title">availability</div>
+            <div class="availability-list">
+              <div class="barber-status">
+                <div class="barber-avatar-small"></div>
+                <div class="status-indicator busy-indicator"></div>
+                <span class="status-text busy">busy</span>
+              </div>
+              <div class="barber-status">
+                <div class="barber-avatar-small"></div>
+                <div class="status-indicator available-indicator"></div>
+                <span class="status-text available">available</span>
+              </div>
+              <div class="barber-status">
+                <div class="barber-avatar-small"></div>
+                <div class="status-indicator available-indicator"></div>
+                <span class="status-text available">available</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module">
+            <div id="mapLoading"></div>
+            <div
+              id="googleMap"
+              style="width: 100%; height: 300px; border-radius: 10px"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Lower section -->
+        <div class="content-bottom">
+          <div class="barbers-profiles">
+            <div class="barber-profile">
+              <div class="profile-edit">✏️</div>
+              <div class="avatar">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(45deg, #f0c674, #e6ac39);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                  "
+                >
+                  👤
+                </div>
+              </div>
+              <button class="btn-profile">
+                <a href="/BarberIn/views/dashboard_profile_barber.html"
+                  >PROFILE
+                </a>
+              </button>
+            </div>
+            <div class="barber-profile">
+              <div class="profile-edit">✏️</div>
+              <div class="avatar">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(45deg, #d4925a, #c07d47);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                  "
+                >
+                  👤
+                </div>
+              </div>
+              <button class="btn-profile">
+                <a href="/BarberIn/views/dashboard_profile_barber.html"
+                  >PROFILE
+                </a>
+              </button>
+            </div>
+            <div class="barber-profile">
+              <div class="profile-edit">✏️</div>
+              <div class="avatar">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(45deg, #8b4513, #654321);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                  "
+                >
+                  👤
+                </div>
+              </div>
+              <button class="btn-profile">
+                <a href="/BarberIn/views/dashboard_profile_barber.html"
+                  >PROFILE
+                </a>
+              </button>
+            </div>
+          </div>
+          <div class="add-barber">
+            <div class="add-icon">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Products -->
+      <div class="column products-column">
+        <div class="column-title">PRODUCTS</div>
+        <div class="products-grid">
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="product-item">
+            <div class="product-icon">🛍️</div>
+            <div class="product-actions">
+              <div class="action-icon">✏️</div>
+              <div class="action-icon">🔍</div>
+            </div>
+          </div>
+          <div class="add-product">
+            <div class="add-product-icon">+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">BARBERIN</footer>
+    <script src="./js/map.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWSXaUzzU4wYQ9GVQj0j-rv3bWFb-B8Ik&callback=initMap&libraries=places"
+      async
+      defer
+      onerror="handleMapError()"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,356 @@
+/* =================================================================
+   GLOBAL RESET AND BASE STYLES
+   ================================================================= */
+/* Universal reset - removes default margins, padding and sets consistent box-sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+/* Body base styles - sets main font, background color and minimum height with padding */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+/* =================================================================
+   MAIN CONTAINER LAYOUT
+   ================================================================= */
+/* Main container - centered layout with maximum width and vertical spacing */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+/* =================================================================
+   HEADER SECTION
+   ================================================================= */
+/* Header container - full width header section */
+        .header {
+            width: 100%;
+        }
+
+/* Logo text - small gray text for brand identification */
+        .logo {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+/* =================================================================
+   MAIN TITLE SECTION
+   ================================================================= */
+/* Main title container - gray background container for main heading */
+        .main-title {
+            background-color: #d3d3d3;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+/* Main title text - large italic heading for brand name */
+        .main-title h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #333;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+/* App slogan - centered tagline text */
+        .app-slogan {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+
+/* =================================================================
+   MAIN CONTENT LAYOUT
+   ================================================================= */
+/* Main content grid - three column layout with center focus */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+/* Side images - placeholder containers for decorative content */
+        .side-image {
+            background-color: #d3d3d3;
+            height: 400px;
+            border-radius: 8px;
+        }
+
+/* =================================================================
+   LOGIN FORM SECTION
+   ================================================================= */
+/* Login container - white bordered container for login form */
+        .login-container {
+            background-color: white;
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+/* Form group - container for each form field */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+/* Form labels - bold labels for form inputs */
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+/* Input wrapper - horizontal layout for input and selector */
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+/* Form inputs - styled text inputs with focus effects */
+        .form-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+/* Input focus effect - blue border on focus */
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+/* =================================================================
+   DROPDOWN SELECTOR SECTION
+   ================================================================= */
+/* Selector button - small square button for dropdown trigger */
+        .selector {
+            width: 30px;
+            height: 30px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            position: relative;
+        }
+
+/* Selector hover effect - darker background on hover */
+        .selector:hover {
+            background-color: #e9ecef;
+        }
+
+/* Dropdown menu - positioned dropdown container */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-width: 100px;
+            z-index: 100;
+            display: none;
+        }
+
+/* Dropdown show state - visible dropdown */
+        .dropdown.show {
+            display: block;
+        }
+
+/* Dropdown items - clickable items within dropdown */
+        .dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+/* Dropdown item hover - light background on hover */
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+/* Dropdown item borders - rounded corners for first and last items */
+        .dropdown-item:first-child {
+            border-radius: 5px 5px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 5px 5px;
+        }
+
+/* =================================================================
+   LOGIN ACTIONS SECTION
+   ================================================================= */
+/* Login section - vertical layout for login actions */
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0
+        }
+
+/* Login button - red primary action button */
+        .btn-login {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+/* Login button hover - darker red on hover */
+        .btn-login:hover {
+            background-color: #ff0019;
+        }
+
+/* Google login button - circular button for Google authentication */
+        .google-login {
+            width: 50px;
+            height: 50px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            color: #4285f4;
+            transition: background-color 0.3s ease;
+        }
+
+/* Google login hover - darker background on hover */
+        .google-login:hover {
+            background-color: #e9ecef;
+        }
+
+/* =================================================================
+   FORM LINKS SECTION
+   ================================================================= */
+/* Form links container - horizontal layout for form navigation links */
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+/* Form links - blue navigation links */
+        .form-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+/* Form links hover - underline on hover */
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+
+/* =================================================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ================================================================= */
+/* Tablet breakpoint - stacks content vertically */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .side-image {
+                height: 200px;
+                order: 2;
+            }
+
+            .login-container {
+                order: 1;
+                padding: 30px 20px;
+            }
+        }
+
+/* Mobile breakpoint - adjusts layout for smaller screens */
+        @media (max-width: 768px) {
+            .main-title h1 {
+                font-size: 2.5rem;
+            }
+
+            .app-slogan {
+                font-size: 1.2rem;
+            }
+
+            .login-container {
+                padding: 25px 15px;
+            }
+
+            .login-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .btn-login {
+                width: 100%;
+            }
+
+            .google-login {
+                align-self: center;
+            }
+
+            .form-links {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+
+/* Small mobile breakpoint - further optimizations for very small screens */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .main-title h1 {
+                font-size: 2rem;
+            }
+
+            .login-container {
+                padding: 20px 10px;
+            }
+        }

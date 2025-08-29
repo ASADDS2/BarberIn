@@ -1,0 +1,419 @@
+/* =================================================================
+   GLOBAL RESET AND BASE STYLES
+   ================================================================= */
+/* Universal reset - removes default margins, padding and sets consistent box-sizing */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+/* Full viewport height with hidden overflow for fixed layout */
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+/* Body base styles - sets main font, background and flex layout */
+  body {
+    font-family: 'Arial Black', Arial, sans-serif;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+/* =================================================================
+   HEADER SECTION
+   ================================================================= */
+/* Header container - fixed header with title and bottom border */
+  .header {
+    padding: 10px 20px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+  }
+
+/* Header title styling */
+  .header h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+/* =================================================================
+   MAIN DASHBOARD LAYOUT
+   ================================================================= */
+/* Main dashboard container - three panel horizontal layout */
+  .dashboard-container {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    padding: 20px;
+    min-height: 0;
+  }
+
+/* =================================================================
+   LEFT PANEL - AGENDA SECTION
+   ================================================================= */
+/* Agenda panel - fixed width left sidebar with blue border and shadow */
+  .agenda-panel {
+    border: 1px solid #aad1ff;
+    border-radius: 8px;
+    padding: 15px;
+    width: 390px;
+    background: #e0e2e7;
+    box-shadow: 0 0 3px rgba(0, 0, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+/* Add icon - circular black button with plus icon */
+  .agenda-panel .icon-add {
+    background: black;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+/* Agenda title - bold section header */
+  .agenda-panel .title {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+  }
+
+/* Button group container - horizontal layout for filter buttons */
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+/* Filter buttons - rounded gray buttons with hover effects */
+  .btn {
+    background: #b2b2b2;
+    color: #333;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .btn.hover,
+  .btn:focus,
+  .btn:hover {
+    background: #999;
+  }
+
+/* Star favorite button - square button for favorites toggle */
+  .star-favorite {
+    background: #b2b2b2;
+    width: 30px;
+    height: 24px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+/* Barber list container - bordered container for barber items */
+  .barber-list {
+    border: 2px solid #7f8ff4;
+    border-radius: 6px;
+    padding: 7px;
+    background: #c3c3c3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+/* Individual barber item - clickable item with star and arrows */
+  .barber-item {
+    background: #a5a5a5;
+    border-radius: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+/* Star icon in barber item */
+  .barber-item .icon-star {
+    font-weight: bold;
+  }
+
+/* Arrow icons in barber item */
+  .barber-item .icon-arrows {
+    font-size: 10px;
+    margin-right: 8px;
+    user-select: none;
+  }
+
+/* =================================================================
+   BARBER DETAIL SECTION
+   ================================================================= */
+/* Barber detail container - detailed view of selected barber */
+  .barber-detail {
+    background: #a5a5a5;
+    border-radius: 10px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+/* Barber name label - centered blue badge with barber name */
+  .barber-detail .name-label {
+    background: #7f8ff4;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 5px 15px;
+    margin: 0 auto;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+  }
+
+/* Photo box - container for barber photo with edit icon */
+  .barber-detail .photo-box {
+    background: #888888;
+    border-radius: 8px;
+    height: 100px;
+    position: relative;
+  }
+
+/* Edit icon - positioned edit button in photo box */
+  .barber-detail .photo-box .icon-edit {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+/* =================================================================
+   CENTER PANEL - MAP SECTION
+   ================================================================= */
+/* Map panel - flexible center panel with black border for map display */
+  .map-panel {
+    flex: 1;
+    position: relative;
+    border: 3px solid #000;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+/* Search box - rounded search input with icon */
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: #ddd;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin: 10px 15px 15px 15px;
+    flex-shrink: 0;
+  }
+
+/* Search input - transparent input field */
+  .search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 14px;
+    padding-left: 8px;
+  }
+
+/* Search icon - gray search icon */
+  .search-box .icon-search {
+    font-size: 18px;
+    color: #999999;
+  }
+
+/* Map image - simulated map with grid pattern background */
+  .map-image {
+    position: relative;
+    flex: 1;
+    background: #ddd;
+    background-image:
+      linear-gradient(to right, transparent 33%, #aaa 33%, #aaa 34%, transparent 34%),
+      linear-gradient(to right, transparent 66%, #aaa 66%, #aaa 67%, transparent 67%),
+      linear-gradient(to bottom, transparent 33%, #aaa 33%, #aaa 34%, transparent 34%),
+      linear-gradient(to bottom, transparent 66%, #aaa 66%, #aaa 67%, transparent 67%);
+    background-size: 33.33% 100%, 33.33% 100%, 100% 33.33%, 100% 33.33%;
+    background-position: top left, top right, top left, bottom left;
+    background-repeat: no-repeat;
+    border-radius: 0 0 8px 8px;
+  }
+
+/* =================================================================
+   MAP ELEMENTS - TREES AND MARKERS
+   ================================================================= */
+/* Tree elements - green tree shapes with brown trunk */
+  .tree {
+    width: 15px;
+    height: 25px;
+    background: #2f8f58;
+    border-radius: 50% 50% 10% 10% / 100% 100% 20% 20%;
+    position: absolute;
+  }
+  .tree::after {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 10px;
+    background: #3d372b;
+    margin: 0 auto;
+    border-radius: 0 0 50% 50%;
+  }
+
+/* Tree positioning - specific positions for each tree */
+  .tree1 {top: 15%; left: 25%;}
+  .tree2 {top: 40%; left: 45%;}
+  .tree3 {top: 50%; left: 55%;}
+  .tree4 {top: 25%; left: 65%;}
+  .tree5 {top: 65%; left: 70%;}
+
+/* Location pin - red map marker with white center dot */
+  .pin-location {
+    width: 22px;
+    height: 30px;
+    background: red;
+    border-radius: 50% 50% 50% 50%;
+    position: absolute;
+    top: 55%;
+    left: 45%;
+  }
+  .pin-location::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    top: 5px;
+    left: 6px;
+  }
+
+/* =================================================================
+   RIGHT PANEL - USER PROFILE SECTION
+   ================================================================= */
+/* User panel - fixed width right sidebar with red border */
+  .user-panel {
+    width: 300px;
+    border: 2px solid #f18282;
+    border-radius: 8px;
+    padding: 10px;
+    background: #c1bdbd;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+/* User photo - square black container for user profile picture */
+  .user-photo {
+    width: 84px;
+    height: 84px;
+    border-radius: 10px;
+    background: #000;
+    position: relative;
+    border: 4px solid black;
+  }
+
+/* User icons container - horizontal layout for user action icons */
+  .user-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+  }
+  .user-icons .icon-person {
+    font-size: 18px;
+    background: white;
+    padding: 3px;
+    border-radius: 40%;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .user-icons .icon-edit {
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+/* User info boxes - gray containers for user information display */
+  .user-info-box {
+    background: #aaa;
+    width: 100%;
+    height: 30px;
+    border-radius: 8px;
+  }
+  .user-info-box.small {
+    height: 20px;
+  }
+
+/* Large info box variant - taller container for more content */
+  .user-info-box.large {
+    height: 70px;
+  }
+
+/* =================================================================
+   FOOTER SECTION
+   ================================================================= */
+/* Footer - brand name footer with rounded top corners */
+  .footer-barberin {
+    background: #ccc;
+    border-radius: 6px 6px 0 0;
+    padding: 15px;
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+  }
+
+/* =================================================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ================================================================= */
+/* Mobile breakpoint - stacks panels vertically */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+    
+    .agenda-panel,
+    .user-panel {
+      width: 100%;
+    }
+    
+    .map-panel {
+      min-height: 300px;
+    }
+  }

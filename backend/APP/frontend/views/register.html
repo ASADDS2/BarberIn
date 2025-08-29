@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Barberin - Register</title>
+<link rel="stylesheet" href="./css/register.css">
+
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="nav-left">Register user</div>
+  <div class="nav-right">
+    <button class="toggle-btn" onclick="toggleRegisterMode()">
+      <span id="toggle-text">Register for Barber Shops</span>
+    </button>
+  </div>
+</div>
+
+<div class="main-container">
+  <!-- User Form -->
+  <div id="user-register" class="register-panel">
+    <div class="panel-header">
+      <div class="logo">✚</div>
+      <div class="brand-title">BARBERIN</div>
+    </div>
+    
+    <div class="register-subtitle">REGISTER</div>
+    
+    <div class="form-layout">
+      <div class="photo-section">
+        <div class="photo-placeholder">📷</div>
+        <div class="photo-placeholder small">📷</div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-row">
+          <div class="form-group">
+            <label>FIRST NAME(S)</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>LAST NAME(S)</label>
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>EMAIL</label>
+            <input type="email" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>PHONE</label>
+            <input type="tel" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>PASSWORD</label>
+            <input type="password" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>ADDRESS</label>
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>AGE</label>
+            <select>
+              <option>Select...</option>
+              <option>18-25</option>
+              <option>26-35</option>
+              <option>36-45</option>
+              <option>46+</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button class="register-btn">REGISTER</button>
+          <button class="google-btn">
+            <span class="google-icon">G</span>
+            Register with Google
+          </button>
+          <span class="login-link">Already registered?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barber Form -->
+  <div id="barber-register" class="register-panel hidden">
+    <div class="panel-header">
+      <div class="logo">✚</div>
+      <div class="brand-title">BARBERIN</div>
+    </div>
+    
+    <div class="register-subtitle">REGISTER</div>
+    
+    <div class="form-layout">
+      <div class="photo-section">
+        <div class="photo-placeholder">📷</div>
+        <div class="photo-placeholder small">📷</div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-row">
+          <div class="form-group">
+            <label>BARBERSHOP NAME</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>BARBERSHOP EMAIL</label>
+            <input type="email" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>BARBERSHOP CONTACT NUMBER</label>
+            <input type="tel" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>PASSWORD</label>
+            <input type="password" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>RESPONSIBLE PERSON NAME</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>ID DOCUMENT</label>
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>OWNER'S CONTACT PHONE</label>
+            <input type="tel" placeholder="">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>BARBERSHOP ADDRESS</label>
+            <textarea placeholder=""></textarea>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button class="register-btn">REGISTER</button>
+          <button class="google-btn">
+            <span class="google-icon">G</span>
+            Register with Google
+          </button>
+          <span class="login-link">Already registered?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let isUserMode = true;
+
+function toggleRegisterMode() {
+  const userPanel = document.getElementById('user-register');
+  const barberPanel = document.getElementById('barber-register');
+  const toggleText = document.getElementById('toggle-text');
+  const navLeft = document.querySelector('.nav-left');
+  
+  if (isUserMode) {
+    // Switch to barber mode
+    userPanel.classList.add('hidden');
+    barberPanel.classList.remove('hidden');
+    toggleText.textContent = 'Register for Users';
+    navLeft.textContent = 'Register BarberShops';
+    isUserMode = false;
+  } else {
+    // Switch to user mode
+    barberPanel.classList.add('hidden');
+    userPanel.classList.remove('hidden');
+    toggleText.textContent = 'Register for Barber Shops';
+    navLeft.textContent = 'Register user';
+    isUserMode = true;
+  }
+}
+
+// Additional functionality for the forms
+document.addEventListener('DOMContentLoaded', function() {
+  // Add event listeners for register buttons
+  const registerBtns = document.querySelectorAll('.register-btn');
+  registerBtns.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const currentMode = isUserMode ? 'user' : 'barbershop';
+      alert(`Registration for ${currentMode} - Functionality pending implementation`);
+    });
+  });
+  
+  // Event listeners for login links
+  const loginLinks = document.querySelectorAll('.login-link');
+  loginLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      alert('Redirect to login page');
+    });
+  });
+  
+  // Event listener for Google button
+  const googleBtns = document.querySelectorAll('.google-btn');
+  googleBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const currentMode = isUserMode ? 'user' : 'barbershop';
+      alert(`Google registration for ${currentMode} - Functionality pending implementation`);
+    });
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,410 @@
+/* =================================================================
+   GLOBAL RESET AND BASE STYLES
+   ================================================================= */
+/* Universal reset - removes default margins, padding and sets consistent box-sizing */
+ * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+/* Full viewport height with hidden overflow for fixed layout */
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+/* Body base styles - sets main font, background and flex layout */
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+  }
+
+/* =================================================================
+   HEADER SECTION
+   ================================================================= */
+/* Header container - fixed header with logo and brand text */
+  .header {
+    padding: 15px 20px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+/* Logo - square black container with brand initial */
+  .logo {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+/* Logo text - brand name next to logo */
+  .logo-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+
+/* =================================================================
+   MAIN DASHBOARD LAYOUT
+   ================================================================= */
+/* Dashboard container - three column grid layout */
+  .dashboard-container {
+    display: grid;
+    grid-template-columns: 300px 1fr 280px;
+    gap: 20px;
+    padding: 20px;
+    flex: 1;
+    min-height: 0;
+  }
+
+/* =================================================================
+   LEFT PANEL - USER PROFILE SECTION
+   ================================================================= */
+/* Profile panel - vertical layout for user profile components */
+  .profile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+  }
+
+/* Profile card - gray container for user photo and name */
+  .profile-card {
+    background: #c0c0c0;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+  }
+
+/* Edit icon - positioned edit button for profile editing */
+  .edit-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transform: rotate(45deg);
+  }
+
+/* Profile photo - square container for user profile picture */
+  .profile-photo {
+    width: 120px;
+    height: 120px;
+    background: #888;
+    border-radius: 15px;
+    margin: 0 auto 15px auto;
+    border: 4px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+/* Profile photo placeholder - user icon when no photo is available */
+  .profile-photo::after {
+    content: '👤';
+    font-size: 50px;
+    color: white;
+  }
+
+/* Profile name - dark rounded container for user name display */
+  .profile-name {
+    background: #888;
+    color: white;
+    text-align: center;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+/* Data panel - container for user information items */
+  .data-panel {
+    background: #c0c0c0;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+    flex: 1;
+  }
+
+/* Data panel edit icon - positioned edit button for data editing */
+  .data-panel .edit-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+
+/* Data item - individual user information display item */
+  .data-item {
+    background: #888;
+    border-radius: 20px;
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+/* =================================================================
+   CENTER PANEL - APPOINTMENTS SECTION
+   ================================================================= */
+/* Appointments panel - vertical layout for appointment management */
+  .appointments-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+  }
+
+/* Active appointment - container for current appointment details */
+  .active-appointment {
+    background: #e0e0e0;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+  }
+
+/* Appointment header - green badge for active appointment status */
+  .appointment-header {
+    background: #4CAF50;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 15px;
+    width: fit-content;
+  }
+
+/* Appointment data - gray container for appointment details */
+  .appointment-data {
+    background: #b0b0b0;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 15px;
+  }
+
+/* Appointment actions - horizontal layout for action buttons */
+  .appointment-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+  }
+
+/* Score button - yellow button for rating appointment */
+  .score-btn {
+    background: #FFC107;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+/* Cancel button - red button for canceling appointment */
+  .cancel-btn {
+    background: #f44336;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+/* =================================================================
+   APPOINTMENT HISTORY SECTION
+   ================================================================= */
+/* History section - flexible container for appointment history */
+  .history-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+/* History header - dark badge for history section title */
+  .history-header {
+    background: #888;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 15px;
+    width: fit-content;
+  }
+
+/* History item - individual past appointment display */
+  .history-item {
+    background: #b0b0b0;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+/* =================================================================
+   RIGHT PANEL - BARBERSHOPS SECTION
+   ================================================================= */
+/* Barbershops panel - vertical layout for barbershop listings */
+  .barbershops-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+  }
+
+/* Section header - dark rounded badge for section titles */
+  .section-header {
+    background: #888;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+/* Barbershop item - container for individual barbershop information */
+  .barbershop-item {
+    background: #c0c0c0;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+/* Barbershop name - dark badge for barbershop name display */
+  .barbershop-name {
+    background: #888;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+/* Rating - blue badge for barbershop rating display */
+  .rating {
+    background: #2196F3;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+/* =================================================================
+   BARBERS SECTION
+   ================================================================= */
+/* Barbers section - container for individual barber listings */
+  .barbers-section {
+    margin-top: 20px;
+  }
+
+/* Barber item - horizontal layout for barber information */
+  .barber-item {
+    background: #c0c0c0;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+
+/* Barber photo - circular orange container for barber avatar */
+  .barber-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #FFA726;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+/* Barber name - dark rounded badge for barber name display */
+  .barber-name {
+    background: #888;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 12px;
+    flex: 1;
+    text-align: center;
+  }
+
+/* =================================================================
+   FOOTER SECTION
+   ================================================================= */
+/* Footer - brand name footer with large text */
+  .footer-barberin {
+    background: #c0c0c0;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 32px;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+    border-radius: 0;
+  }
+
+/* =================================================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ================================================================= */
+/* Tablet breakpoint - stacks panels vertically */
+  @media (max-width: 1024px) {
+    .dashboard-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 15px;
+    }
+    
+    .profile-panel,
+    .appointments-panel,
+    .barbershops-panel {
+      max-height: none;
+    }
+  }
+
+/* Mobile breakpoint - adjusts padding and button layout */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 10px;
+    }
+    
+    .appointment-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }

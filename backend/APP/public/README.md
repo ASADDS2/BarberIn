@@ -1,52 +1,57 @@
-# BARBERIN Backend
+BARBERIN Backend
 
-Backend para la aplicación BARBERIN - Sistema de reservas de citas para barberías.
+Backend for the BARBERIN application - Appointment booking system for barbershops.
 
-## Características
+Features
 
-- **Autenticación**: Login/registro para usuarios y barberías
-- **Gestión de Barberías**: CRUD completo para barberías
-- **Gestión de Barberos**: Manejo de barberos, horarios y disponibilidad
-- **Sistema de Citas**: Reserva, confirmación y gestión de citas
-- **Servicios**: Catálogo de servicios por barbería
-- **Reseñas**: Sistema de calificaciones y comentarios
-- **API RESTful**: Endpoints bien estructurados
+Authentication: Login/registration for users and barbershops
 
-## Instalación
+Barbershop Management: Full CRUD for barbershops
 
-1. Clona el repositorio:
-\`\`\`bash
-git clone [tu-repositorio]
+Barber Management: Manage barbers, schedules, and availability
+
+Appointment System: Booking, confirmation, and appointment management
+
+Services: Service catalog by barbershop
+
+Reviews: Rating and commenting system
+
+RESTful API: Well-structured endpoints
+
+Installation
+
+Clone the repository:
+
+git clone [your-repository]
 cd barberin-backend
-\`\`\`
 
-2. Instala las dependencias:
-\`\`\`bash
+
+Install dependencies:
+
 npm install
-\`\`\`
 
-3. Configura la base de datos:
-   - Crear la base de datos MySQL usando el archivo `DatabaseBarberin.sql`
-   - Copiar `.env.example` a `.env` y configurar las variables
 
-4. Ejecuta el servidor:
-\`\`\`bash
-# Desarrollo
+Set up the database:
+
+Create the MySQL database using the DatabaseBarberin.sql file
+
+Copy .env.example to .env and configure the variables
+
+Run the server:
+
+# Development
 npm run dev
 
-# Producción
+# Production
 npm start
-\`\`\`
 
-## Estructura del Proyecto
-
-\`\`\`
+Project Structure
 backend/
-├── app.js              # Archivo principal
+├── app.js              # Main file
 ├── config/
-│   └── database.js     # Configuración de base de datos
+│   └── database.js     # Database configuration
 ├── middleware/
-│   └── auth.js         # Middleware de autenticación
+│   └── auth.js         # Authentication middleware
 ├── routes/
 │   ├── userRoutes.js
 │   ├── barbershopRoutes.js
@@ -68,80 +73,108 @@ backend/
 ├── package.json
 ├── .env
 └── README.md
-\`\`\`
 
-## Endpoints API
+API Endpoints
+Users
 
-### Usuarios
-- \`POST /api/users/register\` - Registrar usuario
-- \`POST /api/users/login\` - Login usuario
-- \`GET /api/users/profile\` - Obtener perfil (requiere auth)
-- \`PUT /api/users/profile\` - Actualizar perfil (requiere auth)
+POST /api/users/register - Register user
 
-### Barberías
-- \`POST /api/barbershops/register\` - Registrar barbería
-- \`POST /api/barbershops/login\` - Login barbería
-- \`GET /api/barbershops\` - Listar barberías
-- \`GET /api/barbershops/:id\` - Obtener barbería por ID
-- \`GET /api/barbershops/profile/me\` - Perfil barbería (requiere auth)
-- \`PUT /api/barbershops/profile\` - Actualizar perfil barbería (requiere auth)
+POST /api/users/login - User login
 
-### Barberos
-- \`POST /api/barbers\` - Crear barbero (requiere auth barbería)
-- \`GET /api/barbers/barbershop/:id\` - Barberos por barbería
-- \`GET /api/barbers/:id\` - Obtener barbero por ID
-- \`PUT /api/barbers/:id\` - Actualizar barbero (requiere auth)
-- \`PUT /api/barbers/:id/availability\` - Actualizar disponibilidad
-- \`GET /api/barbers/:id/schedule\` - Obtener horario barbero
-- \`POST /api/barbers/:id/schedule\` - Establecer horario barbero
-- \`GET /api/barbers/:id/availability/:date\` - Slots disponibles
+GET /api/users/profile - Get profile (auth required)
 
-### Citas
-- \`POST /api/appointments\` - Crear cita (requiere auth usuario)
-- \`GET /api/appointments/user\` - Citas del usuario (requiere auth)
-- \`GET /api/appointments/barbershop\` - Citas de la barbería (requiere auth)
-- \`PUT /api/appointments/:id/status\` - Actualizar estado de cita
+PUT /api/users/profile - Update profile (auth required)
 
-### Servicios
-- \`POST /api/services\` - Crear servicio (requiere auth barbería)
-- \`GET /api/services/barbershop/:id\` - Servicios por barbería
-- \`GET /api/services/:id\` - Obtener servicio por ID
-- \`PUT /api/services/:id\` - Actualizar servicio (requiere auth)
-- \`DELETE /api/services/:id\` - Eliminar servicio (requiere auth)
+Barbershops
 
-### Reseñas
-- \`POST /api/reviews\` - Crear reseña (requiere auth usuario)
-- \`GET /api/reviews/barber/:id\` - Reseñas de barbero
-- \`GET /api/reviews/barbershop/:id\` - Reseñas de barbería
+POST /api/barbershops/register - Register barbershop
 
-## Autenticación
+POST /api/barbershops/login - Barbershop login
 
-La API utiliza JWT (JSON Web Tokens) para la autenticación. Incluye el token en el header:
+GET /api/barbershops - List barbershops
 
-\`\`\`
+GET /api/barbershops/:id - Get barbershop by ID
+
+GET /api/barbershops/profile/me - Barbershop profile (auth required)
+
+PUT /api/barbershops/profile - Update barbershop profile (auth required)
+
+Barbers
+
+POST /api/barbers - Create barber (auth required for barbershop)
+
+GET /api/barbers/barbershop/:id - Get barbers by barbershop
+
+GET /api/barbers/:id - Get barber by ID
+
+PUT /api/barbers/:id - Update barber (auth required)
+
+PUT /api/barbers/:id/availability - Update availability
+
+GET /api/barbers/:id/schedule - Get barber schedule
+
+POST /api/barbers/:id/schedule - Set barber schedule
+
+GET /api/barbers/:id/availability/:date - Available slots
+
+Appointments
+
+POST /api/appointments - Create appointment (auth required for user)
+
+GET /api/appointments/user - User appointments (auth required)
+
+GET /api/appointments/barbershop - Barbershop appointments (auth required)
+
+PUT /api/appointments/:id/status - Update appointment status
+
+Services
+
+POST /api/services - Create service (auth required for barbershop)
+
+GET /api/services/barbershop/:id - Get services by barbershop
+
+GET /api/services/:id - Get service by ID
+
+PUT /api/services/:id - Update service (auth required)
+
+DELETE /api/services/:id - Delete service (auth required)
+
+Reviews
+
+POST /api/reviews - Create review (auth required for user)
+
+GET /api/reviews/barber/:id - Get reviews of barber
+
+GET /api/reviews/barbershop/:id - Get reviews of barbershop
+
+Authentication
+
+The API uses JWT (JSON Web Tokens) for authentication. Include the token in the header:
+
 Authorization: Bearer <token>
-\`\`\`
 
-## Variables de Entorno
-
-\`\`\`env
+Environment Variables
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=tu_contraseña
+DB_PASSWORD=your_password
 DB_NAME=Barberin
-JWT_SECRET=tu_clave_secreta_jwt
+JWT_SECRET=your_jwt_secret_key
 PORT=3000
-\`\`\`
 
-## Contribución
+Contribution
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (\`git checkout -b feature/AmazingFeature\`)
-3. Commit tus cambios (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push a la rama (\`git push origin feature/AmazingFeature\`)
-5. Abre un Pull Request
+Fork the project
+
+Create a branch for your feature (git checkout -b feature/AmazingFeature)
+
+Commit your changes (git commit -m 'Add some AmazingFeature')
+
+Push to the branch (git push origin feature/AmazingFeature)
+
+Open a Pull Request
 
 ##// backend/app.js
+
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -167,10 +200,10 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) {
-        console.error('Error conectando a la base de datos:', err);
+        console.error('Error connecting to the database:', err);
         return;
     }
-    console.log('Conectado a la base de datos MySQL');
+    console.log('Connected to the MySQL database');
 });
 
 // Make db available to routes
@@ -197,9 +230,45 @@ app.use('/api/reviews', reviewRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Algo salió mal!' });
+    res.status(500).json({ error: 'Something went wrong!' });
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
+
+
+📦 To Install
+
+Install dependencies:
+
+npm install express mysql2 cors bcryptjs jsonwebtoken dotenv
+npm install --save-dev nodemon
+
+
+Set up the .env file:
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=Barberin
+JWT_SECRET=your_jwt_secret_key
+PORT=3000
+
+
+Run the server:
+
+npm run dev  # For development
+npm start    # For production
+
+
+🔗 Main Endpoints
+
+Users: /api/users/*
+Barbershops: /api/barbershops/*
+Barbers: /api/barbers/*
+Appointments: /api/appointments/*
+Services: /api/services/*
+Reviews: /api/reviews/*
+
+The backend is fully ready to connect with your frontend in vanilla JavaScript, CSS, and HTML. All endpoints return JSON with a consistent structure and appropriate error handling.

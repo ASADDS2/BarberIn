@@ -1,4 +1,4 @@
-const AuthService = require('../services/authService');
+import AuthService from '../services/authService.js';
 
 const authenticateUser = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -35,7 +35,5 @@ const authenticateBarbershop = (req, res, next) => {
     }
 };
 
-module.exports = {
-    authenticateUser,
-    authenticateBarbershop
-};
+// Cambia a export default
+export { authenticateUser, authenticateBarbershop };

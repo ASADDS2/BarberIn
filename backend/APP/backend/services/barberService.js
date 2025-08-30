@@ -144,4 +144,4 @@ class BarberService {
     }
 }
 
-module.exports = BarberService;
+export default BarberService;

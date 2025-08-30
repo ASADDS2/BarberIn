@@ -1,7 +1,9 @@
-const express = require('express');
+import express from 'express';  // Usamos `import` para express
+import ReviewService from '../services/reviewService.js';  // Cambiar `require` por `import` con la extensión .js
+import { authenticateUser } from '../middleware/auth.js';  // Cambiar `require` por `import` con la extensión .js
+
 const router = express.Router();
-const ReviewService = require('../services/reviewService');
-const { authenticateUser } = require('../middleware/auth');
+
 
 // Create review
 router.post('/', authenticateUser, async (req, res) => {
@@ -45,4 +47,4 @@ router.get('/barbershop/:barbershop_id', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

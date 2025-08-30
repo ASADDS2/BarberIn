@@ -1,4 +1,4 @@
-const AuthService = require('./authService');
+import AuthService from './authService.js';
 
 class BarbershopService {
     constructor(db) {
@@ -135,4 +135,4 @@ class BarbershopService {
     }
 }
 
-module.exports = BarbershopService;
+export default BarbershopService;

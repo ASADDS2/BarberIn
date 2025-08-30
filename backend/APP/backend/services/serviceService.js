@@ -84,5 +84,4 @@ class ServiceService {
         });
     }
 }
-
-module.exports = ServiceService;
+export default ServiceService;

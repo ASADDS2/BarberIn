@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';  // Asegúrate de usar la sintaxis de ESM aquí también
+import AppointmentService from '../services/appointmentService.js';  // Cambiar require por import
+import { authenticateUser, authenticateBarbershop } from '../middleware/auth.js';  // Asegúrate de que auth.js use import también
+
 const router = express.Router();
-const AppointmentService = require('../services/appointmentService');
-const { authenticateUser, authenticateBarbershop } = require('../middleware/auth');
 
 // Create appointment (user)
 router.post('/', authenticateUser, async (req, res) => {
@@ -57,4 +58,4 @@ router.put('/:id/status', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

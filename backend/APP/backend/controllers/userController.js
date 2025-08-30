@@ -1,6 +1,6 @@
-const UserService = require('../services/userService');
-const Validators = require('../utils/validators');
-const ResponseHelper = require('../utils/responseHelper');
+import UserService from '../services/userService.js';
+import Validators from '../utils/validators.js';
+import ResponseHelper from '../utils/responseHelper.js';
 
 class UserController {
     static async register(req, res) {
@@ -110,4 +110,4 @@ class UserController {
     }
 }
 
-module.exports = UserController;
+export default UserController; // Usar export default

@@ -4,7 +4,7 @@ require('dotenv').config();
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD || 'Qwe.123*',
     database: process.env.DB_NAME || 'Barberin',
     acquireTimeout: 60000,
     timeout: 60000,

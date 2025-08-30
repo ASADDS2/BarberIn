@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';  // Usamos `import` para express
+import ServiceService from '../services/serviceService.js';  // Cambiar `require` por `import` con la extensión .js
+import { authenticateBarbershop } from '../middleware/auth.js';  // Cambiar `require` por `import` con la extensión .js
+
 const router = express.Router();
-const ServiceService = require('../services/serviceService');
-const { authenticateBarbershop } = require('../middleware/auth');
 
 // Create service
 router.post('/', authenticateBarbershop, async (req, res) => {
@@ -68,4 +69,4 @@ router.delete('/:id', authenticateBarbershop, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;  // Usar `export default` para exportar el router

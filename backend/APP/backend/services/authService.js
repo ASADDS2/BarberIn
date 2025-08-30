@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 class AuthService {
     static async hashPassword(password) {
@@ -21,4 +21,5 @@ class AuthService {
     }
 }
 
-module.exports = AuthService;
+// Cambiar a export default
+export default AuthService;

@@ -1,6 +1,7 @@
-const BarbershopService = require('./barbershopService');
-const Validators = require('../utils/validators');
-const ResponseHelper = require('../utils/responseHelper');
+import BarbershopService from '../services/barbershopService.js'; // Incluye la extensión .js
+import Validators from '../utils/validators.js';
+import ResponseHelper from '../utils/responseHelper.js';
+
 
 class BarbershopController {
     static async register(req, res) {
@@ -163,4 +164,4 @@ class BarbershopController {
     }
 }
 
-module.exports = BarbershopController;
+export default BarbershopController;

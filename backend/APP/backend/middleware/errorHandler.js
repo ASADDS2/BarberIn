@@ -1,6 +1,6 @@
-const ResponseHelper = require('../utils/responseHelper');
+import ResponseHelper from '../utils/responseHelper.js';
 
-const errorHandler = (err, req, res, next) => {
+function errorHandler(err, req, res, next) {
     console.error(err.stack);
 
     // MySQL errors
@@ -32,6 +32,6 @@ const errorHandler = (err, req, res, next) => {
 
     // Default error
     ResponseHelper.error(res, 'Error interno del servidor');
-};
+}
 
-module.exports = errorHandler;
+export default errorHandler;

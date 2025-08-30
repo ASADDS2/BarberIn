@@ -197,4 +197,4 @@ class AppointmentService {
     }
 }
 
-module.exports = AppointmentService;
+export default AppointmentService;

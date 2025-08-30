@@ -1,8 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const mysql = require('mysql2');
-const errorHandler = require('./middleware/errorHandler');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import mysql from 'mysql2';
+import errorHandler from './middleware/errorHandler.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Desactivar los warnings de Node.js
+process.emitWarning = () => {};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,10 +25,8 @@ app.use(express.static('public'));
 const db = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'Barberin',
-    acquireTimeout: 60000,
-    timeout: 60000
+    password: process.env.DB_PASSWORD || 'Qwe.123*',
+    database: process.env.DB_NAME || 'Barberin'
 });
 
 db.connect((err) => {
@@ -49,31 +52,60 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-const userRoutes = require('./routes/userRoutes');
-const barbershopRoutes = require('./routes/barbershopRoutes');
-const barberRoutes = require('./routes/barberRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes');
-const serviceRoutes = require('./routes/serviceRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
+// Función para cargar rutas de forma asíncrona
+async function loadRoutes() {
+    try {
+        // Cargar todas las rutas usando imports dinámicos
+        const [
+            userRoutes,
+            barbershopRoutes,
+            barberRoutes,
+            appointmentRoutes,
+            serviceRoutes,
+            reviewRoutes
+        ] = await Promise.all([
+            import('./routes/userRoutes.js'),
+            import('./routes/barbershopRoutes.js'),
+            import('./routes/barberRoutes.js'),
+            import('./routes/appointmentRoutes.js'),
+            import('./routes/serviceRoutes.js'),
+            import('./routes/reviewRoutes.js')
+        ]);
 
-app.use('/api/users', userRoutes);
-app.use('/api/barbershops', barbershopRoutes);
-app.use('/api/barbers', barberRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/reviews', reviewRoutes);
+        // Registrar las rutas
+        app.use('/api/users', userRoutes.default);
+        app.use('/api/barbershops', barbershopRoutes.default);
+        app.use('/api/barbers', barberRoutes.default);
+        app.use('/api/appointments', appointmentRoutes.default);
+        app.use('/api/services', serviceRoutes.default);
+        app.use('/api/reviews', reviewRoutes.default);
 
-// 404 handler
-app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'Endpoint no encontrado'
-    });
-});
+        console.log('✅ Todas las rutas cargadas correctamente');
 
-// Error handling middleware
-app.use(errorHandler);
+        // 404 handler
+        app.use((req, res) => {
+            res.status(404).json({
+                success: false,
+                message: 'Endpoint no encontrado',
+                path: req.originalUrl,
+                method: req.method
+            });
+        });
+
+        // Error handling middleware
+        app.use(errorHandler);
+
+        // Iniciar servidor
+        app.listen(PORT, () => {
+            console.log(`Servidor BARBERIN corriendo en puerto ${PORT}`);
+            console.log(`Health check: http://localhost:${PORT}/health`);
+        });
+
+    } catch (error) {
+        console.error('Error cargando rutas:', error);
+        process.exit(1);
+    }
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
@@ -84,9 +116,7 @@ process.on('SIGINT', () => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor BARBERIN corriendo en puerto ${PORT}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-});
+// Cargar rutas y iniciar servidor
+loadRoutes();
 
-module.exports = app;
+export default app;

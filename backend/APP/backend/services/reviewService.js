@@ -85,4 +85,4 @@ class ReviewService {
     }
 }
 
-module.exports = ReviewService;
+export default ReviewService;

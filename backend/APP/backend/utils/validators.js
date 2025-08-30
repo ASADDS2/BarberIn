@@ -19,7 +19,7 @@ class Validators {
 
     static isValidDate(dateString) {
         const date = new Date(dateString);
-        return date instanceof Date && !isNaN(date.getTime()) && date >= new Date().setHours(0,0,0,0);
+        return date instanceof Date && !isNaN(date.getTime()) && date >= new Date().setHours(0, 0, 0, 0);
     }
 
     static isValidTime(timeString) {
@@ -33,4 +33,5 @@ class Validators {
     }
 }
 
-module.exports = Validators;
+// Cambia a export default
+export default Validators;

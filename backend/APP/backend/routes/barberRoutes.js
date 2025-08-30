@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const BarberService = require('../services/barberService');
-const { authenticateBarbershop } = require('../middleware/auth');
+import BarberService from '../services/barberService.js';
+import { authenticateBarbershop } from '../middleware/auth.js';
 
 // Create barber
 router.post('/', authenticateBarbershop, async (req, res) => {
@@ -89,21 +89,5 @@ router.post('/:id/schedule', authenticateBarbershop, async (req, res) => {
     }
 });
 
-// Get available slots for a barber on a specific date
-router.get('/:id/availability/:date', async (req, res) => {
-    try {
-        const barberService = new BarberService(req.db);
-        const appointmentService = require('../services/appointmentService');
-        const appointmentSvc = new appointmentService(req.db);
-        
-        const availableSlots = await appointmentSvc.getBarberAvailableSlots(
-            req.params.id, 
-            req.params.date
-        );
-        res.json({ success: true, availableSlots });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-module.exports = router;
+export default router;

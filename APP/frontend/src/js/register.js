@@ -11,30 +11,29 @@ function toggleRegisterMode() {
     const navLeft = document.querySelector('.nav-left');
 
     if (isUserMode) {
-        // Switch to barber mode
+        // Switch to barbershop mode
         userPanel.classList.add('hidden');
         barberPanel.classList.remove('hidden');
-        toggleText.textContent = 'Registrar Usuarios';
-        navLeft.textContent = 'Registro de Barberías';
+        toggleText.textContent = 'Register Users';
+        navLeft.textContent = 'Barbershop Registration';
         isUserMode = false;
     } else {
         // Switch to user mode
         barberPanel.classList.add('hidden');
         userPanel.classList.remove('hidden');
-        toggleText.textContent = 'Registrar Barberias';
-        navLeft.textContent = 'Registro de Usuario';
-        isUserMode = true; // 🔧 CORREGIDO: era "Mode = true"
+        toggleText.textContent = 'Register Barbershops';
+        navLeft.textContent = 'User Registration';
+        isUserMode = true;
     }
 }
 
-// 🆕 FUNCIÓN NUEVA: Manejar registro con Google
+// 🆕 NEW FUNCTION: Handle Google Registration
 function handleGoogleRegister() {
-    console.log('🎯 Iniciando registro con Google...');
-    // Redirigir a la ruta de autenticación de Google
+    console.log('🎯 Starting registration with Google...');
     window.location.href = 'http://localhost:3000/auth/google';
 }
 
-// Función para mostrar errores
+// Function to show error messages
 function showError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -49,19 +48,15 @@ function showError(message) {
   `;
     errorDiv.textContent = message;
 
-    // Agregar al formulario activo
     const activeForm = isUserMode ?
         document.querySelector('#user-register .form-section') :
         document.querySelector('#barber-register .form-section');
 
-    // Remover errores previos
     const oldErrors = activeForm.querySelectorAll('.error-message');
     oldErrors.forEach(err => err.remove());
 
-    // Agregar nuevo error al inicio del formulario
     activeForm.insertBefore(errorDiv, activeForm.firstChild);
 
-    // Auto-remover después de 5 segundos
     setTimeout(() => {
         if (errorDiv.parentNode) {
             errorDiv.remove();
@@ -69,7 +64,7 @@ function showError(message) {
     }, 5000);
 }
 
-// Función para mostrar mensaje de éxito
+// Function to show success messages
 function showSuccess(message) {
     const successDiv = document.createElement('div');
     successDiv.className = 'success-message';
@@ -84,19 +79,15 @@ function showSuccess(message) {
   `;
     successDiv.textContent = message;
 
-    // Agregar al formulario activo
     const activeForm = isUserMode ?
         document.querySelector('#user-register .form-section') :
         document.querySelector('#barber-register .form-section');
 
-    // Remover mensajes previos
     const oldMessages = activeForm.querySelectorAll('.success-message, .error-message');
     oldMessages.forEach(msg => msg.remove());
 
-    // Agregar nuevo mensaje al inicio del formulario
     activeForm.insertBefore(successDiv, activeForm.firstChild);
 
-    // Auto-remover después de 5 segundos
     setTimeout(() => {
         if (successDiv.parentNode) {
             successDiv.remove();
@@ -104,52 +95,51 @@ function showSuccess(message) {
     }, 5000);
 }
 
-// 🔧 FUNCIÓN MEJORADA: Obtener datos del formulario de usuario
+// 🔧 IMPROVED: Get user form data
 function getUserFormData() {
     const userFormSection = document.querySelector('#user-register .form-section');
     const inputs = userFormSection.querySelectorAll('input');
     const select = userFormSection.querySelector('select');
 
-    // Mapeo basado en el orden exacto del HTML
     const formData = {
-        first_name: inputs[0].value.trim(),    // Primer input: Nombres
-        last_name: inputs[1].value.trim(),     // Segundo input: Apellidos  
-        email: inputs[2].value.trim(),         // Tercer input: Email
-        phone: inputs[3].value.trim(),         // Cuarto input: Teléfono
-        password: inputs[4].value,             // Quinto input: Contraseña
-        address: inputs[5].value.trim(),       // Sexto input: Dirección
-        age_range: select.value                // Select: Edad
+        first_name: inputs[0].value.trim(),
+        last_name: inputs[1].value.trim(),
+        email: inputs[2].value.trim(),
+        phone: inputs[3].value.trim(),
+        password: inputs[4].value,
+        address: inputs[5].value.trim(),
+        age_range: select.value
     };
 
-    console.log('Datos usuario recolectados:', formData);
+    console.log('Collected user data:', formData);
     return formData;
 }
 
-// 🔧 FUNCIÓN MEJORADA: Obtener datos del formulario de barbería
+// 🔧 IMPROVED: Get barbershop form data
 function getBarbershopFormData() {
     const barberFormSection = document.querySelector('#barber-register .form-section');
     const inputs = barberFormSection.querySelectorAll('input');
     const textarea = barberFormSection.querySelector('textarea');
 
     const formData = {
-        name: inputs[0].value.trim(),          // Nombre Barbería
-        email: inputs[1].value.trim(),         // Email Barbería
-        phone: inputs[2].value.trim(),         // Teléfono Barbería
-        password: inputs[3].value,             // Contraseña
-        owner_name: inputs[4].value.trim(),    // Nombre Responsable
-        owner_id: inputs[5].value.trim(),      // ID Documento
-        owner_phone: inputs[6].value.trim(),   // Teléfono Propietario
-        address: textarea.value.trim()         // Dirección Barbería
+        name: inputs[0].value.trim(),
+        email: inputs[1].value.trim(),
+        phone: inputs[2].value.trim(),
+        password: inputs[3].value,
+        owner_name: inputs[4].value.trim(),
+        owner_id: inputs[5].value.trim(),
+        owner_phone: inputs[6].value.trim(),
+        address: textarea.value.trim()
     };
 
-    console.log('Datos barbería recolectados:', formData);
+    console.log('Collected barbershop data:', formData);
     return formData;
 }
 
-// Función para registrar usuario
+// Function to register user
 async function registerUser(formData) {
     try {
-        console.log('🚀 Enviando datos al backend:', formData);
+        console.log('🚀 Sending user data to backend:', formData);
 
         const response = await fetch(`${API_BASE_URL}/users/register`, {
             method: 'POST',
@@ -159,26 +149,26 @@ async function registerUser(formData) {
             body: JSON.stringify(formData)
         });
 
-        console.log('📡 Status de respuesta:', response.status);
+        console.log('📡 Response status:', response.status);
 
         const data = await response.json();
-        console.log('📡 Datos de respuesta:', data);
+        console.log('📡 Response data:', data);
 
         if (response.ok && data.success) {
-            showSuccess('¡Usuario registrado exitosamente!');
+            showSuccess('User registered successfully!');
             resetUserForm();
 
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 2000);
         } else {
-            const errorMessage = data.message || data.error || 'Error en el registro';
+            const errorMessage = data.message || data.error || 'Registration failed';
             showError(errorMessage);
         }
 
     } catch (error) {
         console.error('❌ Error:', error);
-        showError('Error de conexión con el servidor. Verifica que el backend esté corriendo en puerto 3000');
+        showError('Connection error. Make sure the backend is running on port 3000.');
     }
 }
 
@@ -187,17 +177,17 @@ function resetUserForm() {
         '#user-register .form-section input, #user-register .form-section textarea, #user-register .form-section select'
     ).forEach(el => {
         if (el.tagName === "SELECT") {
-            el.selectedIndex = 0; // vuelve al primer <option>
+            el.selectedIndex = 0;
         } else {
-            el.value = ""; // limpia inputs y textareas
+            el.value = "";
         }
     });
 }
 
-// Función para registrar barbería
+// Function to register barbershop
 async function registerBarbershop(formData) {
     try {
-        console.log('🚀 Enviando datos barbería al backend:', formData);
+        console.log('🚀 Sending barbershop data to backend:', formData);
 
         const response = await fetch(`${API_BASE_URL}/barbershops/register`, {
             method: 'POST',
@@ -207,13 +197,13 @@ async function registerBarbershop(formData) {
             body: JSON.stringify(formData)
         });
 
-        console.log('📡 Status de respuesta barbería:', response.status);
+        console.log('📡 Barbershop response status:', response.status);
 
         const data = await response.json();
-        console.log('📡 Datos de respuesta barbería:', data);
+        console.log('📡 Barbershop response data:', data);
 
         if (response.ok && data.success) {
-            showSuccess('¡Barbería registrada exitosamente!');
+            showSuccess('Barbershop registered successfully!');
             document.querySelectorAll('#barber-register .form-section input, #barber-register .form-section textarea, #barber-register .form-section select')
                 .forEach(el => el.value = '');
 
@@ -221,36 +211,34 @@ async function registerBarbershop(formData) {
                 window.location.href = 'login.html';
             }, 2000);
         } else {
-            const errorMessage = data.message || data.error || 'Error en el registro';
+            const errorMessage = data.message || data.error || 'Registration failed';
             showError(errorMessage);
         }
     } catch (error) {
         console.error('❌ Error:', error);
-        showError('Error de conexión con el servidor');
+        showError('Connection error with the server');
     }
 }
 
-// 🔧 VALIDACIONES MEJORADAS
+// 🔧 VALIDATION FUNCTIONS
 function validateUserForm(formData) {
     const errors = [];
 
-    if (!formData.first_name) errors.push('Nombres es requerido');
-    if (!formData.last_name) errors.push('Apellidos es requerido');
-    if (!formData.email) errors.push('Email es requerido');
-    if (!formData.password) errors.push('Contraseña es requerida');
-    if (!formData.age_range || formData.age_range === 'Seleccione...') {
-        errors.push('Debe seleccionar un rango de edad');
+    if (!formData.first_name) errors.push('First name is required');
+    if (!formData.last_name) errors.push('Last name is required');
+    if (!formData.email) errors.push('Email is required');
+    if (!formData.password) errors.push('Password is required');
+    if (!formData.age_range || formData.age_range === 'Select...') {
+        errors.push('You must select an age range');
     }
 
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
-        errors.push('Formato de email inválido');
+        errors.push('Invalid email format');
     }
 
-    // Validar longitud de contraseña
     if (formData.password && formData.password.length < 6) {
-        errors.push('La contraseña debe tener al menos 6 caracteres');
+        errors.push('Password must be at least 6 characters long');
     }
 
     return errors;
@@ -259,67 +247,58 @@ function validateUserForm(formData) {
 function validateBarbershopForm(formData) {
     const errors = [];
 
-    if (!formData.name) errors.push('Nombre de barbería es requerido');
-    if (!formData.email) errors.push('Email de barbería es requerido');
-    if (!formData.password) errors.push('Contraseña es requerida');
-    if (!formData.owner_name) errors.push('Nombre del responsable es requerido');
+    if (!formData.name) errors.push('Barbershop name is required');
+    if (!formData.email) errors.push('Barbershop email is required');
+    if (!formData.password) errors.push('Password is required');
+    if (!formData.owner_name) errors.push('Responsible person name is required');
 
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
-        errors.push('Formato de email inválido');
+        errors.push('Invalid email format');
     }
 
-    // Validar longitud de contraseña
     if (formData.password && formData.password.length < 6) {
-        errors.push('La contraseña debe tener al menos 6 caracteres');
+        errors.push('Password must be at least 6 characters long');
     }
 
     return errors;
 }
 
-// 🆕 FUNCIÓN NUEVA: Verificar parámetros de URL después de Google OAuth
+// 🆕 NEW FUNCTION: Check Google OAuth result
 function checkGoogleAuthResult() {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     
     if (error === 'auth_failed') {
-        showError('Error en la autenticación con Google. Por favor intenta nuevamente.');
+        showError('Google authentication failed. Please try again.');
     }
-    
-    // Si llegamos desde Google Auth exitoso, el usuario ya estaría redirigido al dashboard
-    // pero por si acaso, podemos manejar un parámetro de éxito
+
     const authSuccess = urlParams.get('auth_success');
     if (authSuccess === 'true') {
-        showSuccess('¡Registro con Google exitoso!');
+        showSuccess('Successfully registered with Google!');
     }
 }
 
-// Event listeners cuando se carga el DOM
+// Event listeners on DOM load
 document.addEventListener('DOMContentLoaded', function () {
-    
-    // 🆕 NUEVO: Verificar resultado de Google Auth al cargar la página
+
     checkGoogleAuthResult();
 
-    // 🔧 REGISTRO DE USUARIO - CORREGIDO
     const userRegisterBtn = document.querySelector('#user-register .btn-login');
     if (userRegisterBtn) {
         userRegisterBtn.addEventListener('click', async function (e) {
             e.preventDefault();
-            e.stopPropagation(); // Evitar conflictos con otros listeners
+            e.stopPropagation();
 
-            console.log('🎯 Botón de registro de usuario clickeado');
+            console.log('🎯 User register button clicked');
 
             const originalText = this.textContent;
-
-            // Deshabilitar botón durante el registro
             this.disabled = true;
-            this.textContent = 'REGISTRANDO...';
+            this.textContent = 'REGISTERING...';
 
             try {
                 const formData = getUserFormData();
 
-                // Validar datos
                 const errors = validateUserForm(formData);
                 if (errors.length > 0) {
                     showError(errors.join('. '));
@@ -328,34 +307,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 await registerUser(formData);
             } finally {
-                // Rehabilitar botón
                 this.disabled = false;
                 this.textContent = originalText;
             }
         });
     } else {
-        console.error('❌ No se encontró el botón de registro de usuario');
+        console.error('❌ User register button not found');
     }
 
-    // 🔧 REGISTRO DE BARBERÍA - CORREGIDO
     const barberRegisterBtn = document.querySelector('#barber-register .register-btn');
     if (barberRegisterBtn) {
         barberRegisterBtn.addEventListener('click', async function (e) {
             e.preventDefault();
-            e.stopPropagation(); // Evitar conflictos con otros listeners
+            e.stopPropagation();
 
-            console.log('🎯 Botón de registro de barbería clickeado');
+            console.log('🎯 Barbershop register button clicked');
 
             const originalText = this.textContent;
-
-            // Deshabilitar botón durante el registro
             this.disabled = true;
-            this.textContent = 'REGISTRANDO...';
+            this.textContent = 'REGISTERING...';
 
             try {
                 const formData = getBarbershopFormData();
 
-                // Validar datos
                 const errors = validateBarbershopForm(formData);
                 if (errors.length > 0) {
                     showError(errors.join('. '));
@@ -364,16 +338,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 await registerBarbershop(formData);
             } finally {
-                // Rehabilitar botón
                 this.disabled = false;
                 this.textContent = originalText;
             }
         });
     } else {
-        console.error('❌ No se encontró el botón de registro de barbería');
+        console.error('❌ Barbershop register button not found');
     }
 
-    // Event listener para links de login
     const loginLinks = document.querySelectorAll('.login-link a');
     loginLinks.forEach(link => {
         link.addEventListener('click', function (e) {
@@ -382,23 +354,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 🆕 ACTUALIZADO: Event listener para botones de Google OAuth
     const googleBtns = document.querySelectorAll('.btn-signup');
     googleBtns.forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-            console.log('Botón de Google OAuth clickeado');
-            
-            // Cambiar texto del botón mientras redirige
+            console.log('Google OAuth button clicked');
+
             const originalText = this.innerHTML;
-            this.innerHTML = '<span class="google-icon">G</span> Redirigiendo...';
+            this.innerHTML = '<span class="google-icon">G</span> Redirecting...';
             this.disabled = true;
-            
-            // Llamar función de Google OAuth
+
             handleGoogleRegister();
         });
     });
 
-    console.log('✅ Event listeners registrados correctamente');
+    console.log('✅ Event listeners successfully registered');
     console.log('🔗 Google OAuth URL: http://localhost:3000/auth/google');
 });

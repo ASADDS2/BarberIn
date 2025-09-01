@@ -32,15 +32,17 @@
       <div class="app-slogan">App slogan</div>
 
       <div class="main-content">
-        <div class="side-image"></div>
+        <div class="side-image">
+          <img src="../src/img/examples/kcodaexample1.webp" alt="utils">
+        </div>
 
         <div class="login-container">
-          <!-- Mensajes de estado -->
+       
           <div id="message-container"></div>
           
           <form>
             <div class="form-group">
-              <label for="usuario">USERNAME / EMAIL</label>
+              <label for="usuario">EMAIL</label>
               <div class="input-wrapper">
                 <input type="text" id="usuario" name="usuario" required />
                 <div class="selector" id="userTypeSelector">
@@ -81,7 +83,9 @@
           </form>
         </div>
 
-        <div class="side-image"></div>
+        <div class="side-image">
+          <img src="../src/img/examples/kcodaexample2.webp" alt="barbers example">
+        </div>
       </div>
     </div>
 
@@ -123,7 +127,33 @@
         }
       }
 
+<<<<<<< HEAD
       // Función para mostrar mensajes
+=======
+     
+      function handleGoogleLogin() {
+        console.log('Iniciando login con Google...');
+        
+        const googleBtn = document.querySelector('.google-login');
+        googleBtn.innerHTML = '...';
+        googleBtn.disabled = true;
+        
+       
+        window.location.href = 'http://localhost:3000/auth/google';
+      }
+
+     
+      function checkGoogleAuthResult() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error === 'auth_failed') {
+          showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
+        }
+      }
+
+      
+>>>>>>> 223dd166cf64c584976aa1c01b3f45f64a754bb6
       function showMessage(message, type = 'info') {
         const container = document.getElementById('message-container');
         const messageDiv = document.createElement('div');
@@ -139,11 +169,11 @@
         `;
         messageDiv.textContent = message;
         
-        // Limpiar mensajes previos
+        
         container.innerHTML = '';
         container.appendChild(messageDiv);
         
-        // Auto-remover después de 5 segundos
+      
         setTimeout(() => {
           if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -151,7 +181,7 @@
         }, 5000);
       }
 
-      // Ejecutar al cargar la página
+      
       document.addEventListener('DOMContentLoaded', function() {
         checkGoogleAuthResult();
       });

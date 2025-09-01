@@ -95,6 +95,9 @@ body {
     display: flex;
     gap: 20px;
 }
+.buttons-container a {
+   text-decoration: none;
+}
 
 .btn {
     padding: 12px 35px;
@@ -107,20 +110,25 @@ body {
 .btn-login {
     background: #b22222;
     color: #fff;
+    text-decoration: none;
 }
 
 .btn-login:hover {
     background: #ff4444;
+    text-decoration: none;
+    
 }
 
 .btn-signup {
     background: #daa520;
     /* dorado */
     color: #000;
+    text-decoration: none;
 }
 
 .btn-signup:hover {
     background: #ffd700;
+    text-decoration: none;
 }
 
 /* =========================

@@ -4,12 +4,19 @@
 const API_BASE_URL = 'http://localhost:3000/api';
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Verificar resultado de Google Auth al cargar
+    checkGoogleAuthResult();
+    
     const form = document.querySelector("form");
 
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
 
+<<<<<<< HEAD
         // Get field values (changed from 'usuario' to email)
+=======
+        // Obtener valores de los campos
+>>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
         const email = document.getElementById("usuario").value.trim();
         const password = document.getElementById("password").value;
 
@@ -20,7 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.textContent = "Logging in...";
 
         try {
+<<<<<<< HEAD
             // Correct call to backend login endpoint
+=======
+            // Llamada al endpoint del backend
+>>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
             const response = await fetch(`${API_BASE_URL}/users/login`, {
                 method: "POST",
                 headers: {
@@ -42,10 +53,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("authToken", data.data.token);
                     localStorage.setItem("userData", JSON.stringify(data.data.user));
                 }
+<<<<<<< HEAD
 
                 // Redirect to user dashboard
                 window.location.href = "dashboard_users.html";
 
+=======
+                
+                // Redirigir al dashboard
+                window.location.href = "../views/dashboard_users.html";
+                
+>>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
             } else {
                 // Handle backend errors
                 let errorMessage = "Invalid credentials";
@@ -69,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+<<<<<<< HEAD
 // Check if user is authenticated
 function isAuthenticated() {
     return localStorage.getItem("authToken") !== null;
@@ -251,3 +270,34 @@ function logout() {
     localStorage.removeItem("userData");
     window.location.href = "login.html";
 }
+=======
+// Función para obtener parámetros de la URL
+function getQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    success: params.get("success"),
+    token: params.get("token"),
+    userData: params.get("userData")
+  };
+}
+
+function saveAuthData() {
+  const { success, token, userData } = getQueryParams();
+
+  if (success === "google_auth" && token && userData) {
+    // Guardar token
+    localStorage.setItem("authToken", token);
+
+    // Guardar información del usuario (como objeto)
+    const user = JSON.parse(decodeURIComponent(userData));
+    localStorage.setItem("userData", JSON.stringify(user));
+
+    console.log("✅ Datos guardados en localStorage:", user);
+
+    // (Opcional) Redirigir al home o dashboard
+    window.location.href = "/frontend/views/dashboard_users.html";
+  }
+}
+// Llamar a la función al cargar la página
+saveAuthData();
+>>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42

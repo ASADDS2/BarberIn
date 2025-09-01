@@ -1,6 +1,6 @@
 // js/login.js
 
-// URL base del backend
+// Backend base URL
 const API_BASE_URL = 'http://localhost:3000/api';
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,25 +9,25 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
 
-        // Obtener valores de los campos (cambiado de 'usuario' a email)
+        // Get field values (changed from 'usuario' to email)
         const email = document.getElementById("usuario").value.trim();
         const password = document.getElementById("password").value;
 
-        // Cambiar el texto del botón mientras procesa
+        // Change button text while processing
         const submitBtn = form.querySelector(".btn-login");
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = "Iniciando sesión...";
+        submitBtn.textContent = "Logging in...";
 
         try {
-            // Llamada corregida al endpoint del backend
+            // Correct call to backend login endpoint
             const response = await fetch(`${API_BASE_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: email,  // Cambiado de 'username' a 'email'
+                    email: email,
                     password: password
                 })
             });
@@ -36,59 +36,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok && data.success) {
                 alert("✅ " + data.message);
-                
-                // Almacenar el token si existe
+
+                // Store token if present
                 if (data.data && data.data.token) {
                     localStorage.setItem("authToken", data.data.token);
                     localStorage.setItem("userData", JSON.stringify(data.data.user));
                 }
-                
-                // Redirigir al dashboard según el tipo de usuario
-                // Por ahora redirigiremos a una página general
+
+                // Redirect to user dashboard
                 window.location.href = "dashboard_users.html";
-                
+
             } else {
-                // Manejar errores del backend
-                let errorMessage = "Credenciales inválidas";
-                
+                // Handle backend errors
+                let errorMessage = "Invalid credentials";
+
                 if (data.message) {
                     errorMessage = data.message;
                 } else if (data.errors && Array.isArray(data.errors)) {
                     errorMessage = data.errors.join(", ");
                 }
-                
+
                 alert("❌ Error: " + errorMessage);
             }
         } catch (error) {
             console.error("Error connecting to backend:", error);
-            alert("⚠️ No se pudo conectar al servidor. Verifica que el backend esté corriendo en puerto 3000");
+            alert("⚠️ Could not connect to the server. Make sure the backend is running on port 3000.");
         } finally {
-            // Restaurar el botón
+            // Restore button
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     });
 });
 
-// Función para verificar si el usuario está autenticado
+// Check if user is authenticated
 function isAuthenticated() {
     return localStorage.getItem("authToken") !== null;
 }
 
-// Función para obtener el token
+// Get the auth token
 function getAuthToken() {
     return localStorage.getItem("authToken");
 }
 
-// Función para cerrar sesión
+// Logout function
 function logout() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     window.location.href = "login.html";
 }
 
-
-// Función para mostrar mensajes en el login
+// Show messages in login
 function showMessage(message, type = 'error') {
     const container = document.getElementById('message-container') || document.body;
     const messageDiv = document.createElement('div');
@@ -105,19 +103,19 @@ function showMessage(message, type = 'error') {
           'background: #e7f3ff; border: 1px solid #b3d9ff; color: #0066cc;'}
     `;
     messageDiv.textContent = message;
-    
-    // Limpiar mensajes previos
+
+    // Remove previous messages
     const oldMessages = document.querySelectorAll('.login-message');
     oldMessages.forEach(msg => msg.remove());
-    
-    // Agregar nuevo mensaje
+
+    // Add new message
     if (container.id === 'message-container') {
         container.appendChild(messageDiv);
     } else {
         container.insertBefore(messageDiv, container.firstChild);
     }
-    
-    // Auto-remover después de 5 segundos
+
+    // Auto-remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -125,19 +123,19 @@ function showMessage(message, type = 'error') {
     }, 5000);
 }
 
-// Verificar si el usuario viene desde Google Auth
+// Check if user came from Google Auth
 function checkGoogleAuthResult() {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     const user = urlParams.get('user');
-    
+
     if (error === 'auth_failed') {
-        showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
-        // Limpiar URL
+        showMessage('Google authentication failed. Please try again.', 'error');
+        // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
     } else if (user) {
-        // El usuario fue autenticado exitosamente con Google
-        showMessage('Login con Google exitoso! Redirigiendo...', 'success');
+        // User authenticated successfully with Google
+        showMessage('Google login successful! Redirecting...', 'success');
         setTimeout(() => {
             window.location.href = 'dashboard_users.html';
         }, 1500);
@@ -145,39 +143,38 @@ function checkGoogleAuthResult() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Verificar resultado de Google Auth al cargar
+    // Check Google Auth result on page load
     checkGoogleAuthResult();
-    
+
     const form = document.querySelector("form");
 
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
 
-        // Obtener valores de los campos (cambiado de 'usuario' a email)
+        // Get form values
         const email = document.getElementById("usuario").value.trim();
         const password = document.getElementById("password").value;
 
-        // Validaciones básicas
+        // Basic validations
         if (!email || !password) {
-            showMessage("Por favor, completa todos los campos", 'error');
+            showMessage("Please complete all fields", 'error');
             return;
         }
 
-        // Cambiar el texto del botón mientras procesa
+        // Button processing state
         const submitBtn = form.querySelector(".btn-login");
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = "Iniciando sesión...";
+        submitBtn.textContent = "Logging in...";
 
         try {
-            // Llamada corregida al endpoint del backend
             const response = await fetch(`${API_BASE_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: email,  // Cambiado de 'username' a 'email'
+                    email: email,
                     password: password
                 })
             });
@@ -186,71 +183,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok && data.success) {
                 showMessage(data.message, 'success');
-                
-                // Almacenar el token si existe
+
+                // Store token if present
                 if (data.data && data.data.token) {
                     localStorage.setItem("authToken", data.data.token);
                     localStorage.setItem("userData", JSON.stringify(data.data.user));
-                    
-                    // También almacenar el tipo de usuario si está disponible
+
+                    // Also store user type if available
                     const userType = data.data.user.user_type || 'user';
                     localStorage.setItem("userType", userType);
                 }
-                
-                // Redirigir al dashboard según el tipo de usuario
+
+                // Redirect to dashboard
                 setTimeout(() => {
                     window.location.href = "dashboard_users.html";
                 }, 1000);
-                
+
             } else {
-                // Manejar errores del backend
-                let errorMessage = "Credenciales inválidas";
-                
+                let errorMessage = "Invalid credentials";
+
                 if (data.message) {
                     errorMessage = data.message;
                 } else if (data.errors && Array.isArray(data.errors)) {
                     errorMessage = data.errors.join(", ");
                 }
-                
+
                 showMessage(errorMessage, 'error');
             }
         } catch (error) {
             console.error("Error connecting to backend:", error);
-            showMessage("No se pudo conectar al servidor. Verifica que el backend esté corriendo en puerto 3000", 'error');
+            showMessage("Could not connect to the server. Make sure the backend is running on port 3000.", 'error');
         } finally {
-            // Restaurar el botón
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     });
 });
 
-// Función para manejar login con Google (llamada desde HTML)
+// Function to handle Google login (called from HTML)
 function handleGoogleLogin() {
-    console.log('Iniciando login con Google...');
-    
-    // Cambiar texto del botón mientras redirige
+    console.log('Starting login with Google...');
+
+    // Change Google button text while redirecting
     const googleBtn = document.querySelector('.google-login');
     if (googleBtn) {
         googleBtn.innerHTML = '...';
         googleBtn.disabled = true;
     }
-    
-    // Redirigir a la ruta de autenticación de Google
+
+    // Redirect to Google OAuth route
     window.location.href = 'http://localhost:3000/auth/google';
 }
 
-// Función para verificar si el usuario está autenticado
+// Check if user is authenticated
 function isAuthenticated() {
     return localStorage.getItem("authToken") !== null;
 }
 
-// Función para obtener el token
+// Get auth token
 function getAuthToken() {
     return localStorage.getItem("authToken");
 }
 
-// Función para cerrar sesión
+// Logout user
 function logout() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");

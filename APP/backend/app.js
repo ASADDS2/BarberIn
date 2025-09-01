@@ -115,7 +115,6 @@ async function loadRoutes() {
         app.listen(PORT, () => {
             console.log(`BARBERIN server running on port ${PORT}`);
             console.log(`Health check: http://localhost:${PORT}/health`);
-            console.log(`Google OAuth: http://localhost:${PORT}/auth/google`);
         });
 
     } catch (error) {

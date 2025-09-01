@@ -371,3 +371,4 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('✅ Event listeners successfully registered');
     console.log('🔗 Google OAuth URL: http://localhost:3000/auth/google');
 });
+

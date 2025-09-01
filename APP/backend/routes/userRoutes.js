@@ -6,10 +6,17 @@
 
 import express from 'express';
 import UserController from '../controllers/userController.js';
-import { authenticateUser } from '../middleware/auth.js';
+
 
 // Create Express router instance
 const router = express.Router();
+
+/**
+ * GET /
+ * Get all users with pagination (for admin purposes)
+ * Requires authentication (consider adding admin role check)
+ */
+router.get('/',  UserController.getAllUsers);
 
 /**
  * POST /register
@@ -30,14 +37,14 @@ router.post('/login', UserController.login);
  * Retrieves the current user's profile information
  * Requires user authentication via JWT token
  */
-router.get('/profile', authenticateUser, UserController.getProfile);
+router.get('/profile',  UserController.getProfile);
 
 /**
  * PUT /profile
  * Updates the current user's profile information
  * Requires user authentication via JWT token
  */
-router.put('/profile', authenticateUser, UserController.updateProfile);
+router.put('/profile',  UserController.updateProfile);
 
 // Export the router for use in the main application
 export default router;

@@ -56,6 +56,17 @@ class UserController {
         }
     }
 
+    static async getAllUsers(req, res) {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+            const userService = new UserService(req.db);
+            const users = await userService.getAllUsers(parseInt(page), parseInt(limit));
+            ResponseHelper.success(res, users, 'Users retrieved successfully');
+        } catch (error) {
+            ResponseHelper.error(res, error.message);
+        }
+    }
+
     static async getProfile(req, res) {
         try {
             const userService = new UserService(req.db);
@@ -110,4 +121,4 @@ class UserController {
     }
 }
 
-export default UserController; // Use export default
+export default UserController;

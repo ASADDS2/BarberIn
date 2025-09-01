@@ -164,63 +164,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    let isUserMode = true;
-
-    function toggleRegisterMode() {
-      const userPanel = document.getElementById('user-register');
-      const barberPanel = document.getElementById('barber-register');
-      const toggleText = document.getElementById('toggle-text');
-      const navLeft = document.querySelector('.nav-left');
-
-      if (isUserMode) {
-        // Switch to barber mode
-        userPanel.classList.add('hidden');
-        barberPanel.classList.remove('hidden');
-        toggleText.textContent = 'Register for Users';
-        navLeft.textContent = 'Register BarberShops';
-        isUserMode = false;
-      } else {
-        // Switch to user mode
-        barberPanel.classList.add('hidden');
-        userPanel.classList.remove('hidden');
-        toggleText.textContent = 'Register for Barber Shops';
-        navLeft.textContent = 'Register user';
-        isUserMode = true;
-      }
-    }
-
-    // Additional functionality for the forms
-    document.addEventListener('DOMContentLoaded', function () {
-      // Add event listeners for register buttons
-      const registerBtns = document.querySelectorAll('.register-btn');
-      registerBtns.forEach(btn => {
-        btn.addEventListener('click', function (e) {
-          e.preventDefault();
-          const currentMode = isUserMode ? 'user' : 'barbershop';
-          alert(`Registration for ${currentMode} - Functionality pending implementation`);
-        });
-      });
-
-      // Event listeners for login links
-      const loginLinks = document.querySelectorAll('.login-link');
-      loginLinks.forEach(link => {
-        link.addEventListener('click', function () {
-          alert('Redirect to login page');
-        });
-      });
-
-      // Event listener for Google button
-      const googleBtns = document.querySelectorAll('.google-btn');
-      googleBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-          const currentMode = isUserMode ? 'user' : 'barbershop';
-          alert(`Google registration for ${currentMode} - Functionality pending implementation`);
-        });
-      });
-    });
-  </script>
   <script src="../src/js/register.js"></script>
 </body>
 

@@ -1,35 +1,37 @@
+// js/register.js
+
 const API_BASE_URL = 'http://localhost:3000/api';
 
 let isUserMode = true;
 
 function toggleRegisterMode() {
-  const userPanel = document.getElementById('user-register');
-  const barberPanel = document.getElementById('barber-register');
-  const toggleText = document.getElementById('toggle-text');
-  const navLeft = document.querySelector('.nav-left');
-  
-  if (isUserMode) {
-    // Switch to barber mode
-    userPanel.classList.add('hidden');
-    barberPanel.classList.remove('hidden');
-    toggleText.textContent = 'Register for Users';
-    navLeft.textContent = 'Register BarberShops';
-    isUserMode = false;
-  } else {
-    // Switch to user mode
-    barberPanel.classList.add('hidden');
-    userPanel.classList.remove('hidden');
-    toggleText.textContent = 'Register for Barber Shops';
-    navLeft.textContent = 'Register user';
-    isUserMode = true;
-  }
+    const userPanel = document.getElementById('user-register');
+    const barberPanel = document.getElementById('barber-register');
+    const toggleText = document.getElementById('toggle-text');
+    const navLeft = document.querySelector('.nav-left');
+
+    if (isUserMode) {
+        // Switch to barber mode
+        userPanel.classList.add('hidden');
+        barberPanel.classList.remove('hidden');
+        toggleText.textContent = 'Registrar Usuarios';
+        navLeft.textContent = 'Registro de Barberías';
+        isUserMode = false;
+    } else {
+        // Switch to user mode
+        barberPanel.classList.add('hidden');
+        userPanel.classList.remove('hidden');
+        toggleText.textContent = 'Registrar Barberías';
+        navLeft.textContent = 'Registro de Usuario';
+        isUserMode = true; // 🔧 CORREGIDO: era "Mode = true"
+    }
 }
 
 // Función para mostrar errores
 function showError(message) {
-  const errorDiv = document.createElement('div');
-  errorDiv.className = 'error-message';
-  errorDiv.style.cssText = `
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.style.cssText = `
     background: #fee;
     border: 1px solid #fcc;
     color: #c00;
@@ -38,33 +40,33 @@ function showError(message) {
     border-radius: 4px;
     font-size: 14px;
   `;
-  errorDiv.textContent = message;
-  
-  // Agregar al formulario activo
-  const activeForm = isUserMode ? 
-    document.querySelector('#user-register .form-section') : 
-    document.querySelector('#barber-register .form-section');
-  
-  // Remover errores previos
-  const oldErrors = activeForm.querySelectorAll('.error-message');
-  oldErrors.forEach(err => err.remove());
-  
-  // Agregar nuevo error al inicio del formulario
-  activeForm.insertBefore(errorDiv, activeForm.firstChild);
-  
-  // Auto-remover después de 5 segundos
-  setTimeout(() => {
-    if (errorDiv.parentNode) {
-      errorDiv.remove();
-    }
-  }, 5000);
+    errorDiv.textContent = message;
+
+    // Agregar al formulario activo
+    const activeForm = isUserMode ?
+        document.querySelector('#user-register .form-section') :
+        document.querySelector('#barber-register .form-section');
+
+    // Remover errores previos
+    const oldErrors = activeForm.querySelectorAll('.error-message');
+    oldErrors.forEach(err => err.remove());
+
+    // Agregar nuevo error al inicio del formulario
+    activeForm.insertBefore(errorDiv, activeForm.firstChild);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 5000);
 }
 
 // Función para mostrar mensaje de éxito
 function showSuccess(message) {
-  const successDiv = document.createElement('div');
-  successDiv.className = 'success-message';
-  successDiv.style.cssText = `
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.style.cssText = `
     background: #efe;
     border: 1px solid #cfc;
     color: #060;
@@ -73,209 +75,296 @@ function showSuccess(message) {
     border-radius: 4px;
     font-size: 14px;
   `;
-  successDiv.textContent = message;
-  
-  // Agregar al formulario activo
-  const activeForm = isUserMode ? 
-    document.querySelector('#user-register .form-section') : 
-    document.querySelector('#barber-register .form-section');
-  
-  // Remover mensajes previos
-  const oldMessages = activeForm.querySelectorAll('.success-message, .error-message');
-  oldMessages.forEach(msg => msg.remove());
-  
-  // Agregar nuevo mensaje al inicio del formulario
-  activeForm.insertBefore(successDiv, activeForm.firstChild);
-  
-  // Auto-remover después de 5 segundos
-  setTimeout(() => {
-    if (successDiv.parentNode) {
-      successDiv.remove();
-    }
-  }, 5000);
+    successDiv.textContent = message;
+
+    // Agregar al formulario activo
+    const activeForm = isUserMode ?
+        document.querySelector('#user-register .form-section') :
+        document.querySelector('#barber-register .form-section');
+
+    // Remover mensajes previos
+    const oldMessages = activeForm.querySelectorAll('.success-message, .error-message');
+    oldMessages.forEach(msg => msg.remove());
+
+    // Agregar nuevo mensaje al inicio del formulario
+    activeForm.insertBefore(successDiv, activeForm.firstChild);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (successDiv.parentNode) {
+            successDiv.remove();
+        }
+    }, 5000);
+}
+
+// 🔧 FUNCIÓN MEJORADA: Obtener datos del formulario de usuario
+function getUserFormData() {
+    const userFormSection = document.querySelector('#user-register .form-section');
+    const inputs = userFormSection.querySelectorAll('input');
+    const select = userFormSection.querySelector('select');
+
+    // Mapeo basado en el orden exacto del HTML
+    const formData = {
+        first_name: inputs[0].value.trim(),    // Primer input: Nombres
+        last_name: inputs[1].value.trim(),     // Segundo input: Apellidos  
+        email: inputs[2].value.trim(),         // Tercer input: Email
+        phone: inputs[3].value.trim(),         // Cuarto input: Teléfono
+        password: inputs[4].value,             // Quinto input: Contraseña
+        address: inputs[5].value.trim(),       // Sexto input: Dirección
+        age_range: select.value                // Select: Edad
+    };
+
+    console.log('📝 Datos usuario recolectados:', formData);
+    return formData;
+}
+
+// 🔧 FUNCIÓN MEJORADA: Obtener datos del formulario de barbería
+function getBarbershopFormData() {
+    const barberFormSection = document.querySelector('#barber-register .form-section');
+    const inputs = barberFormSection.querySelectorAll('input');
+    const textarea = barberFormSection.querySelector('textarea');
+
+    const formData = {
+        name: inputs[0].value.trim(),          // Nombre Barbería
+        email: inputs[1].value.trim(),         // Email Barbería
+        phone: inputs[2].value.trim(),         // Teléfono Barbería
+        password: inputs[3].value,             // Contraseña
+        owner_name: inputs[4].value.trim(),    // Nombre Responsable
+        owner_id: inputs[5].value.trim(),      // ID Documento
+        owner_phone: inputs[6].value.trim(),   // Teléfono Propietario
+        address: textarea.value.trim()         // Dirección Barbería
+    };
+
+    console.log('📝 Datos barbería recolectados:', formData);
+    return formData;
 }
 
 // Función para registrar usuario
 async function registerUser(formData) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/users/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+        console.log('🚀 Enviando datos al backend:', formData);
 
-    const data = await response.json();
+        const response = await fetch(`${API_BASE_URL}/users/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
 
-    if (response.ok && data.success) {
-      showSuccess('Usuario registrado exitosamente!');
-      document.querySelector('#user-register form').reset();
-      
-      // Redirigir al login después de 2 segundos
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
-    } else {
-      // El backend puede devolver errores en diferentes formatos
-      const errorMessage = data.message || data.error || 'Error en el registro';
-      
-      // Si hay errores específicos (array), mostrar el primero
-      if (data.errors && Array.isArray(data.errors)) {
-        showError(data.errors.join(', '));
-      } else {
-        showError(errorMessage);
-      }
+        console.log('📡 Status de respuesta:', response.status);
+
+        const data = await response.json();
+        console.log('📡 Datos de respuesta:', data);
+
+        if (response.ok && data.success) {
+            showSuccess('¡Usuario registrado exitosamente!');
+            resetUserForm();
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } else {
+            const errorMessage = data.message || data.error || 'Error en el registro';
+            showError(errorMessage);
+        }
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        showError('Error de conexión con el servidor. Verifica que el backend esté corriendo en puerto 3000');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    showError('Error de conexión con el servidor. Verifica que el backend esté corriendo en puerto 3000');
-  }
 }
 
-// Función para registrar barbería (necesitaremos crear este endpoint después)
-async function registerBarbershop(formData) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/barbershops/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
+function resetUserForm() {
+    document.querySelectorAll(
+        '#user-register .form-section input, #user-register .form-section textarea, #user-register .form-section select'
+    ).forEach(el => {
+        if (el.tagName === "SELECT") {
+            el.selectedIndex = 0; // vuelve al primer <option>
+        } else {
+            el.value = ""; // limpia inputs y textareas
+        }
     });
+}
 
-    const data = await response.json();
 
-    if (response.ok && data.success) {
-      showSuccess('Barbería registrada exitosamente!');
-      document.querySelector('#barber-register form').reset();
-      
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
-    } else {
-      const errorMessage = data.message || data.error || 'Error en el registro';
-      showError(errorMessage);
+// Función para registrar barbería
+async function registerBarbershop(formData) {
+    try {
+        console.log('🚀 Enviando datos barbería al backend:', formData);
+
+        const response = await fetch(`${API_BASE_URL}/barbershops/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+
+        console.log('📡 Status de respuesta barbería:', response.status);
+
+        const data = await response.json();
+        console.log('📡 Datos de respuesta barbería:', data);
+
+        if (response.ok && data.success) {
+            showSuccess('¡Barbería registrada exitosamente!');
+            document.querySelectorAll('#barber-register .form-section input, #barber-register .form-section textarea, #barber-register .form-section select')
+                .forEach(el => el.value = '');
+
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } else {
+            const errorMessage = data.message || data.error || 'Error en el registro';
+            showError(errorMessage);
+        }
+    } catch (error) {
+        console.error('❌ Error:', error);
+        showError('Error de conexión con el servidor');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    showError('Error de conexión con el servidor');
-  }
+}
+
+// 🔧 VALIDACIONES MEJORADAS
+function validateUserForm(formData) {
+    const errors = [];
+
+    if (!formData.first_name) errors.push('Nombres es requerido');
+    if (!formData.last_name) errors.push('Apellidos es requerido');
+    if (!formData.email) errors.push('Email es requerido');
+    if (!formData.password) errors.push('Contraseña es requerida');
+    if (!formData.age_range || formData.age_range === 'Seleccione...') {
+        errors.push('Debe seleccionar un rango de edad');
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+        errors.push('Formato de email inválido');
+    }
+
+    // Validar longitud de contraseña
+    if (formData.password && formData.password.length < 6) {
+        errors.push('La contraseña debe tener al menos 6 caracteres');
+    }
+
+    return errors;
+}
+
+function validateBarbershopForm(formData) {
+    const errors = [];
+
+    if (!formData.name) errors.push('Nombre de barbería es requerido');
+    if (!formData.email) errors.push('Email de barbería es requerido');
+    if (!formData.password) errors.push('Contraseña es requerida');
+    if (!formData.owner_name) errors.push('Nombre del responsable es requerido');
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+        errors.push('Formato de email inválido');
+    }
+
+    // Validar longitud de contraseña
+    if (formData.password && formData.password.length < 6) {
+        errors.push('La contraseña debe tener al menos 6 caracteres');
+    }
+
+    return errors;
 }
 
 // Event listeners cuando se carga el DOM
-document.addEventListener('DOMContentLoaded', function() {
-  
-  // Formulario de usuario
-  const userForm = document.querySelector('#user-register form');
-  if (userForm) {
-    userForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = this.querySelector('.register-btn');
-      const originalText = submitBtn.textContent;
-      
-      // Deshabilitar botón durante el registro
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'REGISTERING...';
-      
-      // Obtener datos del formulario - MAPEADO CORRECTO
-      const formData = {
-        first_name: this.querySelector('input[placeholder=""]').value.trim(), // Primer input
-        last_name: this.querySelectorAll('input[placeholder=""]')[1].value.trim(), // Segundo input
-        email: this.querySelector('input[type="email"]').value.trim(),
-        phone: this.querySelector('input[type="tel"]').value.trim(),
-        password: this.querySelector('input[type="password"]').value,
-        address: this.querySelectorAll('input[type="text"]')[2].value.trim(), // Input de dirección
-        age_range: this.querySelector('select').value
-      };
-      
-      // Validaciones básicas
-      if (!formData.first_name || !formData.last_name || !formData.email || !formData.password) {
-        showError('Por favor, completa todos los campos obligatorios');
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-        return;
-      }
+document.addEventListener('DOMContentLoaded', function () {
 
-      if (formData.age_range === 'Select...') {
-        showError('Por favor, selecciona un rango de edad');
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-        return;
-      }
-      
-      try {
-        await registerUser(formData);
-      } finally {
-        // Rehabilitar botón
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    });
-  }
+    // 🔧 REGISTRO DE USUARIO - CORREGIDO
+    const userRegisterBtn = document.querySelector('#user-register .btn-login');
+    if (userRegisterBtn) {
+        userRegisterBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            e.stopPropagation(); // Evitar conflictos con otros listeners
 
-  // Formulario de barbería
-  const barberForm = document.querySelector('#barber-register form');
-  if (barberForm) {
-    barberForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = this.querySelector('.register-btn');
-      const originalText = submitBtn.textContent;
-      
-      // Deshabilitar botón durante el registro
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'REGISTERING...';
-      
-      // Obtener datos del formulario de barbería
-      const inputs = this.querySelectorAll('input');
-      const textarea = this.querySelector('textarea');
-      
-      const barbershopData = {
-        name: inputs[0].value.trim(), // BARBERSHOP NAME
-        email: inputs[1].value.trim(), // BARBERSHOP EMAIL
-        phone: inputs[2].value.trim(), // BARBERSHOP CONTACT NUMBER
-        password: inputs[3].value, // PASSWORD
-        owner_name: inputs[4].value.trim(), // RESPONSIBLE PERSON NAME
-        owner_id: inputs[5].value.trim(), // ID DOCUMENT
-        owner_phone: inputs[6].value.trim(), // OWNER'S CONTACT PHONE
-        address: textarea.value.trim() // BARBERSHOP ADDRESS
-      };
-      
-      // Validaciones básicas
-      if (!barbershopData.name || !barbershopData.email || !barbershopData.password || !barbershopData.owner_name) {
-        showError('Por favor, completa todos los campos obligatorios');
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-        return;
-      }
-      
-      try {
-        await registerBarbershop(barbershopData);
-      } finally {
-        // Rehabilitar botón
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
+            console.log('🎯 Botón de registro de usuario clickeado');
+
+            const originalText = this.textContent;
+
+            // Deshabilitar botón durante el registro
+            this.disabled = true;
+            this.textContent = 'REGISTRANDO...';
+
+            try {
+                const formData = getUserFormData();
+
+                // Validar datos
+                const errors = validateUserForm(formData);
+                if (errors.length > 0) {
+                    showError(errors.join('. '));
+                    return;
+                }
+
+                await registerUser(formData);
+            } finally {
+                // Rehabilitar botón
+                this.disabled = false;
+                this.textContent = originalText;
+            }
+        });
+    } else {
+        console.error('❌ No se encontró el botón de registro de usuario');
+    }
+
+    // 🔧 REGISTRO DE BARBERÍA - CORREGIDO
+    const barberRegisterBtn = document.querySelector('#barber-register .register-btn');
+    if (barberRegisterBtn) {
+        barberRegisterBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            e.stopPropagation(); // Evitar conflictos con otros listeners
+
+            console.log('🎯 Botón de registro de barbería clickeado');
+
+            const originalText = this.textContent;
+
+            // Deshabilitar botón durante el registro
+            this.disabled = true;
+            this.textContent = 'REGISTRANDO...';
+
+            try {
+                const formData = getBarbershopFormData();
+
+                // Validar datos
+                const errors = validateBarbershopForm(formData);
+                if (errors.length > 0) {
+                    showError(errors.join('. '));
+                    return;
+                }
+
+                await registerBarbershop(formData);
+            } finally {
+                // Rehabilitar botón
+                this.disabled = false;
+                this.textContent = originalText;
+            }
+        });
+    } else {
+        console.error('❌ No se encontró el botón de registro de barbería');
+    }
+
+    // Event listener para links de login
+    const loginLinks = document.querySelectorAll('.login-link a');
+    loginLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            window.location.href = 'login.html';
+        });
     });
-  }
-  
-  // Event listener para links de login
-  const loginLinks = document.querySelectorAll('.login-link');
-  loginLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.location.href = 'login.html';
+
+    // Event listener para botones de Google (por implementar)
+    const googleBtns = document.querySelectorAll('.btn-signup');
+    googleBtns.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            alert('Funcionalidad de Google OAuth por implementar');
+        });
     });
-  });
-  
-  // Event listener para botones de Google (por implementar)
-  const googleBtns = document.querySelectorAll('.google-btn');
-  googleBtns.forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      alert('Funcionalidad de Google OAuth por implementar');
-    });
-  });
+
+    console.log('✅ Event listeners registrados correctamente');
 });

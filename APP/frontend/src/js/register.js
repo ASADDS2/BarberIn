@@ -329,7 +329,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-<<<<<<< HEAD
     // Enlaces a login
     const loginLinks = document.querySelectorAll('.login-link a');
     loginLinks.forEach(link => {
@@ -339,9 +338,3 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-=======
-    console.log('✅ Event listeners successfully registered');
-    console.log('🔗 Google OAuth URL: http://localhost:3000/auth/google');
-});
-
->>>>>>> 011c7002e37d12110a02b034f21550b76425ace6

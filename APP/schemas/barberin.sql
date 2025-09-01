@@ -18,6 +18,8 @@
 --
 -- Table structure for table `appointments`
 --
+CREATE DATABASE Barberin;
+USE Barberin;
 
 DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

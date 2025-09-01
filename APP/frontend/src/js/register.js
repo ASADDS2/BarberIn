@@ -21,10 +21,17 @@ function toggleRegisterMode() {
         // Switch to user mode
         barberPanel.classList.add('hidden');
         userPanel.classList.remove('hidden');
-        toggleText.textContent = 'Registrar Barberías';
+        toggleText.textContent = 'Registrar Barberias';
         navLeft.textContent = 'Registro de Usuario';
         isUserMode = true; // 🔧 CORREGIDO: era "Mode = true"
     }
+}
+
+// 🆕 FUNCIÓN NUEVA: Manejar registro con Google
+function handleGoogleRegister() {
+    console.log('🎯 Iniciando registro con Google...');
+    // Redirigir a la ruta de autenticación de Google
+    window.location.href = 'http://localhost:3000/auth/google';
 }
 
 // Función para mostrar errores
@@ -114,7 +121,7 @@ function getUserFormData() {
         age_range: select.value                // Select: Edad
     };
 
-    console.log('📝 Datos usuario recolectados:', formData);
+    console.log('Datos usuario recolectados:', formData);
     return formData;
 }
 
@@ -135,7 +142,7 @@ function getBarbershopFormData() {
         address: textarea.value.trim()         // Dirección Barbería
     };
 
-    console.log('📝 Datos barbería recolectados:', formData);
+    console.log('Datos barbería recolectados:', formData);
     return formData;
 }
 
@@ -187,7 +194,6 @@ function resetUserForm() {
     });
 }
 
-
 // Función para registrar barbería
 async function registerBarbershop(formData) {
     try {
@@ -210,7 +216,6 @@ async function registerBarbershop(formData) {
             showSuccess('¡Barbería registrada exitosamente!');
             document.querySelectorAll('#barber-register .form-section input, #barber-register .form-section textarea, #barber-register .form-section select')
                 .forEach(el => el.value = '');
-
 
             setTimeout(() => {
                 window.location.href = 'login.html';
@@ -273,8 +278,28 @@ function validateBarbershopForm(formData) {
     return errors;
 }
 
+// 🆕 FUNCIÓN NUEVA: Verificar parámetros de URL después de Google OAuth
+function checkGoogleAuthResult() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error === 'auth_failed') {
+        showError('Error en la autenticación con Google. Por favor intenta nuevamente.');
+    }
+    
+    // Si llegamos desde Google Auth exitoso, el usuario ya estaría redirigido al dashboard
+    // pero por si acaso, podemos manejar un parámetro de éxito
+    const authSuccess = urlParams.get('auth_success');
+    if (authSuccess === 'true') {
+        showSuccess('¡Registro con Google exitoso!');
+    }
+}
+
 // Event listeners cuando se carga el DOM
 document.addEventListener('DOMContentLoaded', function () {
+    
+    // 🆕 NUEVO: Verificar resultado de Google Auth al cargar la página
+    checkGoogleAuthResult();
 
     // 🔧 REGISTRO DE USUARIO - CORREGIDO
     const userRegisterBtn = document.querySelector('#user-register .btn-login');
@@ -357,14 +382,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Event listener para botones de Google (por implementar)
+    // 🆕 ACTUALIZADO: Event listener para botones de Google OAuth
     const googleBtns = document.querySelectorAll('.btn-signup');
     googleBtns.forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-            alert('Funcionalidad de Google OAuth por implementar');
+            console.log('Botón de Google OAuth clickeado');
+            
+            // Cambiar texto del botón mientras redirige
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span class="google-icon">G</span> Redirigiendo...';
+            this.disabled = true;
+            
+            // Llamar función de Google OAuth
+            handleGoogleRegister();
         });
     });
 
     console.log('✅ Event listeners registrados correctamente');
+    console.log('🔗 Google OAuth URL: http://localhost:3000/auth/google');
 });

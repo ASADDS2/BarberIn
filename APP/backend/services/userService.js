@@ -154,6 +154,84 @@ class UserService {
             throw error;
         }
     }
+
+    // Añadir estos métodos a tu backend/services/userService.js existente
+
+// Método para buscar usuario por Google ID
+async getUserByGoogleId(googleId) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM users WHERE google_id = ?';
+        this.db.query(query, [googleId], (error, results) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(results[0] || null);
+        });
+    });
+}
+
+// Método para buscar usuario por email
+async getUserByEmail(email) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM users WHERE email = ?';
+        this.db.query(query, [email.toLowerCase()], (error, results) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(results[0] || null);
+        });
+    });
+}
+
+// Método para actualizar Google ID de usuario existente
+async updateGoogleId(userId, googleId) {
+    return new Promise((resolve, reject) => {
+        const query = 'UPDATE users SET google_id = ?, provider = ? WHERE user_id = ?';
+        this.db.query(query, [googleId, 'google', userId], (error, results) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(results.affectedRows > 0);
+        });
+    });
+}
+
+// Método para crear usuario desde Google OAuth
+async createGoogleUser(userData) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO users (
+                first_name, last_name, email, google_id, 
+                profile_photo_url, provider, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `;
+        
+        const values = [
+            userData.first_name,
+            userData.last_name,
+            userData.email,
+            userData.google_id,
+            userData.profile_photo_url,
+            userData.provider || 'google'
+        ];
+
+        this.db.query(query, values, (error, results) => {
+            if (error) {
+                if (error.code === 'ER_DUP_ENTRY') {
+                    return reject(new Error('User already exists'));
+                }
+                return reject(error);
+            }
+
+            // Retornar el usuario creado
+            const newUser = {
+                user_id: results.insertId,
+                ...userData
+            };
+            resolve(newUser);
+        });
+    });
+}
 }
 
 // Export the UserService class for use throughout the application

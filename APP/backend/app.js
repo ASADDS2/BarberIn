@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
+import passport from './middleware/passport.js';
 import errorHandler from './middleware/errorHandler.js';
 import dotenv from 'dotenv';
 import db from './config/database.js';
@@ -17,6 +19,22 @@ app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3001',
     credentials: true
 }));
+
+// Configurar sesiones (necesario para Passport)
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'barberin-secret-key-2024',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 horas
+    }
+}));
+
+// Inicializar Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static('public'));
@@ -49,14 +67,16 @@ async function loadRoutes() {
             barberRoutes,
             appointmentRoutes,
             serviceRoutes,
-            reviewRoutes
+            reviewRoutes,
+            authRoutes
         ] = await Promise.all([
             import('./routes/userRoutes.js'),
             import('./routes/barbershopRoutes.js'),
             import('./routes/barberRoutes.js'),
             import('./routes/appointmentRoutes.js'),
             import('./routes/serviceRoutes.js'),
-            import('./routes/reviewRoutes.js')
+            import('./routes/reviewRoutes.js'),
+            import('./routes/authRoutes.js')
         ]);
 
         // Register the routes
@@ -66,6 +86,7 @@ async function loadRoutes() {
         app.use('/api/appointments', appointmentRoutes.default);
         app.use('/api/services', serviceRoutes.default);
         app.use('/api/reviews', reviewRoutes.default);
+        app.use('/auth', authRoutes.default); // Rutas de autenticación Google
 
         console.log('✅ All routes loaded successfully');
 
@@ -86,6 +107,7 @@ async function loadRoutes() {
         app.listen(PORT, () => {
             console.log(`BARBERIN server running on port ${PORT}`);
             console.log(`Health check: http://localhost:${PORT}/health`);
+            console.log(`Google OAuth: http://localhost:${PORT}/auth/google`);
         });
 
     } catch (error) {

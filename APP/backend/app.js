@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import mysql from 'mysql2';
 import errorHandler from './middleware/errorHandler.js';
 import dotenv from 'dotenv';
+import db from './config/database.js';
 
 dotenv.config();
 
@@ -21,21 +21,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static('public'));
 
-// Database connection
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'Qwe.123*',
-    database: process.env.DB_NAME || 'Barberin'
-});
-
-db.connect((err) => {
-    if (err) {
-        console.error('Error conectando a la base de datos:', err);
-        process.exit(1);
-    }
-    console.log('Conectado a la base de datos MySQL');
-});
+// Database connection is now imported from config/database.js
+// The pool is already configured and tested in the database.js file
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -111,7 +98,7 @@ async function loadRoutes() {
 process.on('SIGINT', () => {
     console.log('Cerrando servidor...');
     db.end(() => {
-        console.log('Conexión a base de datos cerrada.');
+        console.log('Pool de conexiones cerrado.');
         process.exit(0);
     });
 });

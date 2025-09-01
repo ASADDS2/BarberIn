@@ -1,10 +1,12 @@
-const mysql = require('mysql2');
-require('dotenv').config();
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'Qwe.123*',
+    password: process.env.DB_PASSWORD || 'tuclave*',
     database: process.env.DB_NAME || 'Barberin',
     acquireTimeout: 60000,
     timeout: 60000,
@@ -23,4 +25,4 @@ pool.getConnection((err, connection) => {
     connection.release();
 });
 
-module.exports = pool;
+export default pool;

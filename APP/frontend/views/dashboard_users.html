@@ -114,8 +114,9 @@
             // localStorage.clear();
 
             // O borra solo lo que usas para la sesión (más seguro)
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
+            localStorage.removeItem("userData");
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
 
             // Redirigir al login
             window.location.href = "./login.html";

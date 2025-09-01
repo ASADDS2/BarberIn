@@ -123,28 +123,6 @@
         }
       }
 
-      // Función para manejar login con Google
-      function handleGoogleLogin() {
-        console.log('Iniciando login con Google...');
-        // Cambiar texto del botón mientras redirige
-        const googleBtn = document.querySelector('.google-login');
-        googleBtn.innerHTML = '...';
-        googleBtn.disabled = true;
-        
-        // Redirigir a la ruta de autenticación de Google
-        window.location.href = 'http://localhost:3000/auth/google';
-      }
-
-      // Verificar si llegamos desde Google Auth
-      function checkGoogleAuthResult() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const error = urlParams.get('error');
-        
-        if (error === 'auth_failed') {
-          showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
-        }
-      }
-
       // Función para mostrar mensajes
       function showMessage(message, type = 'info') {
         const container = document.getElementById('message-container');

@@ -8,10 +8,7 @@
       href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
       rel="stylesheet"
     />
-    <link
-      rel="stylesheet"
-      href="../src/css/dashboard_users.css"
-    />
+    <link rel="stylesheet" href="../src/css/dashboard_users.css" />
   </head>
   <body>
     <!-- Header -->
@@ -22,7 +19,7 @@
         style="height: 70px; width: 80px"
       />
       <!-- botton logout -->
-      <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
+      <button id="logoutBtn" class="logout-btn">log out</button>
     </header>
 
     <!-- Dashboard Layout -->
@@ -30,11 +27,11 @@
       <!-- Left Panel - Agenda -->
       <aside class="agenda-panel">
         <div class="icon-add">+</div>
-        <h2 class="title">Citas</h2>
+        <h2 class="title">Appointment</h2>
 
         <div class="btn-group">
-          <button class="btn">Barberías</button>
-          <button class="btn">Favoritos</button>
+          <button class="btn">Barbershops</button>
+          <button class="btn">Favorites</button>
           <div class="star-favorite">★</div>
         </div>
 
@@ -69,7 +66,7 @@
           <input
             type="text"
             id="searchInput"
-            placeholder="Buscar barberías..."
+            placeholder="Search Barbershops..."
           />
         </div>
 
@@ -109,23 +106,22 @@
     ></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
 
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      // Borra TODO el localStorage
-      // localStorage.clear();
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            // Borra TODO el localStorage
+            // localStorage.clear();
 
-      // O borra solo lo que usas para la sesión (más seguro)
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+            // O borra solo lo que usas para la sesión (más seguro)
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
 
-      // Redirigir al login
-      window.location.href = "./login.html";
-    });
-  }
-});
-
+            // Redirigir al login
+            window.location.href = "./login.html";
+          });
+        }
+      });
     </script>
   </body>
 </html>

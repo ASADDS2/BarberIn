@@ -4,12 +4,6 @@
  * authentication, profile management, and data retrieval.
  */
 
-import AuthService from './authService.js';
-
-/**
- * UserService class
- * Contains methods for managing user data and operations
- */
 class UserService {
     
     /**
@@ -155,84 +149,96 @@ class UserService {
         }
     }
 
-    // Añadir estos métodos a tu backend/services/userService.js existente
+    /**
+     * Retrieves all users with pagination
+     * @param {number} page - Page number
+     * @param {number} limit - Number of users per page
+     * @returns {Promise<Array>} List of users
+     */
+    async getAllUsers(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
 
-// Método para buscar usuario por Google ID
-async getUserByGoogleId(googleId) {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM users WHERE google_id = ?';
-        this.db.query(query, [googleId], (error, results) => {
-            if (error) {
-                return reject(error);
-            }
-            resolve(results[0] || null);
-        });
-    });
-}
-
-// Método para buscar usuario por email
-async getUserByEmail(email) {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM users WHERE email = ?';
-        this.db.query(query, [email.toLowerCase()], (error, results) => {
-            if (error) {
-                return reject(error);
-            }
-            resolve(results[0] || null);
-        });
-    });
-}
-
-// Método para actualizar Google ID de usuario existente
-async updateGoogleId(userId, googleId) {
-    return new Promise((resolve, reject) => {
-        const query = 'UPDATE users SET google_id = ?, provider = ? WHERE user_id = ?';
-        this.db.query(query, [googleId, 'google', userId], (error, results) => {
-            if (error) {
-                return reject(error);
-            }
-            resolve(results.affectedRows > 0);
-        });
-    });
-}
-
-// Método para crear usuario desde Google OAuth
-async createGoogleUser(userData) {
-    return new Promise((resolve, reject) => {
         const query = `
-            INSERT INTO users (
-                first_name, last_name, email, google_id, 
-                profile_photo_url, provider, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+            SELECT user_id, first_name, last_name, email, phone, address, age_range, profile_photo_url
+            FROM users
+            WHERE is_active = TRUE
+            LIMIT ? OFFSET ?
         `;
-        
-        const values = [
-            userData.first_name,
-            userData.last_name,
-            userData.email,
-            userData.google_id,
-            userData.profile_photo_url,
-            userData.provider || 'google'
-        ];
 
-        this.db.query(query, values, (error, results) => {
-            if (error) {
-                if (error.code === 'ER_DUP_ENTRY') {
-                    return reject(new Error('User already exists'));
+        return new Promise((resolve, reject) => {
+            this.db.query(query, [limit, offset], (err, results) => {
+                if (err) {
+                    return reject(err);
                 }
-                return reject(error);
-            }
-
-            // Retornar el usuario creado
-            const newUser = {
-                user_id: results.insertId,
-                ...userData
-            };
-            resolve(newUser);
+                resolve(results);
+            });
         });
-    });
-}
+    }
+
+    // Métodos relacionados con Google OAuth
+
+    // Método para buscar usuario por Google ID
+    async getUserByGoogleId(googleId) {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM users WHERE google_id = ?';
+            this.db.query(query, [googleId], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results[0] || null);
+            });
+        });
+    }
+
+    // Método para actualizar Google ID de usuario existente
+    async updateGoogleId(userId, googleId) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE users SET google_id = ?, provider = ? WHERE user_id = ?';
+            this.db.query(query, [googleId, 'google', userId], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results.affectedRows > 0);
+            });
+        });
+    }
+
+    // Método para crear usuario desde Google OAuth
+    async createGoogleUser(userData) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                INSERT INTO users (
+                    first_name, last_name, email, google_id, 
+                    profile_photo_url, provider, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+            `;
+            
+            const values = [
+                userData.first_name,
+                userData.last_name,
+                userData.email,
+                userData.google_id,
+                userData.profile_photo_url,
+                userData.provider || 'google'
+            ];
+
+            this.db.query(query, values, (error, results) => {
+                if (error) {
+                    if (error.code === 'ER_DUP_ENTRY') {
+                        return reject(new Error('User already exists'));
+                    }
+                    return reject(error);
+                }
+
+                // Retornar el usuario creado
+                const newUser = {
+                    user_id: results.insertId,
+                    ...userData
+                };
+                resolve(newUser);
+            });
+        });
+    }
 }
 
-// Export the UserService class for use throughout the application
 export default UserService;

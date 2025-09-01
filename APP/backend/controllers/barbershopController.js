@@ -1,4 +1,4 @@
-import BarbershopService from '../services/barbershopService.js'; // Incluye la extensión .js
+import BarbershopService from '../services/barbershopService.js'; // Include .js extension
 import Validators from '../utils/validators.js';
 import ResponseHelper from '../utils/responseHelper.js';
 
@@ -11,17 +11,17 @@ class BarbershopController {
                 responsible_person, id_document, owner_phone, description
             } = req.body;
             
-            // Validaciones
+            // Validations
             const errors = [];
-            if (!name || name.length < 3) errors.push('Nombre de barbería requerido (mínimo 3 caracteres)');
-            if (!Validators.isValidEmail(email)) errors.push('Email inválido');
-            if (!Validators.isValidPhone(phone)) errors.push('Teléfono inválido');
-            if (!Validators.isValidPassword(password)) errors.push('Contraseña debe tener al menos 6 caracteres');
-            if (!address || address.length < 10) errors.push('Dirección requerida (mínimo 10 caracteres)');
-            if (!responsible_person || responsible_person.length < 5) errors.push('Persona responsable requerida');
-            if (!id_document || id_document.length < 6) errors.push('Documento de identidad requerido');
-            if (latitude && (latitude < -90 || latitude > 90)) errors.push('Latitud inválida');
-            if (longitude && (longitude < -180 || longitude > 180)) errors.push('Longitud inválida');
+            if (!name || name.length < 3) errors.push('Barbershop name required (minimum 3 characters)');
+            if (!Validators.isValidEmail(email)) errors.push('Invalid email');
+            if (!Validators.isValidPhone(phone)) errors.push('Invalid phone number');
+            if (!Validators.isValidPassword(password)) errors.push('Password must have at least 6 characters');
+            if (!address || address.length < 10) errors.push('Address required (minimum 10 characters)');
+            if (!responsible_person || responsible_person.length < 5) errors.push('Responsible person required');
+            if (!id_document || id_document.length < 6) errors.push('Identity document required');
+            if (latitude && (latitude < -90 || latitude > 90)) errors.push('Invalid latitude');
+            if (longitude && (longitude < -180 || longitude > 180)) errors.push('Invalid longitude');
             
             if (errors.length > 0) {
                 return ResponseHelper.validationError(res, errors);
@@ -43,9 +43,9 @@ class BarbershopController {
             };
 
             const barbershop = await barbershopService.createBarbershop(barbershopData);
-            ResponseHelper.success(res, barbershop, 'Barbería registrada exitosamente', 201);
+            ResponseHelper.success(res, barbershop, 'Barbershop registered successfully', 201);
         } catch (error) {
-            if (error.message.includes('ya existe')) {
+            if (error.message.includes('already exists')) {
                 return ResponseHelper.error(res, error.message, 409);
             }
             ResponseHelper.error(res, error.message);
@@ -57,12 +57,12 @@ class BarbershopController {
             const { email, password } = req.body;
             
             if (!email || !password) {
-                return ResponseHelper.validationError(res, ['Email y contraseña son requeridos']);
+                return ResponseHelper.validationError(res, ['Email and password are required']);
             }
 
             const barbershopService = new BarbershopService(req.db);
             const result = await barbershopService.loginBarbershop(email.toLowerCase().trim(), password);
-            ResponseHelper.success(res, result, 'Login exitoso');
+            ResponseHelper.success(res, result, 'Login successful');
         } catch (error) {
             ResponseHelper.error(res, error.message, 401);
         }
@@ -81,7 +81,7 @@ class BarbershopController {
             }
             
             const barbershops = await barbershopService.getAllBarbershops(filters);
-            ResponseHelper.success(res, { barbershops }, 'Barberías obtenidas');
+            ResponseHelper.success(res, { barbershops }, 'Barbershops retrieved');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }
@@ -92,10 +92,10 @@ class BarbershopController {
             const barbershopService = new BarbershopService(req.db);
             const barbershop = await barbershopService.getBarbershopById(req.params.id);
             if (!barbershop) {
-                return ResponseHelper.notFound(res, 'Barbería no encontrada');
+                return ResponseHelper.notFound(res, 'Barbershop not found');
             }
             const { password_hash, ...barbershopWithoutPassword } = barbershop;
-            ResponseHelper.success(res, { barbershop: barbershopWithoutPassword }, 'Barbería obtenida');
+            ResponseHelper.success(res, { barbershop: barbershopWithoutPassword }, 'Barbershop retrieved');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }
@@ -106,10 +106,10 @@ class BarbershopController {
             const barbershopService = new BarbershopService(req.db);
             const barbershop = await barbershopService.getBarbershopById(req.barbershop.barbershop_id);
             if (!barbershop) {
-                return ResponseHelper.notFound(res, 'Barbería no encontrada');
+                return ResponseHelper.notFound(res, 'Barbershop not found');
             }
             const { password_hash, ...barbershopWithoutPassword } = barbershop;
-            ResponseHelper.success(res, { barbershop: barbershopWithoutPassword }, 'Perfil obtenido');
+            ResponseHelper.success(res, { barbershop: barbershopWithoutPassword }, 'Profile retrieved');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }
@@ -122,13 +122,13 @@ class BarbershopController {
                 owner_phone, description, profile_photo_url, cover_photo_url
             } = req.body;
             
-            // Validaciones
+            // Validations
             const errors = [];
-            if (name && name.length < 3) errors.push('Nombre debe tener al menos 3 caracteres');
-            if (phone && !Validators.isValidPhone(phone)) errors.push('Teléfono inválido');
-            if (address && address.length < 10) errors.push('Dirección debe tener al menos 10 caracteres');
-            if (latitude && (latitude < -90 || latitude > 90)) errors.push('Latitud inválida');
-            if (longitude && (longitude < -180 || longitude > 180)) errors.push('Longitud inválida');
+            if (name && name.length < 3) errors.push('Name must have at least 3 characters');
+            if (phone && !Validators.isValidPhone(phone)) errors.push('Invalid phone number');
+            if (address && address.length < 10) errors.push('Address must have at least 10 characters');
+            if (latitude && (latitude < -90 || latitude > 90)) errors.push('Invalid latitude');
+            if (longitude && (longitude < -180 || longitude > 180)) errors.push('Invalid longitude');
             
             if (errors.length > 0) {
                 return ResponseHelper.validationError(res, errors);
@@ -155,9 +155,9 @@ class BarbershopController {
 
             const updated = await barbershopService.updateBarbershop(req.barbershop.barbershop_id, barbershopData);
             if (!updated) {
-                return ResponseHelper.notFound(res, 'Barbería no encontrada');
+                return ResponseHelper.notFound(res, 'Barbershop not found');
             }
-            ResponseHelper.success(res, null, 'Perfil actualizado correctamente');
+            ResponseHelper.success(res, null, 'Profile updated successfully');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }

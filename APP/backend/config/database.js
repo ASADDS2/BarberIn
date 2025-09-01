@@ -6,7 +6,7 @@ dotenv.config();
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'tuclave*',
+    password: process.env.DB_PASSWORD || 'Qwe.123*',
     database: process.env.DB_NAME || 'Barberin',
     acquireTimeout: 60000,
     timeout: 60000,
@@ -18,10 +18,10 @@ const pool = mysql.createPool(dbConfig);
 // Test connection
 pool.getConnection((err, connection) => {
     if (err) {
-        console.error('Error conectando a la base de datos:', err);
+        console.error('Error connecting to database:', err);
         return;
     }
-    console.log('Pool de conexiones MySQL creado exitosamente');
+    console.log('MySQL connection pool created successfully');
     connection.release();
 });
 

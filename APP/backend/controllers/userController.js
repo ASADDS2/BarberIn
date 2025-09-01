@@ -7,13 +7,13 @@ class UserController {
         try {
             const { first_name, last_name, email, phone, password, address, age_range } = req.body;
             
-            // Validaciones
+            // Validations
             const errors = [];
-            if (!first_name || first_name.length < 2) errors.push('Nombre requerido (mínimo 2 caracteres)');
-            if (!last_name || last_name.length < 2) errors.push('Apellido requerido (mínimo 2 caracteres)');
-            if (!Validators.isValidEmail(email)) errors.push('Email inválido');
-            if (phone && !Validators.isValidPhone(phone)) errors.push('Teléfono inválido');
-            if (!Validators.isValidPassword(password)) errors.push('Contraseña debe tener al menos 6 caracteres');
+            if (!first_name || first_name.length < 2) errors.push('First name required (minimum 2 characters)');
+            if (!last_name || last_name.length < 2) errors.push('Last name required (minimum 2 characters)');
+            if (!Validators.isValidEmail(email)) errors.push('Invalid email');
+            if (phone && !Validators.isValidPhone(phone)) errors.push('Invalid phone number');
+            if (!Validators.isValidPassword(password)) errors.push('Password must have at least 6 characters');
             
             if (errors.length > 0) {
                 return ResponseHelper.validationError(res, errors);
@@ -31,9 +31,9 @@ class UserController {
             };
 
             const user = await userService.createUser(userData);
-            ResponseHelper.success(res, user, 'Usuario registrado exitosamente', 201);
+            ResponseHelper.success(res, user, 'User registered successfully', 201);
         } catch (error) {
-            if (error.message.includes('ya existe')) {
+            if (error.message.includes('already exists')) {
                 return ResponseHelper.error(res, error.message, 409);
             }
             ResponseHelper.error(res, error.message);
@@ -45,12 +45,12 @@ class UserController {
             const { email, password } = req.body;
             
             if (!email || !password) {
-                return ResponseHelper.validationError(res, ['Email y contraseña son requeridos']);
+                return ResponseHelper.validationError(res, ['Email and password are required']);
             }
 
             const userService = new UserService(req.db);
             const result = await userService.loginUser(email.toLowerCase().trim(), password);
-            ResponseHelper.success(res, result, 'Login exitoso');
+            ResponseHelper.success(res, result, 'Login successful');
         } catch (error) {
             ResponseHelper.error(res, error.message, 401);
         }
@@ -61,10 +61,10 @@ class UserController {
             const userService = new UserService(req.db);
             const user = await userService.getUserById(req.user.user_id);
             if (!user) {
-                return ResponseHelper.notFound(res, 'Usuario no encontrado');
+                return ResponseHelper.notFound(res, 'User not found');
             }
             const { password_hash, ...userWithoutPassword } = user;
-            ResponseHelper.success(res, { user: userWithoutPassword }, 'Perfil obtenido');
+            ResponseHelper.success(res, { user: userWithoutPassword }, 'Profile retrieved');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }
@@ -74,11 +74,11 @@ class UserController {
         try {
             const { first_name, last_name, phone, address, age_range, profile_photo_url } = req.body;
             
-            // Validaciones
+            // Validations
             const errors = [];
-            if (first_name && first_name.length < 2) errors.push('Nombre debe tener al menos 2 caracteres');
-            if (last_name && last_name.length < 2) errors.push('Apellido debe tener al menos 2 caracteres');
-            if (phone && !Validators.isValidPhone(phone)) errors.push('Teléfono inválido');
+            if (first_name && first_name.length < 2) errors.push('First name must have at least 2 characters');
+            if (last_name && last_name.length < 2) errors.push('Last name must have at least 2 characters');
+            if (phone && !Validators.isValidPhone(phone)) errors.push('Invalid phone number');
             
             if (errors.length > 0) {
                 return ResponseHelper.validationError(res, errors);
@@ -101,13 +101,13 @@ class UserController {
 
             const updated = await userService.updateUser(req.user.user_id, userData);
             if (!updated) {
-                return ResponseHelper.notFound(res, 'Usuario no encontrado');
+                return ResponseHelper.notFound(res, 'User not found');
             }
-            ResponseHelper.success(res, null, 'Perfil actualizado correctamente');
+            ResponseHelper.success(res, null, 'Profile updated successfully');
         } catch (error) {
             ResponseHelper.error(res, error.message);
         }
     }
 }
 
-export default UserController; // Usar export default
+export default UserController; // Use export default

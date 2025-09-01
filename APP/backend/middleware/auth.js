@@ -4,7 +4,7 @@ const authenticateUser = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
-        return res.status(401).json({ error: 'Token no proporcionado' });
+        return res.status(401).json({ error: 'Token not provided' });
     }
 
     try {
@@ -12,7 +12,7 @@ const authenticateUser = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(401).json({ error: 'Invalid token' });
     }
 };
 
@@ -20,20 +20,20 @@ const authenticateBarbershop = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
-        return res.status(401).json({ error: 'Token no proporcionado' });
+        return res.status(401).json({ error: 'Token not provided' });
     }
 
     try {
         const decoded = AuthService.verifyToken(token);
         if (decoded.type !== 'barbershop') {
-            return res.status(403).json({ error: 'Acceso denegado' });
+            return res.status(403).json({ error: 'Access denied' });
         }
         req.barbershop = decoded;
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(401).json({ error: 'Invalid token' });
     }
 };
 
-// Cambia a export default
+// Change to export default
 export { authenticateUser, authenticateBarbershop };

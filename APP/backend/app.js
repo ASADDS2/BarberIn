@@ -6,7 +6,7 @@ import db from './config/database.js';
 
 dotenv.config();
 
-// Desactivar los warnings de Node.js
+// Disable Node.js warnings
 process.emitWarning = () => {};
 
 const app = express();
@@ -39,10 +39,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// Función para cargar rutas de forma asíncrona
+// Function to load routes asynchronously
 async function loadRoutes() {
     try {
-        // Cargar todas las rutas usando imports dinámicos
+        // Load all routes using dynamic imports
         const [
             userRoutes,
             barbershopRoutes,
@@ -59,7 +59,7 @@ async function loadRoutes() {
             import('./routes/reviewRoutes.js')
         ]);
 
-        // Registrar las rutas
+        // Register the routes
         app.use('/api/users', userRoutes.default);
         app.use('/api/barbershops', barbershopRoutes.default);
         app.use('/api/barbers', barberRoutes.default);
@@ -67,13 +67,13 @@ async function loadRoutes() {
         app.use('/api/services', serviceRoutes.default);
         app.use('/api/reviews', reviewRoutes.default);
 
-        console.log('✅ Todas las rutas cargadas correctamente');
+        console.log('✅ All routes loaded successfully');
 
         // 404 handler
         app.use((req, res) => {
             res.status(404).json({
                 success: false,
-                message: 'Endpoint no encontrado',
+                message: 'Endpoint not found',
                 path: req.originalUrl,
                 method: req.method
             });
@@ -82,28 +82,28 @@ async function loadRoutes() {
         // Error handling middleware
         app.use(errorHandler);
 
-        // Iniciar servidor
+        // Start server
         app.listen(PORT, () => {
-            console.log(`Servidor BARBERIN corriendo en puerto ${PORT}`);
+            console.log(`BARBERIN server running on port ${PORT}`);
             console.log(`Health check: http://localhost:${PORT}/health`);
         });
 
     } catch (error) {
-        console.error('Error cargando rutas:', error);
+        console.error('Error loading routes:', error);
         process.exit(1);
     }
 }
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    console.log('Cerrando servidor...');
+    console.log('Closing server...');
     db.end(() => {
-        console.log('Pool de conexiones cerrado.');
+        console.log('Connection pool closed.');
         process.exit(0);
     });
 });
 
-// Cargar rutas y iniciar servidor
+// Load routes and start server
 loadRoutes();
 
 export default app;

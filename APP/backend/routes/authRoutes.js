@@ -12,9 +12,11 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/login?error=auth_failed' }),
     (req, res) => {
-        // Redirigir al dashboard después del login exitoso
-        const redirectUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-        res.redirect(`${redirectUrl}/dashboard_users.html?user=${req.user.user_id}`);
+        // CORREGIDO: Redirigir a la ruta correcta del frontend
+        const redirectUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        
+        // Cambiar la ruta para que coincida con tu estructura
+        res.redirect(`${redirectUrl}/src/views/dashboard_users.html?user=${req.user.user_id}`);
     }
 );
 

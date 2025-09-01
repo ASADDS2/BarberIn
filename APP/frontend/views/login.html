@@ -35,6 +35,9 @@
         <div class="side-image"></div>
 
         <div class="login-container">
+          <!-- Mensajes de estado -->
+          <div id="message-container"></div>
+          
           <form>
             <div class="form-group">
               <label for="usuario">USERNAME / EMAIL</label>
@@ -61,13 +64,14 @@
               <label for="password">PASSWORD</label>
               <div class="input-wrapper">
                 <input type="password" id="password" name="password" required />
-                <div class="selector">👁</div>
+                <div class="selector" onclick="togglePasswordVisibility()">👁</div>
               </div>
             </div>
 
             <div class="login-section">
               <button type="submit" class="btn-login">Log in</button>
-              <div class="google-login">G</div>
+              <!-- Botón de Google con funcionalidad -->
+              <button type="button" class="google-login" onclick="handleGoogleLogin()">G</button>
             </div>
 
             <div class="form-links">
@@ -106,16 +110,72 @@
       }
 
       // Toggle password visibility
-      const passwordSelector = document.querySelector("#password + .selector");
-      passwordSelector.addEventListener("click", function () {
+      function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
+        const selector = document.querySelector("#password + .selector");
+        
         if (passwordInput.type === "password") {
           passwordInput.type = "text";
-          this.innerHTML = "👁";
+          selector.innerHTML = "👁";
         } else {
           passwordInput.type = "password";
-          this.innerHTML = "👁";
+          selector.innerHTML = "👁";
         }
+      }
+
+      // Función para manejar login con Google
+      function handleGoogleLogin() {
+        console.log('Iniciando login con Google...');
+        // Cambiar texto del botón mientras redirige
+        const googleBtn = document.querySelector('.google-login');
+        googleBtn.innerHTML = '...';
+        googleBtn.disabled = true;
+        
+        // Redirigir a la ruta de autenticación de Google
+        window.location.href = 'http://localhost:3000/auth/google';
+      }
+
+      // Verificar si llegamos desde Google Auth
+      function checkGoogleAuthResult() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error === 'auth_failed') {
+          showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
+        }
+      }
+
+      // Función para mostrar mensajes
+      function showMessage(message, type = 'info') {
+        const container = document.getElementById('message-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.cssText = `
+          padding: 10px;
+          margin: 10px 0;
+          border-radius: 4px;
+          font-size: 14px;
+          ${type === 'error' ? 'background: #fee; border: 1px solid #fcc; color: #c00;' : 
+            type === 'success' ? 'background: #efe; border: 1px solid #cfc; color: #060;' :
+            'background: #e7f3ff; border: 1px solid #b3d9ff; color: #0066cc;'}
+        `;
+        messageDiv.textContent = message;
+        
+        // Limpiar mensajes previos
+        container.innerHTML = '';
+        container.appendChild(messageDiv);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (messageDiv.parentNode) {
+            messageDiv.remove();
+          }
+        }, 5000);
+      }
+
+      // Ejecutar al cargar la página
+      document.addEventListener('DOMContentLoaded', function() {
+        checkGoogleAuthResult();
       });
     </script>
     <script src="../src/js/login.js"></script>

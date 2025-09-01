@@ -12,15 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        // Get field values (changed from 'usuario' to email)
-=======
-        // Obtener valores de los campos
->>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
-=======
-        // Obtener valores de los campos (cambiado de 'usuario' a email)
->>>>>>> parent of 1ceb5ea (Feat: translate)
+
         const email = document.getElementById("usuario").value.trim();
         const password = document.getElementById("password").value;
 
@@ -31,15 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.textContent = "Iniciando sesión...";
 
         try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            // Correct call to backend login endpoint
-=======
-            // Llamada al endpoint del backend
->>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
-=======
-            // Llamada corregida al endpoint del backend
->>>>>>> parent of 1ceb5ea (Feat: translate)
+
             const response = await fetch(`${API_BASE_URL}/users/login`, {
                 method: "POST",
                 headers: {
@@ -61,25 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("authToken", data.data.token);
                     localStorage.setItem("userData", JSON.stringify(data.data.user));
                 }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
                 // Redirect to user dashboard
                 window.location.href = "dashboard_users.html";
 
-=======
+
                 
                 // Redirigir al dashboard
                 window.location.href = "../views/dashboard_users.html";
                 
->>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
-=======
-                
+     
                 // Redirigir al dashboard según el tipo de usuario
                 // Por ahora redirigiremos a una página general
                 window.location.href = "dashboard_users.html";
                 
->>>>>>> parent of 1ceb5ea (Feat: translate)
+
             } else {
                 // Manejar errores del backend
                 let errorMessage = "Credenciales inválidas";
@@ -103,12 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 // Check if user is authenticated
-=======
+
 // Función para verificar si el usuario está autenticado
->>>>>>> parent of 1ceb5ea (Feat: translate)
+
 function isAuthenticated() {
     return localStorage.getItem("authToken") !== null;
 }
@@ -293,9 +272,9 @@ function logout() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     window.location.href = "login.html";
-<<<<<<< HEAD
+
 }
-=======
+
 // Función para obtener parámetros de la URL
 function getQueryParams() {
   const params = new URLSearchParams(window.location.search);
@@ -325,7 +304,3 @@ function saveAuthData() {
 }
 // Llamar a la función al cargar la página
 saveAuthData();
->>>>>>> 41c168acfdebb79f47791b389bc3c44337390f42
-=======
-}
->>>>>>> parent of 1ceb5ea (Feat: translate)

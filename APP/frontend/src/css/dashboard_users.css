@@ -251,3 +251,28 @@ html {
   letter-spacing: 3px;
   border-radius: 12px 12px 0 0;
 }
+
+/* Botón Logout */
+.logout-btn {
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  float: right; /* se alinea a la derecha en el header */
+  margin-top: 10px;
+}
+
+.logout-btn:hover {
+  background: #c53030;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4);
+}
+
+.logout-btn:active {
+  transform: scale(0.95);
+}

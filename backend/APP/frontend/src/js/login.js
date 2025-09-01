@@ -10,13 +10,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("password").value;
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/login", {
+            // Determinar el tipo de usuario y endpoint correspondiente
+            const userType = document.querySelector('.dropdown-item.selected')?.textContent || 'User';
+            const endpoint = userType === 'Barber' ? '/api/barbershops/login' : '/api/users/login';
+            
+            const response = await fetch(`http://localhost:3000${endpoint}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    username: username,
+                    email: username,
                     password: password
                 })
             });

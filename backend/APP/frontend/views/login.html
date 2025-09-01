@@ -80,7 +80,17 @@
             console.log('Selected user type:', type);
             const dropdown = document.getElementById('userTypeDropdown');
             dropdown.classList.remove('show');
-            // You can add additional logic here to handle the selection
+            
+            // Remove previous selection
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selection to clicked item
+            event.target.classList.add('selected');
+            
+            // Update selector text
+            document.getElementById('userTypeSelector').textContent = type + ' ▼';
         }
 
         // Toggle password visibility

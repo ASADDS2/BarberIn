@@ -21,6 +21,8 @@
         alt="Logo KCoda"
         style="height: 70px; width: 80px"
       />
+      <!-- botton logout -->
+      <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
     </header>
 
     <!-- Dashboard Layout -->
@@ -105,5 +107,25 @@
       async
       defer
     ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      // Borra TODO el localStorage
+      // localStorage.clear();
+
+      // O borra solo lo que usas para la sesión (más seguro)
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+
+      // Redirigir al login
+      window.location.href = "./login.html";
+    });
+  }
+});
+
+    </script>
   </body>
 </html>

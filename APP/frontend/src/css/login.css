@@ -276,3 +276,108 @@ body {
         text-align: center;
     }
 }
+
+
+/* Estilos adicionales para el selector de tipo de usuario */
+.user-type-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-type-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.user-type-card.selected {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border-width: 4px;
+}
+
+.user-type-card.selected.user-selected {
+    background: linear-gradient(135deg, #e53e3e, #ff6b6b);
+    color: white;
+    border-color: #e53e3e;
+    animation: pulseRed 2s infinite;
+}
+
+.user-type-card.selected.barber-selected {
+    background: linear-gradient(135deg, #007bff, #40a9ff);
+    color: white;
+    border-color: #007bff;
+    animation: pulseBlue 2s infinite;
+}
+
+.user-type-card.selected small {
+    color: rgba(255,255,255,0.9);
+}
+
+/* Animaciones de pulso */
+@keyframes pulseRed {
+    0% { box-shadow: 0 8px 25px rgba(229, 62, 62, 0.3); }
+    50% { box-shadow: 0 8px 35px rgba(229, 62, 62, 0.5); }
+    100% { box-shadow: 0 8px 25px rgba(229, 62, 62, 0.3); }
+}
+
+@keyframes pulseBlue {
+    0% { box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3); }
+    50% { box-shadow: 0 8px 35px rgba(0, 123, 255, 0.5); }
+    100% { box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3); }
+}
+
+/* Efecto de check mark cuando está seleccionado */
+.user-type-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Estados de focus para accesibilidad */
+.user-type-card:focus {
+    outline: 3px solid #ffc107;
+    outline-offset: 2px;
+}
+
+/* Responsive - en pantallas pequeñas */
+@media (max-width: 480px) {
+    .user-type-cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .user-type-card {
+        max-width: 200px;
+        width: 100%;
+    }
+}
+
+/* Efecto de brillo cuando está seleccionado */
+.user-type-card.selected::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    border-radius: 17px;
+    z-index: -1;
+}
+
+/* Error state styling */
+.type-selection-error {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}

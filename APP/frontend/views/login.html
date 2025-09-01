@@ -37,28 +37,47 @@
         </div>
 
         <div class="login-container">
-       
+          <!-- Mensaje de estado -->
           <div id="message-container"></div>
+          
+          <!-- User Type Selection - More Prominent -->
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; text-align: center; font-size: 18px; font-weight: 700; color: #3eaaca; margin-bottom: 15px;">
+              SELECT ACCOUNT TYPE
+            </label>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+              <div 
+                class="user-type-card" 
+                id="userCard" 
+                onclick="selectUserType('User')"
+                style="flex: 1; max-width: 150px; padding: 20px; border: 3px solid #e53e3e; border-radius: 15px; text-align: center; cursor: pointer; background: #f8f9fa; transition: all 0.3s ease;"
+              >
+                <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+                <div style="font-weight: 700; font-size: 14px; color: #333;">USER</div>
+                <small style="color: #666; font-size: 11px;">Book appointments</small>
+              </div>
+              <div 
+                class="user-type-card" 
+                id="barberCard" 
+                onclick="selectUserType('Barber')"
+                style="flex: 1; max-width: 150px; padding: 20px; border: 3px solid #007bff; border-radius: 15px; text-align: center; cursor: pointer; background: #f8f9fa; transition: all 0.3s ease;"
+              >
+                <div style="font-size: 40px; margin-bottom: 10px;">✂️</div>
+                <div style="font-weight: 700; font-size: 14px; color: #333;">BARBERSHOP</div>
+                <small style="color: #666; font-size: 11px;">Manage business</small>
+              </div>
+            </div>
+            <input type="hidden" id="selectedUserType" name="userType" value="" />
+            <small id="typeError" style="color: #e53e3e; font-size: 12px; text-align: center; display: none; margin-top: 10px;">
+              Please select an account type
+            </small>
+          </div>
           
           <form>
             <div class="form-group">
               <label for="usuario">EMAIL</label>
               <div class="input-wrapper">
-                <input type="text" id="usuario" name="usuario" required />
-                <div class="selector" id="userTypeSelector">
-                  ▼
-                  <div class="dropdown" id="userTypeDropdown">
-                    <div class="dropdown-item" onclick="selectUserType('User')">
-                      User
-                    </div>
-                    <div
-                      class="dropdown-item"
-                      onclick="selectUserType('Barber')"
-                    >
-                      Barber
-                    </div>
-                  </div>
-                </div>
+                <input type="email" id="usuario" name="usuario" placeholder="user@email.com" required />
               </div>
             </div>
 
@@ -72,8 +91,6 @@
 
             <div class="login-section">
               <button type="submit" class="btn-login">Log in</button>
-              <!-- Botón de Google con funcionalidad -->
-              
             </div>
 
             <div class="form-links">
@@ -90,57 +107,69 @@
     </div>
 
     <script>
-      // Toggle dropdown for user type selector
-      document
-        .getElementById("userTypeSelector")
-        .addEventListener("click", function (e) {
-          e.stopPropagation();
-          const dropdown = document.getElementById("userTypeDropdown");
-          dropdown.classList.toggle("show");
-        });
-
-      // Close dropdown when clicking outside
-      document.addEventListener("click", function () {
-        const dropdown = document.getElementById("userTypeDropdown");
-        dropdown.classList.remove("show");
-      });
+      let selectedType = '';
 
       // Select user type function
       function selectUserType(type) {
-        console.log("Selected user type:", type);
-        const dropdown = document.getElementById("userTypeDropdown");
-        dropdown.classList.remove("show");
-        // You can add additional logic here to handle the selection
+        selectedType = type;
+        const userCard = document.getElementById('userCard');
+        const barberCard = document.getElementById('barberCard');
+        const hiddenInput = document.getElementById('selectedUserType');
+        const typeError = document.getElementById('typeError');
+        
+        // Reset styles
+        userCard.style.background = '#f8f9fa';
+        userCard.style.transform = 'scale(1)';
+        userCard.style.color = '#333';
+        userCard.style.boxShadow = 'none';
+        barberCard.style.background = '#f8f9fa';
+        barberCard.style.transform = 'scale(1)';
+        barberCard.style.color = '#333';
+        barberCard.style.boxShadow = 'none';
+        
+        hiddenInput.value = type;
+        typeError.style.display = 'none';
       }
 
       // Toggle password visibility
       function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
-        const selector = document.querySelector("#password + .selector");
+        const selector = passwordInput.nextElementSibling;
         
         if (passwordInput.type === "password") {
           passwordInput.type = "text";
-          selector.innerHTML = "👁";
+          selector.innerHTML = "🙈";
         } else {
           passwordInput.type = "password";
           selector.innerHTML = "👁";
         }
       }
 
-      // Función para mostrar mensajes
-     
+      // Form validation
+      document.querySelector('form').addEventListener('submit', function(e) {
+        const typeError = document.getElementById('typeError');
+        if (!selectedType) {
+          e.preventDefault();
+          typeError.style.display = 'block';
+          typeError.textContent = 'Please select an account type';
+          return false;
+        }
+      });
+
+      // Handle Google login
       function handleGoogleLogin() {
         console.log('Iniciando login con Google...');
         
         const googleBtn = document.querySelector('.google-login');
-        googleBtn.innerHTML = '...';
-        googleBtn.disabled = true;
+        if (googleBtn) {
+          googleBtn.innerHTML = '...';
+          googleBtn.disabled = true;
+        }
         
-       
         window.location.href = 'http://localhost:3000/auth/google';
       }
 
-     
+      // Check Google auth result
       function checkGoogleAuthResult() {
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
@@ -150,7 +179,7 @@
         }
       }
 
-      
+      // Show message function (basic version for HTML)
       function showMessage(message, type = 'info') {
         const container = document.getElementById('message-container');
         const messageDiv = document.createElement('div');
@@ -166,11 +195,9 @@
         `;
         messageDiv.textContent = message;
         
-        
         container.innerHTML = '';
         container.appendChild(messageDiv);
         
-      
         setTimeout(() => {
           if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -178,7 +205,7 @@
         }, 5000);
       }
 
-      
+      // Check Google auth result on page load
       document.addEventListener('DOMContentLoaded', function() {
         checkGoogleAuthResult();
       });

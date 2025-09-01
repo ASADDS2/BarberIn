@@ -72,51 +72,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Función para manejar login con Google (llamada desde HTML)
-function handleGoogleLogin() {
-    console.log('Iniciando login con Google...');
-    
-    // Cambiar texto del botón mientras redirige
-    const googleBtn = document.querySelector('.google-login');
-    if (googleBtn) {
-        googleBtn.innerHTML = '...';
-        googleBtn.disabled = true;
-    }
-    
-    // Redirigir a la ruta de autenticación de Google
-    window.location.href = 'http://localhost:3000/auth/google';
+// Función para obtener parámetros de la URL
+function getQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    success: params.get("success"),
+    token: params.get("token"),
+    userData: params.get("userData")
+  };
 }
 
-// Verificar si el usuario viene desde Google Auth
-function checkGoogleAuthResult() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    const user = urlParams.get('user');
-    
-    if (error === 'auth_failed') {
-        alert('❌ Error en la autenticación con Google. Por favor intenta nuevamente.');
-        // Limpiar URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (user) {
-        // El usuario fue autenticado exitosamente con Google
-        alert('✅ Login con Google exitoso! Redirigiendo...');
-        
-        // Limpiar URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // Redirigir al dashboard
-        setTimeout(() => {
-            window.location.href = "../views/dashboard_users.html";
-        }, 1500);
-    }
-}
+function saveAuthData() {
+  const { success, token, userData } = getQueryParams();
 
-// Función para verificar si el usuario está autenticado
-function isAuthenticated() {
-    return localStorage.getItem("authToken") !== null;
-}
+  if (success === "google_auth" && token && userData) {
+    // Guardar token
+    localStorage.setItem("authToken", token);
 
-// Función para obtener el token
-function getAuthToken() {
-    return localStorage.getItem("authToken");
+    // Guardar información del usuario (como objeto)
+    const user = JSON.parse(decodeURIComponent(userData));
+    localStorage.setItem("userData", JSON.stringify(user));
+
+    console.log("✅ Datos guardados en localStorage:", user);
+
+    // (Opcional) Redirigir al home o dashboard
+    window.location.href = "/frontend/views/dashboard_users.html";
+  }
 }
+// Llamar a la función al cargar la página
+saveAuthData();

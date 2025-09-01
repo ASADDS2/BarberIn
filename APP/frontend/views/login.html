@@ -32,10 +32,12 @@
       <div class="app-slogan">App slogan</div>
 
       <div class="main-content">
-        <div class="side-image"></div>
+        <div class="side-image">
+          <img src="../src/img/examples/kcodaexample1.webp" alt="utils">
+        </div>
 
         <div class="login-container">
-          <!-- Mensajes de estado -->
+       
           <div id="message-container"></div>
           
           <form>
@@ -81,7 +83,9 @@
           </form>
         </div>
 
-        <div class="side-image"></div>
+        <div class="side-image">
+          <img src="../src/img/examples/kcodaexample2.webp" alt="barbers example">
+        </div>
       </div>
     </div>
 
@@ -123,19 +127,19 @@
         }
       }
 
-      // Función para manejar login con Google
+     
       function handleGoogleLogin() {
         console.log('Iniciando login con Google...');
-        // Cambiar texto del botón mientras redirige
+        
         const googleBtn = document.querySelector('.google-login');
         googleBtn.innerHTML = '...';
         googleBtn.disabled = true;
         
-        // Redirigir a la ruta de autenticación de Google
+       
         window.location.href = 'http://localhost:3000/auth/google';
       }
 
-      // Verificar si llegamos desde Google Auth
+     
       function checkGoogleAuthResult() {
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
@@ -145,7 +149,7 @@
         }
       }
 
-      // Función para mostrar mensajes
+      
       function showMessage(message, type = 'info') {
         const container = document.getElementById('message-container');
         const messageDiv = document.createElement('div');
@@ -161,11 +165,11 @@
         `;
         messageDiv.textContent = message;
         
-        // Limpiar mensajes previos
+        
         container.innerHTML = '';
         container.appendChild(messageDiv);
         
-        // Auto-remover después de 5 segundos
+      
         setTimeout(() => {
           if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -173,7 +177,7 @@
         }, 5000);
       }
 
-      // Ejecutar al cargar la página
+      
       document.addEventListener('DOMContentLoaded', function() {
         checkGoogleAuthResult();
       });

@@ -125,19 +125,19 @@ BarberIn/
 ## 🚀 Installation
 
 ### Prerequisites
-- Node.js 18.x or higher
+- Node.js 22.x or higher
 - MySQL 8.0 or higher
 - Git
 
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/yourusername/barberin.git
-cd barberin
+cd Barberin
 ```
 
 ### Step 2: Install Dependencies
 ```bash
-cd backend/APP/backend
+cd Barberin/APP/
 npm install
 ```
 
@@ -148,7 +148,7 @@ mysql -u root -p < ../schemas/DatabaseBarberin.sql
 ```
 
 ### Step 4: Environment Configuration
-Create a `.env` file in `backend/APP/backend/`:
+Create a `.env` file in `Barberin/APP/backend/`:
 ```env
 # Database Configuration
 DB_HOST=localhost
@@ -219,7 +219,7 @@ const dbConfig = {
 ### CORS Configuration
 ```javascript
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3001' or 'http://localhost:5173' ,
     credentials: true
 }));
 ```

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barberin - Register</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/register.css" />
+</head>
+
+<body>
+  <div class="top-nav">
+    <div class="nav-left">Register User</div>
+    <div class="nav-right">
+      <button class="toggle-btn" onclick="toggleRegisterMode()">
+        <span id="toggle-text">Register Barbershops</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- User panel -->
+    <div id="user-register" class="register-panel">
+      <div class="panel-header">
+        <div class="main-title" style="display: flex; justify-content: center">
+          <img src="../src/img/logos/barberin.webp" alt="Barberin logo" style="height: 220px; width: 400px" />
+        </div>
+      </div>
+      <div class="register-subtitle">User Registration</div>
+
+      <div class="form-layout">
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="Ex: Juan" />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Ex: Arnache" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="example@gmail.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" placeholder="minimum 10 digits" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" placeholder="********" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Address</label>
+              <input type="text" placeholder="Ex: Street 123 #45-67" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age</label>
+              <select>
+                <option>Select...</option>
+                <option>18-25</option>
+                <option>26-35</option>
+                <option>36-45</option>
+                <option>46+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-login">Register</button>
+           
+            <span class="login-link"><a href="./login.html">Already have an account?</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barbershop panel  -->
+    <div id="barber-register" class="register-panel hidden">
+      <div class="panel-header">
+        <div class="main-title" style="display: flex; justify-content: center">
+          <img src="../src/img/logos/barberin.webp" alt="Barberin logo" style="height: 220px; width: 400px" />
+        </div>
+      </div>
+      <div class="register-subtitle">Barbershop Registration</div>
+
+      <!-- status message -->
+      <div id="message-container" style="display: none; padding: 10px; margin: 10px 0; border-radius: 5px;"></div>
+
+      <form id="barbershop-register-form">
+        <div class="form-layout">
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Barbershop Name *</label>
+                <input type="text" id="name" name="name" placeholder="Ex: BarberShop Pro" required />
+              </div>
+              <div class="form-group">
+                <label>Barbershop Email *</label>
+                <input type="email" id="email" name="email" placeholder="example@barbershop.com" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Barbershop Phone *</label>
+                <input type="tel" id="phone" name="phone" placeholder="+57 310 000 0000" required />
+              </div>
+              <div class="form-group">
+                <label>Password *</label>
+                <input type="password" id="password" name="password" placeholder="********" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Responsible Person *</label>
+                <input type="text" id="responsible_person" name="responsible_person" placeholder="Ex: Carlos Gómez" required />
+              </div>
+              <div class="form-group">
+                <label>Document ID *</label>
+                <input type="text" id="id_document" name="id_document" placeholder="ID/NIT" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Owner Phone</label>
+                <input type="tel" id="owner_phone" name="owner_phone" placeholder="+57 320 111 2233" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label>Barbershop Address *</label>
+                <textarea id="address" name="address" placeholder="Ex: 45th Avenue #12-34" required></textarea>
+              </div>
+            </div>
+
+            <!-- field optionals -->
+            <div class="form-row">
+              <div class="form-group">
+                <label>Latitude (optional)</label>
+                <input type="number" id="latitude" name="latitude" placeholder="10.9639" step="any" />
+              </div>
+              <div class="form-group">
+                <label>Longitude (optional)</label>
+                <input type="number" id="longitude" name="longitude" placeholder="-74.7964" step="any" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label>Description (optional)</label>
+                <textarea id="description" name="description" placeholder="Brief description of your barbershop"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-login" id="register-btn">Register</button>
+              <span class="login-link"><a href="./login.html">Already have an account?</a></span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="../src/js/register.js">
+   
+  </script>
+</body>
+
+</html>

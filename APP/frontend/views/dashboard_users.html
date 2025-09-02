@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Usuario</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../src/css/dashboard_users.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <img
+        src="../src/img/logos/kcoda.webp"
+        alt="Logo KCoda"
+        style="height: 70px; width: 80px"
+      />
+      <!-- botton logout -->
+      <button id="logoutBtn" class="logout-btn">log out</button>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+      <!-- Left Panel - Agenda -->
+      <aside class="agenda-panel">
+        <div class="icon-add">+</div>
+        <h2 class="title">Appointment</h2>
+
+        <div class="btn-group">
+          <button class="btn">Barbershops</button>
+          <button class="btn">Favorites</button>
+          <div class="star-favorite">★</div>
+        </div>
+
+        <div class="barber-list">
+          <div class="barber-item" data-lat="10.963889" data-lng="-74.796387">
+            <div>➚ BARBERSHOP NAME</div>
+            <div class="icon-star">★</div>
+          </div>
+          <div class="barber-item" data-lat="10.988056" data-lng="-74.791667">
+            <div>➚ BARBERSHOP NAME 2</div>
+          </div>
+          <div class="barber-item" data-lat="11.004722" data-lng="-74.807222">
+            <div>➚ BARBERSHOP NAME 3</div>
+          </div>
+          <div class="barber-item" data-lat="10.975000" data-lng="-74.802778">
+            <div>➚ BARBERSHOP NAME 4</div>
+          </div>
+        </div>
+
+        <div class="barber-detail">
+          <div class="name-label">BARBERSHOP NAME</div>
+          <div class="photo-box">
+            <div class="icon-edit">↗</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Panel - Map -->
+      <main class="map-panel">
+        <div class="search-box">
+          <span class="icon-search">🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Barbershops..."
+          />
+        </div>
+
+        <div class="map-loading" id="mapLoading">.</div>
+        <div id="googleMap"></div>
+      </main>
+
+      <!-- Right Panel - User -->
+      <aside class="user-panel">
+        <div class="user-photo">
+          <a href="./view_user_profile.html">👤</a>
+        </div>
+        <div class="user-info-box"></div>
+        <div class="user-info-box small"></div>
+        <div class="user-info-box"></div>
+        <div class="user-info-box large"></div>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-barberin">
+      <div class="main-title" style="display: flex; justify-content: center">
+        <img
+          src="../src/img/logos/barberin.webp"
+          alt="Logo barberin"
+          style="height: 60px; width: 140px"
+        />
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../src/js/map.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWSXaUzzU4wYQ9GVQj0j-rv3bWFb-B8Ik&callback=initMap&libraries=places"
+      async
+      defer
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            // Clear user data from local storage
+            localStorage.removeItem("userData");
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+
+            //  login
+            window.location.href = "./login.html";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

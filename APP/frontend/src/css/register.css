@@ -1,0 +1,198 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #aad5e2, #3a3a3a);
+  ;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top nav */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: transparent;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.toggle-btn {
+  background: #056add;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  transition: 0.3s;
+}
+
+.toggle-btn:hover {
+  background: #0077ff;
+}
+
+/* Main container */
+.main-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Panels */
+.register-panel {
+  background: #f8f9fa;
+  color: #333;
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 650px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.panel-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.brand-title {
+  font-size: 2rem;
+  font-weight: bold;
+  font-style: italic;
+  color: #19598d;
+}
+
+.register-subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+  text-decoration: underline;
+  color: #444;
+}
+
+/* Forms */
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+input,
+select,
+textarea {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #bbb;
+  font-size: 14px;
+  outline: none;
+}
+
+textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+/* Actions */
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-login {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.btn-login:hover {
+  background: #ff0000;
+}
+
+.btn-signup {
+  background-color: #056add;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-signup:hover {
+  background: #0077ff;
+}
+
+.google-icon {
+  font-weight: bold;
+}
+
+.login-link {
+  margin-left: auto;
+  font-size: 14px;
+  color: #056add;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-link:hover {
+  color: #0077ff;
+}
+
+/* Hidden */
+.hidden {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .register-panel {
+    padding: 25px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+}

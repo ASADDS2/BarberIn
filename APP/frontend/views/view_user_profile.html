@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Barberin Dashboard</title>
+
+    <!-- Montserrat -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--  look & feel  home) -->
+    <link rel="stylesheet" href="../src/css/view_user_profile.css" />
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo-text">Kcoda logo</div>
+    </div>
+
+    <div class="dashboard-container">
+      <!-- Left Panel: Profile and Data -->
+      <div class="profile-panel">
+        <div class="profile-card">
+          <div class="edit-icon">✏</div>
+          <div class="profile-photo"><img id="foto" src="../src/img/examples/photo_Example.webp" alt="foto"></div>
+          <div class="profile-name">CARLOS MENDOZA</div>
+        </div>
+
+        <div class="data-panel">
+          <div class="edit-icon">✏</div>
+          <div class="data-item">Member since: March 2023</div>
+          <div class="data-item">Total appointments: 47 services</div>
+          <div class="data-item">Total spent: $1,285 USD</div>
+          <div class="data-item">Favorite service: Haircut + Beard</div>
+          <div class="data-item">Accumulated points: 2,450 pts</div>
+        </div>
+      </div>
+
+      <!-- Center Panel: Appointments -->
+      <div class="appointments-panel">
+        <div class="active-appointment">
+          <div class="appointment-header">ACTIVE APPOINTMENT</div>
+          <div class="appointment-data">
+            Service: Haircut + Beard + Eyebrows<br>
+            Barber: Miguel Rodriguez<br>
+            Date: Today 3:30 PM<br>
+            Location: Classic Cuts Barbershop<br>
+            Price: $45 USD
+          </div>
+          <div class="appointment-actions">
+            <button class="score-btn">SCORE</button>
+            <button class="cancel-btn">CANCEL</button>
+          </div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-header">APPOINTMENT HISTORY</div>
+          <div class="history-item">Aug 25, 2025: Classic Haircut - The Barber's Den - $25 ⭐4.9</div>
+          <div class="history-item">Aug 18, 2025: Beard + Mustache - Modern Cuts - $30 ⭐4.8</div>
+          <div class="history-item">Aug 10, 2025: Premium Haircut - Gentleman's Choice - $50 ⭐5.0</div>
+          <div class="history-item">Aug 03, 2025: Haircut + Beard - Classic Cuts - $40 ⭐4.9</div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Barbershops and Barbers -->
+      <div class="barbershops-panel">
+        <div class="section-header">FAVORITE BARBERSHOPS</div>
+
+        <div class="barbershop-item">
+          <div class="barbershop-name">Classic Cuts Barbershop</div>
+          <div class="rating">4.9</div>
+        </div>
+
+        <div class="barbershop-item">
+          <div class="barbershop-name">The Barber's Den</div>
+          <div class="rating">4.7</div>
+        </div>
+
+        <div class="barbershop-item">
+          <div class="barbershop-name">Gentleman's Choice</div>
+          <div class="rating">4.8</div>
+        </div>
+
+        <div class="barbershop-item">
+          <div class="barbershop-name">Modern Cuts Studio</div>
+          <div class="rating">4.6</div>
+        </div>
+
+        <div class="barbers-section">
+          <div class="section-header">FAVORITE BARBERS</div>
+
+          <div class="barber-item">
+            <div class="barber-photo">👨</div>
+            <div class="barber-name">MIGUEL RODRIGUEZ</div>
+          </div>
+
+          <div class="barber-item">
+            <div class="barber-photo">👨</div>
+            <div class="barber-name">JORGE LOPEZ</div>
+          </div>
+
+          <div class="barber-item">
+            <div class="barber-photo">👨</div>
+            <div class="barber-name">ANDRES SILVA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-barberin">
+      <div class="main-title" style="display: flex; justify-content: center">
+        <img
+          src="/APP/frontend/src/img/logos/barberin.webp"
+          alt="Logo barberin"
+          style="height: 60px; width: 140px"
+        />
+      </div>
+    </footer>
+  </body>
+</html>

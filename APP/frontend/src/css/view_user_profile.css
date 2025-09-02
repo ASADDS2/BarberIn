@@ -1,0 +1,386 @@
+/* --------------------------------------------
+   view_user_profile.css  — versión corregida
+   Mantiene la estructura original (sin tocar HTML)
+   Restablece scroll/visibilidad y efectos del "home"
+   -------------------------------------------- */
+
+/* RESET / BASE */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  /* FORZAR scroll disponible (evita "desaparecer" contenido) */
+  height: auto !important;
+  min-height: 100%;
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #aad5e2, #3a3a3a);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* Layout principal — como en home: ancho máximo centrado */
+.dashboard-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: 300px 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Header compacto (igual que home) */
+.header {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #fff;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+/* ========== Tarjetas / apariencia general (mismo estilo home) ========== */
+.card-like {
+  background: #fff;
+  color: #333;
+  padding: 20px;
+  border-radius: 15px;
+  transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.card-like:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+/* =========================
+   LEFT PANEL - PROFILE & DATA
+   ========================= */
+.profile-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-card,
+.data-panel {
+  background: #fff;
+  color: #333;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+
+/* Asegurar que los paneles no se corten: scroll si son largos */
+.profile-panel .profile-card,
+.profile-panel .data-panel {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Edit icon visible y con color acento */
+.profile-card .edit-icon,
+.data-panel .edit-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #b22222;
+  /* rojo */
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 6px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+/* Foto de perfil: mandamos pseudo-element si no hay img */
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 14px auto;
+  background: #f1f1f1;
+  border-radius: 105px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #666;
+  border: 4px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+#foto{
+
+  border-radius: 105px;
+
+}
+.profile-photo::after {
+  content: '';
+  font-size: 48px;
+  color: #666;
+  display: block;
+  border-radius: 200px;
+}
+
+/* Nombre perfil (visible y contrastado) */
+.profile-name {
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  color: #333;
+  background: #fff;
+}
+
+/* Items de datos (mantener DOM intacto) */
+.data-panel .data-item {
+  background: #fff;
+  color: #333;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   CENTRAL - APPOINTMENTS
+   ========================= */
+.appointments-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.active-appointment,
+.history-item {
+  background: #fff;
+  color: #333;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* IMPORTANT — Garantizar que la sección central pueda hacer scroll si es necesario */
+.appointments-panel {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Badges / encabezados */
+.appointment-header {
+  display: inline-block;
+  background: #3bdb0a;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Contenedor de datos */
+.appointment-data {
+  background: #fff;
+  color: #333;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Acciones: siempre visibles y con espacio */
+.appointment-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.score-btn,
+.cancel-btn {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Colores como en home */
+.score-btn {
+  background: #daa520;
+  color: #000;
+}
+
+.cancel-btn {
+  background: #b22222;
+  color: #fff;
+}
+
+/* History header */
+.history-header {
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* =========================
+   RIGHT - BARBERSHOPS & BARBERS
+   ========================= */
+.barbershops-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.barbershops-panel>* {
+  background: #fff;
+  color: #333;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+/* Items list */
+.barbershop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: transform .18s ease;
+}
+
+.barbershop-item:hover {
+  transform: translateY(-6px);
+}
+
+.barbershop-name {
+  font-weight: 800;
+  color: #b22222;
+}
+
+.rating {
+  background: #0d6efd;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+/* Barber items */
+.barbers-section {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.barber-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff;
+  color: #333;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.barber-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0c674;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* =========================
+   FOOTER (estilo home)
+   ========================= */
+.footer-barberin {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto 0;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffd700;
+  text-align: center;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+/* =========================
+   ACCESIBILITY / HELPERS
+   ========================= */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.center {
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 992px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin: 18px;
+  }
+
+  .header {
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+}

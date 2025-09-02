@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil del Barbero</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="../src/css/dashboard_profile_barber.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <img src="/BarberIn/APP/frontend/src/img/logos/kcoda.webp" alt="Logo KCoda" />
+        </div>
+        <h1 class="barber-name">BARBER NAME</h1>
+        <div class="qualification">
+          <span class="badge">Qualification</span>
+          <div class="rating">
+            <span>👍</span>
+            <span class="stars">★★</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Appointments -->
+        <aside class="appointments">
+          <h2>Citas</h2>
+          <div class="appointment-card">
+            <span>Cliente 1</span>
+            <button class="btn btn-login">Tomar</button>
+          </div>
+          <div class="appointment-card">
+            <span>Cliente 2</span>
+            <button class="btn btn-login">Tomar</button>
+          </div>
+          <div class="appointment-card">
+            <span>Cliente 3</span>
+            <button class="btn btn-login">Tomar</button>
+          </div>
+        </aside>
+
+        <!-- Profile Center -->
+        <main class="profile">
+          <div class="avatar-section">
+            <div class="avatar">👤</div>
+            <div class="name-box">
+              <span>Nombre</span>
+              <span class="edit">✏️</span>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <h3>Descripción ✏️</h3>
+            <p>Texto de ejemplo de la descripción del barbero.</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Especialidades ✏️</h3>
+            <p>Fade, Clásicos, Degradados</p>
+          </div>
+
+          <div class="haircut-references">
+            <h3>Referencias</h3>
+            <div class="references-grid">
+              <div class="reference-card">
+                <div class="ref-img">🖼️</div>
+                <span class="desc-blue">Corte 1</span>
+              </div>
+              <div class="reference-card">
+                <div class="ref-img">🖼️</div>
+                <span class="desc-red">Corte 2</span>
+              </div>
+              <div class="reference-card">
+                <div class="ref-img">🖼️</div>
+                <span class="desc-blue">Corte 3</span>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- Ranking -->
+        <aside class="ranking">
+          <h2>Ranking</h2>
+          <div class="ranking-box">#1</div>
+        </aside>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer-barberin">
+        <div class="main-title" style="display: flex; justify-content: center">
+          <img
+            src="/BarberIn/APP/frontend/src/img/logos/barberin.webp"
+            alt="Logo barberin"
+            style="height: 60px; width: 140px"
+          />
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

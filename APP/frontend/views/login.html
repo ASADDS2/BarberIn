@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BARBERIN - Login</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/login.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <img src="../src/img/logos/kcoda.webp" alt="Logo KCoda" style="height: 100px; width: 100px" />
+      </div>
+      <div class="main-title" style="display: flex; justify-content: center">
+        <img src="../src/img/logos/barberin.webp" alt="Logo barberin" style="height: 220px; width: 500px" />
+      </div>
+    </div>
+
+    <div class="app-slogan">App slogan</div>
+
+    <div class="main-content">
+      <div class="side-image">
+        <img src="../src/img/examples/kcodaexample1.webp" alt="utils">
+      </div>
+
+      <div class="login-container">
+
+        <div id="message-container"></div>
+
+        <!-- User Type Selection - More Prominent -->
+        <div class="form-group" style="margin-bottom: 25px;">
+          <label
+            style="display: block; text-align: center; font-size: 18px; font-weight: 700; color: #3eaaca; margin-bottom: 15px;">
+            SELECT ACCOUNT TYPE
+          </label>
+          <div style="display: flex; gap: 15px; justify-content: center;">
+            <div class="user-type-card" id="userCard" onclick="selectUserType('User')"
+              style="flex: 1; max-width: 150px; padding: 20px; border: 3px solid #e53e3e; border-radius: 15px; text-align: center; cursor: pointer; background: #f8f9fa; transition: all 0.3s ease;">
+              <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+              <div style="font-weight: 700; font-size: 14px; color: #333;">USER</div>
+              <small style="color: #666; font-size: 11px;">Book appointments</small>
+            </div>
+            <div class="user-type-card" id="barberCard" onclick="selectUserType('Barber')"
+              style="flex: 1; max-width: 150px; padding: 20px; border: 3px solid #007bff; border-radius: 15px; text-align: center; cursor: pointer; background: #f8f9fa; transition: all 0.3s ease;">
+              <div style="font-size: 40px; margin-bottom: 10px;">✂️</div>
+              <div style="font-weight: 700; font-size: 14px; color: #333;">BARBERSHOP</div>
+              <small style="color: #666; font-size: 11px;">Manage business</small>
+            </div>
+          </div>
+          <input type="hidden" id="selectedUserType" name="userType" value="" />
+          <small id="typeError"
+            style="color: #e53e3e; font-size: 12px; text-align: center; display: none; margin-top: 10px;">
+            Please select an account type
+          </small>
+        </div>
+
+        <form>
+          <div class="form-group">
+            <label for="usuario">EMAIL</label>
+            <div class="input-wrapper">
+              <input type="email" id="usuario" name="usuario" placeholder="user@email.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">PASSWORD</label>
+            <div class="input-wrapper">
+              <input type="password" id="password" name="password" required />
+              <div class="selector" onclick="togglePasswordVisibility()">👁</div>
+            </div>
+          </div>
+
+          <div class="login-section">
+            <button type="submit" class="btn-login">Log in</button>
+          </div>
+
+          <div class="form-links">
+            <a href="./register.html">Sign up</a>
+            <a href="#">Forgot your password?</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="side-image">
+        <img src="../src/img/examples/kcodaexample2.webp" alt="barbers example">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedType = null;
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("password");
+      const selector = passwordInput.nextElementSibling;
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        selector.innerHTML = "🙈";
+      } else {
+        passwordInput.type = "password";
+        selector.innerHTML = "👁";
+      }
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const typeError = document.getElementById('typeError');
+      if (!selectedType) {
+        e.preventDefault();
+        typeError.style.display = 'block';
+        typeError.textContent = 'Please select an account type';
+        return false;
+      }
+    });
+
+    // Handle Google login
+    function handleGoogleLogin() {
+      console.log('Iniciando login con Google...');
+
+      const googleBtn = document.querySelector('.google-login');
+      if (googleBtn) {
+        googleBtn.innerHTML = '...';
+        googleBtn.disabled = true;
+      }
+
+      window.location.href = 'http://localhost:3000/auth/google';
+    }
+
+    // Check Google auth result
+    function checkGoogleAuthResult() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get('error');
+
+      if (error === 'auth_failed') {
+        showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
+      }
+    }
+
+    // Show message function (basic version for HTML)
+    function showMessage(message, type = 'info') {
+      const container = document.getElementById('message-container');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      messageDiv.style.cssText = `
+          padding: 10px;
+          margin: 10px 0;
+          border-radius: 4px;
+          font-size: 14px;
+          ${type === 'error' ? 'background: #fee; border: 1px solid #fcc; color: #c00;' :
+          type === 'success' ? 'background: #efe; border: 1px solid #cfc; color: #060;' :
+            'background: #e7f3ff; border: 1px solid #b3d9ff; color: #0066cc;'}
+        `;
+      messageDiv.textContent = message;
+
+      container.innerHTML = '';
+      container.appendChild(messageDiv);
+
+      setTimeout(() => {
+        if (messageDiv.parentNode) {
+          messageDiv.remove();
+        }
+      }, 5000);
+    }
+
+    // Check Google auth result on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      checkGoogleAuthResult();
+    });
+  </script>
+  <script src="../src/js/login.js"></script>
+</body>
+
+</html>

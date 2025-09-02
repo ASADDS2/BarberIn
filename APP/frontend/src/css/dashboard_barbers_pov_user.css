@@ -1,0 +1,592 @@
+/* =================================================================
+   GLOBAL RESET AND BASE STYLES
+   ================================================================= */
+/* Universal reset - removes default margins, padding and sets consistent box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body base styles - sets main font, background color and minimum height */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #3eaaca, #3a3a3a);
+    min-height: 100vh;
+}
+
+/* =================================================================
+   DASHBOARD HEADER SECTION
+   ================================================================= */
+/* Dashboard header bar - light gray top bar with navigation info */
+.dashboard-header {
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #666;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Main header container - white background with flexible layout */
+.header {
+    background: linear-gradient(135deg, #3eaaca, #3a3a3a);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    position: relative;
+}
+
+/* Header left section - flexible area for logo and navigation */
+.header-left {
+    flex: 1;
+
+}
+
+/* Logo styling - brand text in header */
+.logo {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Barber name container - centered prominent display for barber name */
+.barber-name-container {
+    border: 2px solid #dc3545;
+    border-radius: 10px;
+    background-color: #d3d3d3;
+    padding: 6px 20px;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    max-width: calc(100% - 200px);
+}
+
+/* Barber name text - large italic text for barber's name */
+.barber-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    font-style: italic;
+}
+
+/* Icon row container - horizontal layout for action icons */
+.icon-row {
+    display: flex;
+    gap: 10px;
+}
+
+/* Individual icon styling - square clickable icons with hover effects */
+.icon {
+    width: 50px;
+    height: 50px;
+    background-color: #f8f9fa;
+    border: 2px solid #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.3s;
+}
+
+/* Icon hover effect - darker background on hover */
+.icon:hover {
+    background-color: #e9ecef;
+}
+
+/* =================================================================
+   MAIN CONTENT LAYOUT
+   ================================================================= */
+/* Main container - three column grid layout for dashboard content */
+.main-container {
+    display: grid;
+    grid-template-columns: 350px 1fr 300px;
+    gap: 20px;
+    padding: 20px;
+    min-height: calc(100vh - 170px);
+}
+
+/* =================================================================
+   COLUMN LAYOUT STYLES
+   ================================================================= */
+/* Base column styling - white rounded containers with padding */
+.column {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+}
+
+/* Appointments column - red border for appointment section */
+.appointments-column {
+    border: 3px solid #dc3545;
+}
+
+/* Content column - blue border for main content section */
+.content-column {
+    border: 3px solid #007bff;
+}
+
+/* Products column - blue border for products section */
+.products-column {
+    border: 3px solid #007bff;
+}
+
+/* Column title - dark rounded badge for section headers */
+.column-title {
+    background-color: #6c757d;
+    color: white;
+    text-align: center;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* =================================================================
+   APPOINTMENTS SECTION
+   ================================================================= */
+/* Appointment card - individual appointment container with action button */
+.appointment-card {
+    background-color: #d3d3d3;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Appointment card text - bold text for appointment details */
+.appointment-card span {
+    font-weight: bold;
+    color: #333;
+}
+
+/* View button - blue action button for viewing appointment details */
+.btn-ver {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+/* View button hover effect - darker blue on hover */
+.btn-ver:hover {
+    background-color: #0056b3;
+}
+
+/* =================================================================
+   CONTENT MODULES SECTION
+   ================================================================= */
+/* Content modules container - horizontal layout for schedule and availability */
+.content-modules {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Base module styling - flexible containers with minimum height */
+.module {
+    flex: 1;
+    background-color: #d3d3d3;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 120px;
+    position: relative;
+}
+
+/* Schedule module - red border for schedule section */
+.horarios-module {
+    border: 2px solid #dc3545;
+}
+
+/* Availability module - red border for availability section */
+.disponibilidad-module {
+    border: 2px solid #dc3545;
+}
+
+/* Module title - small dark rounded badge for module headers */
+.module-title {
+    background-color: #6c757d;
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 12px;
+}
+
+/* Schedule slots container - horizontal layout for time slots */
+.horario-slots {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Individual schedule slot - time slot display with red border */
+.horario-slot {
+    background-color: #f8f9fa;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+/* Small edit button - positioned edit button for modules */
+.edit-btn-small {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+/* =================================================================
+   AVAILABILITY STATUS SECTION
+   ================================================================= */
+/* Availability list - vertical layout for barber status items */
+.disponibilidad-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Barber status item - horizontal layout for avatar, indicator and text */
+.barber-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+/* Small barber avatar - circular avatar for status display */
+.barber-avatar-small {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #f0c674;
+}
+
+/* Status indicator - circular indicator for availability status */
+.status-indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+/* Busy indicator - red circle for busy status */
+.ocupado-indicator {
+    background-color: #dc3545;
+}
+
+/* Available indicator - green circle for available status */
+.disponible-indicator {
+    background-color: #28a745;
+}
+
+/* Status text - bold text for status labels */
+.status-text {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+/* Busy status text - red text for busy status */
+.ocupado {
+    color: #dc3545;
+}
+
+/* Available status text - green text for available status */
+.disponible {
+    color: #28a745;
+}
+
+/* =================================================================
+   MAP SECTION
+   ================================================================= */
+/* Map placeholder - patterned background container for map display */
+.map-placeholder {
+    background-color: #f8f9fa;
+    border: 2px dashed #6c757d;
+    border-radius: 10px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    position: relative;
+    background-image:
+        linear-gradient(45deg, #e9ecef 25%, transparent 25%),
+        linear-gradient(-45deg, #e9ecef 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e9ecef 75%),
+        linear-gradient(-45deg, transparent 75%, #e9ecef 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Map marker - positioned red marker icon on map */
+.map-marker {
+    position: absolute;
+    font-size: 24px;
+    color: #dc3545;
+}
+
+/* =================================================================
+   BARBER PROFILES SECTION
+   ================================================================= */
+/* Content bottom container - horizontal layout for profiles and add button */
+.content-bottom {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+/* Barber profiles container - flexible layout for multiple barber profiles */
+.barbers-profiles {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+}
+
+/* Individual barber profile - centered layout for profile display */
+.barber-profile {
+    text-align: center;
+    position: relative;
+}
+
+/* Profile edit button - small edit button above profile */
+.profile-edit {
+    background-color: #d3d3d3;
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    font-size: 10px;
+    cursor: pointer;
+    border: 1px solid #999;
+}
+
+/* Avatar container - rectangular container for barber profile image */
+.avatar {
+    width: 120px;
+    height: 90px;
+    background-color: #f8f9fa;
+    border: 4px solid #333;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Avatar image - responsive image styling for profile pictures */
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Profile button - blue action button below avatar */
+.btn-profile {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Add barber section - container for add new barber functionality */
+.add-barber {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+/* Add icon - circular dark button for adding new barber */
+.add-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* =================================================================
+   PRODUCTS SECTION
+   ================================================================= */
+/* Products grid - two column grid layout for product items */
+.products-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Individual product item - centered container for product display */
+.product-item {
+    background-color: #d3d3d3;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+/* Product icon - large icon for product representation */
+.product-icon {
+    font-size: 24px;
+}
+
+/* Product actions container - positioned action buttons for products */
+.product-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 3px;
+}
+
+/* Action icon - small blue action buttons for product operations */
+.action-icon {
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+/* Add product section - full width container for add product button */
+.add-product {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Add product icon - large circular button for adding new products */
+.add-product-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #333;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* =================================================================
+   FOOTER SECTION
+   ================================================================= */
+/* Footer container - dark background footer with brand name */
+footer {
+    background-color: #666;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+/* Footer title - large white text for brand name */
+.footer-title {
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* =================================================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ================================================================= */
+/* Large tablet breakpoint - stacks columns vertically */
+@media (max-width: 1200px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .content-modules {
+        flex-direction: column;
+    }
+
+    .barbers-profiles {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Mobile breakpoint - adjusts layout for smaller screens */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .header-icons {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 0;
+    }
+
+    .main-container {
+        padding: 10px;
+    }
+
+    .column {
+        padding: 15px;
+    }
+
+    .barbers-profiles {
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 60px;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}

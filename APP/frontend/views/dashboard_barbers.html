@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BARBERIN - Dashboard Barber</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/dashboard_barbers.css" />
+
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-left">
+      <div class="logo"><img src="/BarberIn/APP/frontend/src/img/logos/kcoda.webp" alt="Logo KCoda"
+          style="height: 60px; width: 70px" /></div>
+    </div>
+    <div class="barber-name-container">
+      <div class="barber-name">Mike's Barbershop</div>
+    </div>
+    <!-- Logout Button -->
+    <button id="logoutBtn" class="logout-btn">Log Out</button>
+  </header>
+
+  <div class="main-container">
+    <!--  Appointments -->
+    <div class="column appointments-column">
+      <div class="column-title">APPOINTMENTS</div>
+      <div class="appointment-card">
+        <span>John Smith - 2:00 PM<br>Haircut & Beard Trim</span>
+        <button class="btn-view">View</button>
+      </div>
+      <div class="appointment-card">
+        <span>Alex Johnson - 3:30 PM<br>Classic Cut</span>
+        <button class="btn-view">View</button>
+      </div>
+      <div class="appointment-card">
+        <span>David Wilson - 4:00 PM<br>Fade Cut</span>
+        <button class="btn-view">View</button>
+      </div>
+      <div class="appointment-card">
+        <span>Robert Brown - 5:15 PM<br>Shave & Styling</span>
+        <button class="btn-view">View</button>
+      </div>
+    </div>
+
+    <!-- Central column -->
+    <div class="column content-column">
+      <div class="content-modules">
+        <!-- Schedule -->
+        <div class="module schedule-module">
+          <div class="module-title">Schedule</div>
+          <button class="edit-btn-small">✏️</button>
+          <div class="schedule-slots">
+            <div class="schedule-slot">Monday<br />9:00 AM - 6:00 PM</div>
+            <div class="schedule-slot">Tuesday<br />9:00 AM - 6:00 PM</div>
+            <div class="schedule-slot">Wednesday<br />9:00 AM - 6:00 PM</div>
+            <div class="schedule-slot">Thursday<br />9:00 AM - 6:00 PM</div>
+            <div class="schedule-slot">Friday<br />9:00 AM - 7:00 PM</div>
+            <div class="schedule-slot">Saturday<br />8:00 AM - 5:00 PM</div>
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="module availability-module">
+          <div class="module-title">Availability</div>
+          <div class="availability-list">
+            <div class="barber-status">
+              <div class="barber-avatar-small">👤</div>
+              <div class="status-indicator available-indicator"></div>
+              <span class="status-text available">Mike - Available</span>
+            </div>
+            <div class="barber-status">
+              <div class="barber-avatar-small">👤</div>
+              <div class="status-indicator busy-indicator"></div>
+              <span class="status-text busy">Carlos - Busy</span>
+            </div>
+            <div class="barber-status">
+              <div class="barber-avatar-small">👤</div>
+              <div class="status-indicator available-indicator"></div>
+              <span class="status-text available">James - Available</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="module">
+          <div id="mapLoading"></div>
+          <div id="googleMap" style="width: 100%; height: 250px; border-radius: 10px"></div>
+        </div>
+      </div>
+
+      <!-- Profiles -->
+      <div class="content-bottom">
+        <div class="barbers-profiles">
+          <div class="barber-profile">
+            <div class="profile-edit">✏️</div>
+            <div class="avatar">👤</div>
+            <div class="barber-name-small">Mike Rodriguez</div>
+            <button class="btn-profile">
+              <a href="./dashboard_profile_barber.html">Profile</a>
+            </button>
+          </div>
+          <div class="barber-profile">
+            <div class="profile-edit">✏️</div>
+            <div class="avatar">👤</div>
+            <div class="barber-name-small">Carlos Silva</div>
+            <button class="btn-profile">
+              <a href="./dashboard_profile_barber.html">Profile</a>
+            </button>
+          </div>
+          <div class="barber-profile">
+            <div class="profile-edit">✏️</div>
+            <div class="avatar">👤</div>
+            <div class="barber-name-small">James Wright</div>
+            <button class="btn-profile">
+              <a href="./dashboard_profile_barber.html">Profile</a>
+            </button>
+          </div>
+        </div>
+        <div class="add-barber">
+          <div class="add-icon">+</div>
+          <div class="add-text">Add Barber</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column - Products -->
+    <div class="column products-column">
+      <div class="column-title">PRODUCTS</div>
+      <div class="products-grid">
+        <div class="product-item">
+          <div class="product-icon">💇‍♂️</div>
+          <div class="product-name">Hair Pomade</div>
+          <div class="product-price">$15.99</div>
+          <div class="product-actions">
+            <div class="action-icon">✏️</div>
+            <div class="action-icon">📋</div>
+          </div>
+        </div>
+        <div class="product-item">
+          <div class="product-icon">✂️</div>
+          <div class="product-name">Beard Oil</div>
+          <div class="product-price">$12.50</div>
+          <div class="product-actions">
+            <div class="action-icon">✏️</div>
+            <div class="action-icon">📋</div>
+          </div>
+        </div>
+        <div class="product-item">
+          <div class="product-icon">🧴</div>
+          <div class="product-name">Shampoo</div>
+          <div class="product-price">$8.99</div>
+          <div class="product-actions">
+            <div class="action-icon">✏️</div>
+            <div class="action-icon">📋</div>
+          </div>
+        </div>
+        <div class="product-item">
+          <div class="product-icon">💈</div>
+          <div class="product-name">Aftershave</div>
+          <div class="product-price">$11.25</div>
+          <div class="product-actions">
+            <div class="action-icon">✏️</div>
+            <div class="action-icon">📋</div>
+          </div>
+        </div>
+        <div class="add-product">
+          <div class="add-product-icon">+</div>
+          <div class="add-product-text">Add Product</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">BARBERIN</footer>
+
+  <script src="./js/map.js"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWSXaUzzU4wYQ9GVQj0j-rv3bWFb-B8Ik&callback=initMap&libraries=places"
+    async defer onerror="handleMapError()"></script>
+
+  <!-- Logout Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          // Clear user data from local storage
+          localStorage.removeItem("userData");
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userType");
+
+          // Redirect to login
+          window.location.href = "./login.html";
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

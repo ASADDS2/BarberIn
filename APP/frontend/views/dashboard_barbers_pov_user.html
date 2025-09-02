@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARBERIN - Barber Dashboard</title>
+    <!-- Google Fonts import for Montserrat font family -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <!-- Main stylesheet for dashboard styling -->
+    <link rel="stylesheet" href="../src/css/dashboard_barbers_pov_user.css">
+</head>
+<body>
+    <!-- Header section containing logo and barber name -->
+    <header class="header">
+        <div class="header-left">
+            <!-- Company/App logo -->
+            <div class="logo">Kcoda logo</div>
+            <!-- Container for displaying the current barber's name -->
+            <div class="barber-name-container">
+                <div class="barber-name">BARBER NAME</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content container with three-column layout -->
+    <div class="main-container">
+        <!-- Left column: Appointments section -->
+        <div class="column appointments-column">
+            <div class="column-title">APPOINTMENTS</div>
+            <!-- Individual appointment cards with placeholder data -->
+            <div class="appointment-card">
+                <span>APPOINTMENT DATA</span>
+                <button class="btn-view">View</button>
+            </div>
+            <div class="appointment-card">
+                <span>APPOINTMENT DATA</span>
+                <button class="btn-view">View</button>
+            </div>
+            <div class="appointment-card">
+                <span>APPOINTMENT DATA</span>
+                <button class="btn-view">View</button>
+            </div>
+            <div class="appointment-card">
+                <span>APPOINTMENT DATA</span>
+                <button class="btn-view">View</button>
+            </div>
+        </div>
+
+        <!-- Middle column: Main content area with modules and barber profiles -->
+        <div class="column content-column">
+            <!-- Top section: Various information modules -->
+            <div class="content-modules">
+                <!-- Schedule module showing working hours -->
+                <div class="module schedule-module">
+                    <div class="module-title">Schedule</div>
+                    <!-- Time slots display -->
+                    <div class="schedule-slots">
+                        <div class="schedule-slot">7:00 am<br>10:00 pm</div>
+                        <div class="schedule-slot">7:00 am<br>10:00 pm</div>
+                    </div>
+                </div>
+                
+                <!-- Availability module showing barber status -->
+                <div class="module availability-module">
+                    <div class="module-title">Availability</div>
+                    <div class="availability-list">
+                        <!-- Individual barber status indicators -->
+                        <div class="barber-status">
+                            <div class="barber-avatar-small"></div>
+                            <div class="status-indicator busy-indicator"></div>
+                            <span class="status-text busy">Busy</span>
+                        </div>
+                        <div class="barber-status">
+                            <div class="barber-avatar-small"></div>
+                            <div class="status-indicator available-indicator"></div>
+                            <span class="status-text available">Available</span>
+                        </div>
+                        <div class="barber-status">
+                            <div class="barber-avatar-small"></div>
+                            <div class="status-indicator available-indicator"></div>
+                            <span class="status-text available">Available</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map module with location marker -->
+                <div class="module">
+                    <div class="map-placeholder">
+                        <div class="map-marker">📍</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom section: Barber profile cards -->
+            <div class="content-bottom">
+                <div class="barbers-profiles">
+                    <!-- Individual barber profile card -->
+                    <div class="barber-profile">
+                        <!-- Avatar with gradient background and user icon -->
+                        <div class="avatar">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #f0c674, #e6ac39); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+                        </div>
+                        <!-- Profile button with link to detailed barber profile -->
+                        <button class="btn-profile"><a href="/BarberIn/views/dashboard_profile_barber.html">PROFILE </a></button>
+                    </div>
+                    <!-- Second barber profile card -->
+                    <div class="barber-profile">
+                        <!-- Avatar with different gradient colors -->
+                        <div class="avatar">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #d4925a, #c07d47); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+                        </div>
+                        <!-- Profile button linking to barber details -->
+                        <button class="btn-profile"><a href="/BarberIn/views/dashboard_profile_barber.html">PROFILE </a></button>
+                    </div>
+                    <!-- Third barber profile card -->
+                    <div class="barber-profile">
+                        <!-- Avatar with darker gradient theme -->
+                        <div class="avatar">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #8b4513, #654321); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+                        </div>
+                        <!-- Profile button for accessing barber information -->
+                        <button class="btn-profile"><a href="/BarberIn/views/dashboard_profile_barber.html">PROFILE </a></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right column: Products section -->
+        <div class="column products-column">
+            <div class="column-title">PRODUCTS</div>
+            <!-- Grid layout for product items -->
+            <div class="products-grid">
+                <!-- Individual product items with shopping bag icon and search functionality -->
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-icon">🛍️</div>
+                    <div class="product-actions">
+                        <!-- Search/view icon for product details -->
+                        <div class="action-icon">🔍</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with application branding -->
+    <footer class="footer">
+        BARBERIN
+    </footer>
+</body>
+</html>

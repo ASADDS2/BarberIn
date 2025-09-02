@@ -2,8 +2,8 @@
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
-// Variable para almacenar el tipo de usuario seleccionado
-let selectedUserType = 'User'; // Por defecto User
+// Variable to store the selected user type
+let selectedUserType = 'User'; // Default User
 
 document.addEventListener("DOMContentLoaded", () => {
     checkGoogleAuthResult();
@@ -19,32 +19,32 @@ function initializeLoginForm() {
         const email = document.getElementById("usuario").value.trim();
         const password = document.getElementById("password").value;
 
-        // Validaciones básicas
+        // Basic validations
         if (!email || !password) {
-            showMessage("Por favor, completa todos los campos", 'error');
+            showMessage("Please complete all fields", 'error');
             return;
         }
 
-        // Validar formato de email
+        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            showMessage("Por favor, ingresa un email válido", 'error');
+            showMessage("Please enter a valid email", 'error');
             return;
         }
 
-        // Cambiar el texto del botón mientras procesa
+        // Change button text while processing
         const submitBtn = form.querySelector(".btn-login");
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = "Iniciando sesión...";
+        submitBtn.textContent = "Logging in...";
 
         try {
-            // Determinar el endpoint según el tipo de usuario seleccionado
+            // Determine endpoint based on selected user type
             const endpoint = selectedUserType === 'Barber' 
                 ? '/barbershops/login' 
                 : '/users/login';
             
-            console.log(`Intentando login como ${selectedUserType} en endpoint: ${endpoint}`);
+            console.log(`Attempting login as ${selectedUserType} at endpoint: ${endpoint}`);
 
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 method: "POST",
@@ -58,21 +58,21 @@ function initializeLoginForm() {
             });
 
             const data = await response.json();
-            console.log('Respuesta del servidor:', data);
+            console.log('Server response:', data);
 
             if (response.ok && data.success) {
                 showMessage(data.message, 'success');
                 
-                // Almacenar datos de autenticación
+                // Store authentication data
                 if (selectedUserType === 'Barber') {
-                    // Datos del barbershop
+                    // Barbershop data
                     if (data.data && data.data.token) {
                         localStorage.setItem("authToken", data.data.token);
                         localStorage.setItem("barbershopData", JSON.stringify(data.data.barbershop));
                         localStorage.setItem("userType", "barbershop");
                     }
                 } else {
-                    // Datos del user
+                    // User data
                     if (data.data && data.data.token) {
                         localStorage.setItem("authToken", data.data.token);
                         localStorage.setItem("userData", JSON.stringify(data.data.user));
@@ -80,7 +80,7 @@ function initializeLoginForm() {
                     }
                 }
                 
-                // Redirigir al dashboard correspondiente
+                // Redirect to corresponding dashboard
                 setTimeout(() => {
                     if (selectedUserType === 'Barber') {
                         window.location.href = "dashboard_barbers.html";
@@ -90,8 +90,8 @@ function initializeLoginForm() {
                 }, 1000);
                 
             } else {
-                // Manejar errores del backend
-                let errorMessage = "Credenciales inválidas";
+                // Handle backend errors
+                let errorMessage = "Invalid credentials";
                 
                 if (data.message) {
                     errorMessage = data.message;
@@ -103,19 +103,19 @@ function initializeLoginForm() {
             }
         } catch (error) {
             console.error("Error connecting to backend:", error);
-            showMessage("No se pudo conectar al servidor. Verifica que el backend esté corriendo en puerto 3000", 'error');
+            showMessage("Could not connect to server. Please verify that the backend is running on port 3000", 'error');
         } finally {
-            // Restaurar el botón
+            // Restore button
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     });
 }
 
-// Función para seleccionar tipo de usuario (modificada para funcionar con el HTML actual)
+// Function to select user type (modified to work with current HTML)
 function selectUserType(type) {
     selectedUserType = type;
-    console.log("Tipo de usuario seleccionado:", type);
+    console.log("Selected user type:", type);
     
       const userCard = document.getElementById("userCard");
       const barberCard = document.getElementById("barberCard");
@@ -133,7 +133,7 @@ function selectUserType(type) {
       console.log("Selected type:", type);
 }
 
-// Función para mostrar mensajes
+// Function to show messages
 function showMessage(message, type = 'error') {
     const container = document.getElementById('message-container') || document.body;
     const messageDiv = document.createElement('div');
@@ -152,18 +152,18 @@ function showMessage(message, type = 'error') {
     `;
     messageDiv.textContent = message;
     
-    // Limpiar mensajes previos
+    // Clear previous messages
     const oldMessages = document.querySelectorAll('.login-message');
     oldMessages.forEach(msg => msg.remove());
     
-    // Agregar nuevo mensaje
+    // Add new message
     if (container.id === 'message-container') {
         container.appendChild(messageDiv);
     } else {
         container.insertBefore(messageDiv, container.firstChild);
     }
     
-    // Auto-remover después de 5 segundos
+    // Auto-remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -171,28 +171,28 @@ function showMessage(message, type = 'error') {
     }, 5000);
 }
 
-// Verificar si el usuario viene desde Google Auth
+// Check if user comes from Google Auth
 function checkGoogleAuthResult() {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     const user = urlParams.get('user');
     
     if (error === 'auth_failed') {
-        showMessage('Error en la autenticación con Google. Por favor intenta nuevamente.', 'error');
-        // Limpiar URL
+        showMessage('Error in Google authentication. Please try again.', 'error');
+        // Clear URL
         window.history.replaceState({}, document.title, window.location.pathname);
     } else if (user) {
-        // El usuario fue autenticado exitosamente con Google
-        showMessage('Login con Google exitoso! Redirigiendo...', 'success');
+        // User was successfully authenticated with Google
+        showMessage('Google login successful! Redirecting...', 'success');
         setTimeout(() => {
             window.location.href = 'dashboard_users.html';
         }, 1500);
     }
 }
 
-// Función para manejar login con Google
+// Function to handle Google login
 function handleGoogleLogin() {
-    console.log('Iniciando login con Google...');
+    console.log('Starting Google login...');
     
     const googleBtn = document.querySelector('.google-login');
     if (googleBtn) {
@@ -203,7 +203,7 @@ function handleGoogleLogin() {
     window.location.href = 'http://localhost:3000/auth/google';
 }
 
-// Funciones de utilidad para manejo de autenticación
+// Utility functions for authentication handling
 function isAuthenticated() {
     return localStorage.getItem("authToken") !== null;
 }
@@ -233,10 +233,10 @@ function logout() {
     window.location.href = "login.html";
 }
 
-// Función para proteger rutas (usar en dashboards)
+// Function to protect routes (use in dashboards)
 function protectRoute(requiredUserType = null) {
     if (!isAuthenticated()) {
-        showMessage('Debes iniciar sesión para acceder a esta página', 'error');
+        showMessage('You must log in to access this page', 'error');
         setTimeout(() => {
             window.location.href = 'login.html';
         }, 2000);
@@ -244,7 +244,7 @@ function protectRoute(requiredUserType = null) {
     }
     
     if (requiredUserType && getUserType() !== requiredUserType) {
-        showMessage('No tienes permisos para acceder a esta página', 'error');
+        showMessage('You do not have permission to access this page', 'error');
         setTimeout(() => {
             logout();
         }, 2000);
@@ -254,7 +254,7 @@ function protectRoute(requiredUserType = null) {
     return true;
 }
 
-// Función auxiliar para hacer peticiones autenticadas al API
+// Helper function to make authenticated requests to API
 async function makeAuthenticatedRequest(endpoint, options = {}) {
     const token = getAuthToken();
     

@@ -322,10 +322,37 @@ body {
     font-weight: bold;
 }
 
+/* Logout Button Styles */
+.logout-btn {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #c53030, #e53e3e);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+    border: 2px solid #fff;
+}
+
+.logout-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(229, 62, 62, 0.3);
+}
+
 /* RESPONSIVE */
 @media (max-width: 1000px) {
     .main-container {
         grid-template-columns: 1fr;
     }
 }
-

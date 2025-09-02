@@ -4,16 +4,16 @@ const API_BASE_URL = 'http://localhost:3000/api';
 
 let isUserMode = true;
 
-// Función unificada para mostrar mensajes
+// Unified function to show messages
 function showMessage(message, type = 'info') {
-    // Remover mensajes anteriores
+    // Remove previous messages
     const oldMessages = document.querySelectorAll('.success-message, .error-message');
     oldMessages.forEach(msg => msg.remove());
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `${type}-message`;
     
-    // Estilos base
+    // Base styles
     messageDiv.style.cssText = `
         padding: 10px;
         margin: 10px 0;
@@ -21,7 +21,7 @@ function showMessage(message, type = 'info') {
         font-size: 14px;
     `;
     
-    // Aplicar estilo según el tipo
+    // Apply style based on type
     if (type === 'success') {
         messageDiv.style.background = '#d4edda';
         messageDiv.style.color = '#155724';
@@ -38,14 +38,14 @@ function showMessage(message, type = 'info') {
 
     messageDiv.textContent = message;
 
-    // Insertar en el panel activo
+    // Insert into active panel
     const activeForm = isUserMode 
         ? document.querySelector('#user-register .form-section')
         : document.querySelector('#barber-register .form-section');
         
     activeForm.insertBefore(messageDiv, activeForm.firstChild);
 
-    // Auto-remover después de 5 segundos
+    // Auto-remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -53,7 +53,7 @@ function showMessage(message, type = 'info') {
     }, 5000);
 }
 
-// Toggle entre modos de registro
+// Toggle between registration modes
 function toggleRegisterMode() {
     const userPanel = document.getElementById('user-register');
     const barberPanel = document.getElementById('barber-register');
@@ -61,14 +61,14 @@ function toggleRegisterMode() {
     const navLeft = document.querySelector('.nav-left');
 
     if (isUserMode) {
-        // Cambiar a modo barbershop
+        // Switch to barbershop mode
         userPanel.classList.add('hidden');
         barberPanel.classList.remove('hidden');
         toggleText.textContent = 'Register Users';
         navLeft.textContent = 'Barbershop Registration';
         isUserMode = false;
     } else {
-        // Cambiar a modo user
+        // Switch to user mode
         barberPanel.classList.add('hidden');
         userPanel.classList.remove('hidden');
         toggleText.textContent = 'Register Barbershops';
@@ -77,7 +77,7 @@ function toggleRegisterMode() {
     }
 }
 
-// Obtener datos del formulario de usuario
+// Get user form data
 function getUserFormData() {
     const userFormSection = document.querySelector('#user-register .form-section');
     const inputs = userFormSection.querySelectorAll('input');
@@ -94,27 +94,27 @@ function getUserFormData() {
     };
 }
 
-// Obtener datos del formulario de barbershop (desde el HTML con form)
+// Get barbershop form data (from HTML with form)
 function getBarbershopFormData() {
     const form = document.getElementById('barbershop-register-form');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     
-    // Convertir valores vacíos a null para campos opcionales
+    // Convert empty values to null for optional fields
     Object.keys(data).forEach(key => {
         if (data[key] === '') {
             data[key] = null;
         }
     });
     
-    // Convertir latitude y longitude a números si existen
+    // Convert latitude and longitude to numbers if they exist
     if (data.latitude) data.latitude = parseFloat(data.latitude);
     if (data.longitude) data.longitude = parseFloat(data.longitude);
     
     return data;
 }
 
-// Validaciones
+// Validations
 function validateUserForm(formData) {
     const errors = [];
 
@@ -160,7 +160,7 @@ function validateBarbershopForm(formData) {
     return errors;
 }
 
-// Función genérica para hacer peticiones al API
+// Generic function to make API requests
 async function makeApiRequest(endpoint, data) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -189,7 +189,7 @@ async function makeApiRequest(endpoint, data) {
     }
 }
 
-// Registrar usuario
+// Register user
 async function registerUser(formData) {
     const result = await makeApiRequest('/users/register', formData);
     
@@ -204,7 +204,7 @@ async function registerUser(formData) {
     }
 }
 
-// Registrar barbershop
+// Register barbershop
 async function registerBarbershop(formData) {
     const result = await makeApiRequest('/barbershops/register', formData);
     
@@ -219,7 +219,7 @@ async function registerBarbershop(formData) {
     }
 }
 
-// Limpiar formulario
+// Clear form
 function resetForm(panelSelector) {
     document.querySelectorAll(`${panelSelector} input, ${panelSelector} textarea, ${panelSelector} select`)
         .forEach(el => {
@@ -231,7 +231,7 @@ function resetForm(panelSelector) {
         });
 }
 
-// Función auxiliar para manejar botones durante el submit
+// Helper function to handle buttons during submit
 function setButtonState(button, loading = false) {
     if (loading) {
         button.originalText = button.textContent;
@@ -243,7 +243,7 @@ function setButtonState(button, loading = false) {
     }
 }
 
-// Manejo de autenticación con Google
+// Handle Google authentication
 function handleGoogleRegister() {
     window.location.href = 'http://localhost:3000/auth/google';
 }
@@ -266,7 +266,7 @@ function checkGoogleAuthResult() {
 document.addEventListener('DOMContentLoaded', function () {
     checkGoogleAuthResult();
 
-    // Botón de registro de usuario
+    // User registration button
     const userRegisterBtn = document.querySelector('#user-register .btn-login');
     if (userRegisterBtn) {
         userRegisterBtn.addEventListener('click', async function (e) {
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Formulario de registro de barbershop
+    // Barbershop registration form
     const barbershopForm = document.getElementById('barbershop-register-form');
     if (barbershopForm) {
         barbershopForm.addEventListener('submit', async function (e) {
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Enlaces a login
+    // Login links
     const loginLinks = document.querySelectorAll('.login-link a');
     loginLinks.forEach(link => {
         link.addEventListener('click', function (e) {

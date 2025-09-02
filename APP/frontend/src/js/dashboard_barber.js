@@ -1,40 +1,40 @@
 // js/dashboard_barbers.js
 
-// Importar funciones de login.js (asegúrate de que login.js se cargue primero)
+// Import functions from login.js (make sure login.js loads first)
 const API_BASE_URL = 'http://localhost:3000/api';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Proteger la ruta - solo barbershops pueden acceder
+    // Protect route - only barbershops can access
     if (!protectRoute('barbershop')) {
         return;
     }
     
-    // Inicializar el dashboard
+    // Initialize dashboard
     initializeBarbershopDashboard();
 });
 
 async function initializeBarbershopDashboard() {
     try {
-        // Obtener datos del barbershop desde localStorage
+        // Get barbershop data from localStorage
         const barbershopData = getCurrentUser();
         
         if (!barbershopData || !barbershopData.barbershop_id) {
-            console.error('No se encontraron datos del barbershop');
+            console.error('Barbershop data not found');
             logout();
             return;
         }
         
-        // Actualizar el nombre del barbershop en el header
+        // Update barbershop name in header
         updateBarbershopHeader(barbershopData);
         
-        // Cargar datos del dashboard
+        // Load dashboard data
         await loadDashboardData(barbershopData.barbershop_id);
         
-        console.log('Dashboard inicializado correctamente para:', barbershopData.name);
+        console.log('Dashboard initialized successfully for:', barbershopData.name);
         
     } catch (error) {
-        console.error('Error inicializando dashboard:', error);
-        showDashboardError('Error cargando el dashboard. Por favor, intenta nuevamente.');
+        console.error('Error initializing dashboard:', error);
+        showDashboardError('Error loading dashboard. Please try again.');
     }
 }
 
@@ -44,23 +44,23 @@ function updateBarbershopHeader(barbershopData) {
         barberNameContainer.textContent = barbershopData.name || 'BARBERSHOP';
     }
     
-    // También podemos actualizar el título de la página
+    // Also update page title
     document.title = `BARBERIN - ${barbershopData.name || 'Dashboard'}`;
 }
 
 async function loadDashboardData(barbershopId) {
     try {
-        // Cargar citas del barbershop
+        // Load barbershop appointments
         await loadAppointments(barbershopId);
         
-        // Cargar barberos del barbershop
+        // Load barbershop barbers
         await loadBarbers(barbershopId);
         
-        // Cargar productos/servicios
+        // Load products/services
         await loadServices(barbershopId);
         
     } catch (error) {
-        console.error('Error cargando datos del dashboard:', error);
+        console.error('Error loading dashboard data:', error);
         throw error;
     }
 }
@@ -73,11 +73,11 @@ async function loadAppointments(barbershopId) {
             const data = await response.json();
             updateAppointmentsColumn(data.data?.appointments || []);
         } else {
-            console.error('Error cargando citas');
+            console.error('Error loading appointments');
             updateAppointmentsColumn([]);
         }
     } catch (error) {
-        console.error('Error en loadAppointments:', error);
+        console.error('Error in loadAppointments:', error);
         updateAppointmentsColumn([]);
     }
 }
@@ -85,7 +85,7 @@ async function loadAppointments(barbershopId) {
 function updateAppointmentsColumn(appointments) {
     const appointmentsColumn = document.querySelector('.appointments-column');
     
-    // Limpiar citas existentes (excepto el título)
+    // Clear existing appointments (except title)
     const existingCards = appointmentsColumn.querySelectorAll('.appointment-card');
     existingCards.forEach(card => card.remove());
     
@@ -98,13 +98,13 @@ function updateAppointmentsColumn(appointments) {
             color: #666;
             font-style: italic;
         `;
-        noAppointmentsDiv.textContent = 'No hay citas programadas';
+        noAppointmentsDiv.textContent = 'No scheduled appointments';
         appointmentsColumn.appendChild(noAppointmentsDiv);
         return;
     }
     
-    // Crear cards para las citas
-    appointments.slice(0, 5).forEach(appointment => { // Mostrar máximo 5
+    // Create cards for appointments
+    appointments.slice(0, 5).forEach(appointment => { // Show maximum 5
         const appointmentCard = document.createElement('div');
         appointmentCard.className = 'appointment-card';
         
@@ -128,11 +128,11 @@ async function loadBarbers(barbershopId) {
             const data = await response.json();
             updateBarbersSection(data.data?.barbers || []);
         } else {
-            console.error('Error cargando barberos');
+            console.error('Error loading barbers');
             updateBarbersSection([]);
         }
     } catch (error) {
-        console.error('Error en loadBarbers:', error);
+        console.error('Error in loadBarbers:', error);
         updateBarbersSection([]);
     }
 }
@@ -140,7 +140,7 @@ async function loadBarbers(barbershopId) {
 function updateBarbersSection(barbers) {
     const barbersContainer = document.querySelector('.barbers-profiles');
     
-    // Limpiar barberos existentes
+    // Clear existing barbers
     barbersContainer.innerHTML = '';
     
     if (barbers.length === 0) {
@@ -152,12 +152,12 @@ function updateBarbersSection(barbers) {
             font-style: italic;
             padding: 20px;
         `;
-        noBarbers.textContent = 'No hay barberos registrados';
+        noBarbers.textContent = 'No registered barbers';
         barbersContainer.appendChild(noBarbers);
         return;
     }
     
-    // Crear perfiles de barberos
+    // Create barber profiles
     barbers.forEach(barber => {
         const barberProfile = document.createElement('div');
         barberProfile.className = 'barber-profile';
@@ -173,7 +173,7 @@ function updateBarbersSection(barbers) {
         barbersContainer.appendChild(barberProfile);
     });
     
-    // Agregar botón de añadir barbero si hay menos de 4
+    // Add "add barber" button if there are less than 4
     if (barbers.length < 4) {
         const addBarber = document.createElement('div');
         addBarber.className = 'add-barber';
@@ -190,11 +190,11 @@ async function loadServices(barbershopId) {
             const data = await response.json();
             updateProductsSection(data.data?.services || []);
         } else {
-            console.error('Error cargando servicios');
+            console.error('Error loading services');
             updateProductsSection([]);
         }
     } catch (error) {
-        console.error('Error en loadServices:', error);
+        console.error('Error in loadServices:', error);
         updateProductsSection([]);
     }
 }
@@ -202,11 +202,11 @@ async function loadServices(barbershopId) {
 function updateProductsSection(services) {
     const productsGrid = document.querySelector('.products-grid');
     
-    // Limpiar productos existentes
+    // Clear existing products
     productsGrid.innerHTML = '';
     
-    // Crear items de productos/servicios
-    services.slice(0, 8).forEach(service => { // Máximo 8 servicios
+    // Create product/service items
+    services.slice(0, 8).forEach(service => { // Maximum 8 services
         const productItem = document.createElement('div');
         productItem.className = 'product-item';
         
@@ -214,63 +214,63 @@ function updateProductsSection(services) {
             <div class="product-icon" title="${service.service_name}">🛍️</div>
             <div class="product-actions">
                 <div class="action-icon" onclick="editService(${service.service_id})">✏️</div>
-                <div class="action-icon" onclick="viewService(${service.service_id})">🔍</div>
+                <div class="action-icon" onclick="viewService(${service.service_id})">📋</div>
             </div>
         `;
         
         productsGrid.appendChild(productItem);
     });
     
-    // Agregar botón de añadir producto
+    // Add "add product" button
     const addProduct = document.createElement('div');
     addProduct.className = 'add-product';
     addProduct.innerHTML = '<div class="add-product-icon" onclick="addNewService()">+</div>';
     productsGrid.appendChild(addProduct);
 }
 
-// Funciones de interacción
+// Interaction functions
 function viewAppointment(appointmentId) {
-    console.log('Ver cita:', appointmentId);
-    // Implementar lógica para ver detalles de la cita
-    alert(`Ver detalles de la cita ${appointmentId}`);
+    console.log('View appointment:', appointmentId);
+    // Implement logic to view appointment details
+    alert(`View appointment details ${appointmentId}`);
 }
 
 function viewBarberProfile(barberId) {
-    console.log('Ver perfil del barbero:', barberId);
+    console.log('View barber profile:', barberId);
     window.location.href = `dashboard_profile_barber.html?barberId=${barberId}`;
 }
 
 function editBarber(barberId) {
-    console.log('Editar barbero:', barberId);
-    // Implementar lógica para editar barbero
-    alert(`Editar barbero ${barberId}`);
+    console.log('Edit barber:', barberId);
+    // Implement logic to edit barber
+    alert(`Edit barber ${barberId}`);
 }
 
 function addNewBarber() {
-    console.log('Añadir nuevo barbero');
-    // Implementar lógica para añadir barbero
-    alert('Función para añadir nuevo barbero');
+    console.log('Add new barber');
+    // Implement logic to add barber
+    alert('Function to add new barber');
 }
 
 function editService(serviceId) {
-    console.log('Editar servicio:', serviceId);
-    // Implementar lógica para editar servicio
-    alert(`Editar servicio ${serviceId}`);
+    console.log('Edit service:', serviceId);
+    // Implement logic to edit service
+    alert(`Edit service ${serviceId}`);
 }
 
 function viewService(serviceId) {
-    console.log('Ver servicio:', serviceId);
-    // Implementar lógica para ver servicio
-    alert(`Ver detalles del servicio ${serviceId}`);
+    console.log('View service:', serviceId);
+    // Implement logic to view service
+    alert(`View service details ${serviceId}`);
 }
 
 function addNewService() {
-    console.log('Añadir nuevo servicio');
-    // Implementar lógica para añadir servicio
-    alert('Función para añadir nuevo servicio');
+    console.log('Add new service');
+    // Implement logic to add service
+    alert('Function to add new service');
 }
 
-// Función para mostrar errores en el dashboard
+// Function to show dashboard errors
 function showDashboardError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.style.cssText = `
@@ -296,7 +296,7 @@ function showDashboardError(message) {
     }, 5000);
 }
 
-// Función para refrescar datos del dashboard
+// Function to refresh dashboard data
 async function refreshDashboard() {
     const barbershopData = getCurrentUser();
     if (barbershopData && barbershopData.barbershop_id) {
@@ -304,9 +304,9 @@ async function refreshDashboard() {
     }
 }
 
-// Función para logout específica del dashboard
+// Dashboard-specific logout function
 function logoutFromDashboard() {
-    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+    if (confirm('Are you sure you want to log out?')) {
         logout();
     }
 }

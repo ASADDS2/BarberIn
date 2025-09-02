@@ -4,6 +4,8 @@
  * authentication, profile management, and data retrieval.
  */
 
+import AuthService from './authService.js';
+
 class UserService {
     
     /**

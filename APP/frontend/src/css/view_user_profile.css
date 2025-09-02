@@ -123,7 +123,7 @@ body {
   height: 120px;
   margin: 0 auto 14px auto;
   background: #f1f1f1;
-  border-radius: 15px;
+  border-radius: 105px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,11 +133,17 @@ body {
   position: relative;
 }
 
+#foto{
+
+  border-radius: 105px;
+
+}
 .profile-photo::after {
-  content: '👤';
+  content: '';
   font-size: 48px;
   color: #666;
   display: block;
+  border-radius: 200px;
 }
 
 /* Nombre perfil (visible y contrastado) */

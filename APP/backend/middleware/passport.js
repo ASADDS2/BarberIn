@@ -3,7 +3,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import UserService from '../services/userService.js';
 import db from '../config/database.js';
 
-// Configuración de la estrategia de Google OAuth
+// Google OAuth strategy configuration
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -12,19 +12,19 @@ passport.use(new GoogleStrategy({
     try {
         const userService = new UserService(db);
         
-        // Buscar si el usuario ya existe por email o google_id
+        // Search if user already exists by email or google_id
         let user = await userService.getUserByGoogleId(profile.id);
         
         if (!user) {
-            // Si no existe, buscar por email
+            // If doesn't exist, search by email
             user = await userService.getUserByEmail(profile.emails[0].value);
             
             if (user) {
-                // Si existe por email, actualizar con google_id
+                // If exists by email, update with google_id
                 await userService.updateGoogleId(user.user_id, profile.id);
                 user.google_id = profile.id;
             } else {
-                // Crear nuevo usuario
+                // Create new user
                 const userData = {
                     first_name: profile.name.givenName,
                     last_name: profile.name.familyName,
@@ -40,17 +40,17 @@ passport.use(new GoogleStrategy({
         
         return done(null, user);
     } catch (error) {
-        console.error('Error en Google Strategy:', error);
+        console.error('Error in Google Strategy:', error);
         return done(error, null);
     }
 }));
 
-// Serializar usuario para la sesión
+// Serialize user for session
 passport.serializeUser((user, done) => {
     done(null, user.user_id);
 });
 
-// Deserializar usuario de la sesión
+// Deserialize user from session
 passport.deserializeUser(async (id, done) => {
     try {
         const userService = new UserService(db);

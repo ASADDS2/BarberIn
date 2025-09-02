@@ -117,24 +117,20 @@ function selectUserType(type) {
     selectedUserType = type;
     console.log("Tipo de usuario seleccionado:", type);
     
-    // Actualizar el texto del selector para mostrar la selección actual
-    const selector = document.getElementById("userTypeSelector");
-    const emailInput = document.getElementById("usuario");
-    
-    
-    if (type === 'Barber') {
-        selector.style.backgroundColor = '#ff6b35';
-        selector.style.color = 'white';
-        emailInput.placeholder = "barbershop@email.com";
-    } else {
-        selector.style.backgroundColor = '#f0f0f0';
-        selector.style.color = '#333';
-        emailInput.placeholder = "user@email.com";
-    }
-    
-    // Cerrar dropdown
-    const dropdown = document.getElementById("userTypeDropdown");
-    dropdown.classList.remove("show");
+      const userCard = document.getElementById("userCard");
+      const barberCard = document.getElementById("barberCard");
+      const placeholderInput = document.getElementById("usuario");
+
+      if (type === "User") {
+        userCard.style.border = "3px solid #e53e3e";
+        barberCard.style.border = "1px solid #ccc";
+        placeholderInput.placeholder = "user@email.com";
+      } else if (type === "Barber") {
+        barberCard.style.border = "3px solid #007bff";
+        userCard.style.border = "1px solid #ccc";
+        placeholderInput.placeholder = "barbershop@email.com";
+      }
+      console.log("Selected type:", type);
 }
 
 // Función para mostrar mensajes

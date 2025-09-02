@@ -315,20 +315,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Botones de Google OAuth
-    const googleBtns = document.querySelectorAll('.btn-signup');
-    googleBtns.forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const originalText = this.innerHTML;
-            this.innerHTML = '<span class="google-icon">G</span> Redirecting...';
-            this.disabled = true;
-
-            handleGoogleRegister();
-        });
-    });
-
     // Enlaces a login
     const loginLinks = document.querySelectorAll('.login-link a');
     loginLinks.forEach(link => {

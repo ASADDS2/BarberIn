@@ -1,8 +1,9 @@
--- Base de datos para la aplicación BARBERIN
--- Sistema de reservas de citas para barberías
+-- Database for BARBERIN application
+-- Barbershop appointment booking system
 CREATE DATABASE Barberin;
 USE Barberin;
--- Tabla de usuarios (clientes)
+
+-- Users table (clients)
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
@@ -18,7 +19,7 @@ CREATE TABLE users (
     is_active BOOLEAN DEFAULT TRUE
 );
 
--- Tabla de barberías
+-- Barbershops table
 CREATE TABLE barbershops (
     barbershop_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(200) NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE barbershops (
     is_active BOOLEAN DEFAULT TRUE
 );
 
--- Tabla de barberos
+-- Barbers table
 CREATE TABLE barbers (
     barber_id INT PRIMARY KEY AUTO_INCREMENT,
     barbershop_id INT NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE barbers (
     FOREIGN KEY (barbershop_id) REFERENCES barbershops(barbershop_id) ON DELETE CASCADE
 );
 
--- Tabla de horarios de barberos
+-- Barber schedules table
 CREATE TABLE barber_schedules (
     schedule_id INT PRIMARY KEY AUTO_INCREMENT,
     barber_id INT NOT NULL,
@@ -74,7 +75,7 @@ CREATE TABLE barber_schedules (
     UNIQUE KEY unique_barber_day (barber_id, day_of_week)
 );
 
--- Tabla de servicios/productos
+-- Services/products table
 CREATE TABLE services (
     service_id INT PRIMARY KEY AUTO_INCREMENT,
     barbershop_id INT NOT NULL,
@@ -89,7 +90,7 @@ CREATE TABLE services (
     FOREIGN KEY (barbershop_id) REFERENCES barbershops(barbershop_id) ON DELETE CASCADE
 );
 
--- Tabla de citas/appointments
+-- Appointments table
 CREATE TABLE appointments (
     appointment_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -109,7 +110,7 @@ CREATE TABLE appointments (
     FOREIGN KEY (service_id) REFERENCES services(service_id) ON DELETE SET NULL
 );
 
--- Tabla de reseñas/ratings
+-- Reviews/ratings table
 CREATE TABLE reviews (
     review_id INT PRIMARY KEY AUTO_INCREMENT,
     appointment_id INT NOT NULL,
@@ -126,7 +127,7 @@ CREATE TABLE reviews (
     UNIQUE KEY unique_review_per_appointment (appointment_id)
 );
 
--- Tabla de favoritos de usuarios
+-- User favorites table
 CREATE TABLE user_favorites (
     favorite_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -140,7 +141,7 @@ CREATE TABLE user_favorites (
     UNIQUE KEY unique_user_favorite (user_id, barbershop_id, barber_id, favorite_type)
 );
 
--- Tabla de galería de trabajos de barberos
+-- Barber portfolio/gallery table
 CREATE TABLE barber_portfolio (
     portfolio_id INT PRIMARY KEY AUTO_INCREMENT,
     barber_id INT NOT NULL,
@@ -152,7 +153,7 @@ CREATE TABLE barber_portfolio (
     FOREIGN KEY (barber_id) REFERENCES barbers(barber_id) ON DELETE CASCADE
 );
 
--- Tabla de productos de barbería
+-- Barbershop products table
 CREATE TABLE products (
     product_id INT PRIMARY KEY AUTO_INCREMENT,
     barbershop_id INT NOT NULL,
@@ -168,7 +169,7 @@ CREATE TABLE products (
     FOREIGN KEY (barbershop_id) REFERENCES barbershops(barbershop_id) ON DELETE CASCADE
 );
 
--- Tabla de disponibilidad de barberos en tiempo real
+-- Real-time barber availability table
 CREATE TABLE barber_availability (
     availability_id INT PRIMARY KEY AUTO_INCREMENT,
     barber_id INT NOT NULL,
@@ -178,7 +179,7 @@ CREATE TABLE barber_availability (
     UNIQUE KEY unique_barber_availability (barber_id)
 );
 
--- Índices para optimización
+-- Indexes for optimization
 CREATE INDEX idx_appointments_date ON appointments(appointment_date);
 CREATE INDEX idx_appointments_user ON appointments(user_id);
 CREATE INDEX idx_appointments_barber ON appointments(barber_id);
@@ -186,11 +187,11 @@ CREATE INDEX idx_barbershops_location ON barbershops(latitude, longitude);
 CREATE INDEX idx_reviews_rating ON reviews(rating);
 CREATE INDEX idx_barbers_barbershop ON barbers(barbershop_id);
 
--- Triggers para actualizar ratings automáticamente
+-- Triggers to automatically update ratings
 
 DELIMITER //
 
--- Trigger para actualizar rating promedio de barberos
+-- Trigger to update barber average rating
 CREATE TRIGGER update_barber_rating 
 AFTER INSERT ON reviews
 FOR EACH ROW
@@ -209,7 +210,7 @@ BEGIN
     WHERE barber_id = NEW.barber_id;
 END//
 
--- Trigger para actualizar rating promedio de barberías
+-- Trigger to update barbershop average rating
 CREATE TRIGGER update_barbershop_rating 
 AFTER INSERT ON reviews
 FOR EACH ROW
@@ -230,24 +231,24 @@ END//
 
 DELIMITER ;
 
--- Datos de ejemplo para testing
+-- Sample data for testing
 
--- Insertar barbería de ejemplo
+-- Insert sample barbershop
 INSERT INTO barbershops (name, email, phone, password_hash, address, responsible_person, id_document, owner_phone) 
-VALUES ('Barbería Clásica', 'info@barberiaclasica.com', '+573001234567', 'hash_example', 'Calle 45 #23-15, Barranquilla', 'Juan Pérez', '12345678', '+573001234567');
+VALUES ('Classic Barbershop', 'info@classicbarbershop.com', '+573001234567', 'hash_example', 'Street 45 #23-15, Barranquilla', 'Juan Pérez', '12345678', '+573001234567');
 
--- Insertar barbero de ejemplo
+-- Insert sample barber
 INSERT INTO barbers (barbershop_id, name, description, specialties, qualification) 
-VALUES (1, 'Carlos Mendoza', 'Barbero con 10 años de experiencia', 'Cortes clásicos, barba', 'Técnico en barbería');
+VALUES (1, 'Carlos Mendoza', 'Barber with 10 years of experience', 'Classic cuts, beard styling', 'Barbering Technician');
 
--- Insertar horario de barbero
+-- Insert barber schedule
 INSERT INTO barber_schedules (barber_id, day_of_week, start_time, end_time) 
 VALUES (1, 'Monday', '07:00:00', '22:00:00');
 
--- Insertar disponibilidad inicial
+-- Insert initial availability
 INSERT INTO barber_availability (barber_id, status) 
 VALUES (1, 'available');
 
--- Insertar servicio de ejemplo
+-- Insert sample service
 INSERT INTO services (barbershop_id, name, description, price, duration_minutes, category) 
-VALUES (1, 'Corte Clásico', 'Corte de cabello tradicional', 25000.00, 45, 'haircut');
+VALUES (1, 'Classic Haircut', 'Traditional haircut service', 25000.00, 45, 'haircut');
